@@ -1,5 +1,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "liquid"
+    name: "Liquid",
+    targets: [],
+    exclude: []
 )
