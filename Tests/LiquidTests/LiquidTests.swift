@@ -14,12 +14,14 @@ import Foundation
 #endif
 
 class LiquidTests: XCTestCase {
+    func testLexer() { LexerTests().testTokenize() }
 
 }
 
 extension LiquidTests {
     static var allTests : [(String, (LiquidTests) -> () throws -> Void)] {
         return [
+            ("testLexer", testLexer),
         ]
     }
 }
