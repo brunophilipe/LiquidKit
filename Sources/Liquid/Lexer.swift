@@ -19,7 +19,7 @@ struct Lexer {
         func strip() -> String {
             let start = string.index(string.startIndex, offsetBy: 2)
             let end = string.index(string.endIndex, offsetBy: -2)
-            return string[start..<end].trim(character: " ")
+          return String(string[start..<end]).trim(character: " ")
         }
         
         if string.hasPrefix("{{") {
@@ -80,14 +80,14 @@ class Scanner {
         
         var index = content.startIndex
         while index != content.endIndex {
-            let substring = content.substring(from: index)
+            let substring = String(content[index...])
             
             if substring.hasPrefix(until) {
-                let result = content.substring(to: index)
+                let result = String(content[..<index])
                 content = substring
                 
                 if returnUntil {
-                    content = content.substring(from: until.endIndex)
+                    content = String(content[until.endIndex...])
                     return result + until
                 }
                 
@@ -108,10 +108,10 @@ class Scanner {
         
         var index = content.startIndex
         while index != content.endIndex {
-            let substring = content.substring(from: index)
+            let substring = String(content[index...])
             for string in until {
                 if substring.hasPrefix(string) {
-                    let result = content.substring(to: index)
+                    let result = String(content[..<index])
                     content = substring
                     return (string, result)
                 }

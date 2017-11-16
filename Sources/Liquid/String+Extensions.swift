@@ -35,7 +35,7 @@ extension String {
     func trim(character: Character) -> String {
         let first = findFirstNot(character: character) ?? startIndex
         let last = findLastNot(character: character) ?? endIndex
-        return self[first..<last]
+      return String(self[first..<last])
     }
 }
 
