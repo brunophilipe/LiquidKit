@@ -14,7 +14,14 @@ import Foundation
 #endif
 
 class LiquidTests: XCTestCase {
-    func testLexer() { LexerTests().testTokenize() }
+  func testLexer() {
+    LexerTests().testCreateToken()
+    LexerTests().testTokenize()
+  }
+  func testParser()  {
+    ParserTests().testParseText()
+    ParserTests().testParseVariable()
+  }
 
 }
 
@@ -22,6 +29,7 @@ extension LiquidTests {
     static var allTests : [(String, (LiquidTests) -> () throws -> Void)] {
         return [
             ("testLexer", testLexer),
+            ("testParser", testParser),
         ]
     }
 }
