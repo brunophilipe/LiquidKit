@@ -23,3 +23,9 @@ open class Filter {
 		self.lambda = lambda
 	}
 }
+
+extension Filter {
+	static let abs = Filter(identifier: "abs") { (input, _) -> String in
+		return "\(Swift.abs(Decimal(string: input) ?? 0))"
+	}
+}

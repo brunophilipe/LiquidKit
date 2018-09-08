@@ -37,5 +37,13 @@ class ParserTests: XCTestCase {
             _ = parser.parse()
         }
     }
+
+	func testFilter_abs() {
+		let lexer = Lexer(templateString: "{{ -7 | abs }}{{ 100 | abs }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["7", "100"])
+	}
     
 }
