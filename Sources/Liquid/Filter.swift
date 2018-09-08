@@ -78,4 +78,13 @@ extension Filter {
 
 		return input.replacingCharacters(in: firstWordRange, with: firstWord.localizedCapitalized)
 	}
+
+	static let ceil = Filter(identifier: "ceil") { (input, _) -> String in
+
+		guard let inputDouble = Double(input) else {
+				return input
+		}
+
+		return "\(Int(Darwin.ceil(inputDouble)))"
+	}
 }

@@ -28,6 +28,7 @@ open class TokenParser {
 		filters.append(.atLeast)
 		filters.append(.atMost)
 		filters.append(.capitalize)
+		filters.append(.ceil)
 	}
     
     /// Parse the given tokens into nodes
