@@ -58,7 +58,7 @@ class ParserTests: XCTestCase {
 //		{{ "website.com" | append: filename }}
 	}
 
-	func testFilter_atleast() {
+	func testFilter_atLeast() {
 		let lexer = Lexer(templateString: "{{ 4 | at_least: 5 }}{{ 4 | at_least: 3 }}")
 		let tokenize = lexer.tokenize()
 		let parser = TokenParser(tokens: tokenize, context: Context())
