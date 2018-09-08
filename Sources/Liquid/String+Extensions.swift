@@ -6,6 +6,7 @@
 //
 //
 extension String {
+
     func findFirstNot(character: Character) -> String.Index? {
         var index = startIndex
         
@@ -37,6 +38,10 @@ extension String {
         let last = findLastNot(character: character) ?? endIndex
       return String(self[first..<last])
     }
+
+	var trimmingWhitespaces: String {
+		return trimmingCharacters(in: .whitespacesAndNewlines)
+	}
 }
 
 extension String {
