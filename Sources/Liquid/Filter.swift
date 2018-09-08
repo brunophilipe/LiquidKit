@@ -54,7 +54,7 @@ extension Filter {
 			let inputDecimal = Decimal(string: input),
 			let firstParameter = parameters.first,
 			let parameterDecimal = Decimal(string: firstParameter)
-			else {
+		else {
 				return input
 		}
 
