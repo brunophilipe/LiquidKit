@@ -8,10 +8,10 @@
 
 import Foundation
 
-struct Lexer {
+public struct Lexer {
     let templateString: String
     
-    init(templateString: String) {
+    public init(templateString: String) {
         self.templateString = templateString
     }
     
@@ -32,7 +32,7 @@ struct Lexer {
     }
     
     /// Returns an array of tokens from a given template string.
-    func tokenize() -> [Token] {
+    public func tokenize() -> [Token] {
         var tokens: [Token] = []
         
         let scanner = Scanner(templateString)
