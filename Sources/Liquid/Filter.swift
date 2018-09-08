@@ -28,4 +28,12 @@ extension Filter {
 	static let abs = Filter(identifier: "abs") { (input, _) -> String in
 		return "\(Swift.abs(Decimal(string: input) ?? 0))"
 	}
+
+	static let append = Filter(identifier: "append") { (input, parameters) -> String in
+		guard let firstParameter = parameters.first else {
+			return input
+		}
+
+		return input + firstParameter
+	}
 }
