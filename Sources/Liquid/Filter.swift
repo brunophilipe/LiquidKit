@@ -48,4 +48,16 @@ extension Filter {
 
 		return "\(max(inputDecimal, parameterDecimal))"
 	}
+
+	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> String in
+		guard
+			let inputDecimal = Decimal(string: input),
+			let firstParameter = parameters.first,
+			let parameterDecimal = Decimal(string: firstParameter)
+			else {
+				return input
+		}
+
+		return "\(min(inputDecimal, parameterDecimal))"
+	}
 }
