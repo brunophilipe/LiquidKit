@@ -47,11 +47,11 @@ class ParserTests: XCTestCase {
 	}
 
 	func testFilter_append() {
-		let lexer = Lexer(templateString: "{{ \"/my/fancy/url\" | append: \".html\" }}")
+		let lexer = Lexer(templateString: "{{ \"/my/fancy/url\" | append: \".html\" }}{{ \"a\" | append: \"b\" | append: \"c\" }}")
 		let tokenize = lexer.tokenize()
 		let parser = TokenParser(tokens: tokenize, context: Context())
 		let res = parser.parse()
-		XCTAssertEqual(res, ["/my/fancy/url.html"])
+		XCTAssertEqual(res, ["/my/fancy/url.html", "abc"])
 
 		// TODO:
 //		{% assign filename = "/index.html" %}
