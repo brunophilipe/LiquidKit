@@ -73,5 +73,13 @@ class ParserTests: XCTestCase {
 		let res = parser.parse()
 		XCTAssertEqual(res, ["4", "3"])
 	}
+
+	func testFilter_capitalize() {
+		let lexer = Lexer(templateString: "{{ \"title\" | capitalize }}{{ \"my great title\" | capitalize }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Title", "My great title"])
+	}
     
 }

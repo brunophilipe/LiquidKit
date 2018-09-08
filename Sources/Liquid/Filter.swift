@@ -60,4 +60,22 @@ extension Filter {
 
 		return "\(min(inputDecimal, parameterDecimal))"
 	}
+
+	static let capitalize = Filter(identifier: "capitalize") { (input: String, _) -> String in
+
+		guard input.count > 0 else {
+			return input
+		}
+
+		var firstWord: String!
+		var firstWordRange: Range<String.Index>!
+
+		input.enumerateSubstrings(in: input.startIndex..., options: .byWords, { (word, wordRange, _, stop) in
+			firstWord = word
+			firstWordRange = wordRange
+			stop = true
+		})
+
+		return input.replacingCharacters(in: firstWordRange, with: firstWord.localizedCapitalized)
+	}
 }

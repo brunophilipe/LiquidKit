@@ -23,10 +23,11 @@ open class TokenParser {
     }
 
 	open func registerFilters() {
-		filters.append(Filter.abs)
-		filters.append(Filter.append)
-		filters.append(Filter.atLeast)
-		filters.append(Filter.atMost)
+		filters.append(.abs)
+		filters.append(.append)
+		filters.append(.atLeast)
+		filters.append(.atMost)
+		filters.append(.capitalize)
 	}
     
     /// Parse the given tokens into nodes
