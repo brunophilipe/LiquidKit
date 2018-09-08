@@ -9,16 +9,12 @@
 public class Context {
     var dictionaries: [String: Any?]
 
-//    public let environment: Environment
-
-    init(dictionary: [String: Any]? = nil) {
+    public init(dictionary: [String: Any]? = nil) {
         if let dictionary = dictionary {
             dictionaries = dictionary
         } else {
             dictionaries = [:]
         }
-
-//        self.environment = environment ?? Environment()
     }
 }
 
