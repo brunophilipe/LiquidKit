@@ -29,6 +29,7 @@ open class TokenParser {
 		filters.append(.atMost)
 		filters.append(.capitalize)
 		filters.append(.ceil)
+		filters.append(.date)
 	}
     
     /// Parse the given tokens into nodes

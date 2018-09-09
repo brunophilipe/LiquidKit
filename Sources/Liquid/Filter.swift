@@ -87,4 +87,54 @@ extension Filter {
 
 		return "\(Int(Darwin.ceil(inputDouble)))"
 	}
+
+	static let date = Filter(identifier: "date") { (input, parameters) -> String in
+
+		guard let formatString = parameters.first else {
+			return input
+		}
+
+		var date: Date? = nil
+
+		if input == "today" || input == "now" {
+			date = Date()
+		} else {
+			let styles: [DateFormatter.Style] = [.none, .short, .medium, .long, .full]
+			let dateFormatter = DateFormatter()
+
+			for dateStyle in styles {
+				for timeStyle in styles {
+					dateFormatter.dateStyle = dateStyle
+					dateFormatter.timeStyle = timeStyle
+
+					dateFormatter.locale = Locale.current
+
+					if let parsedDate = dateFormatter.date(from: input) {
+						date = parsedDate
+						break
+					}
+
+					dateFormatter.locale = Locale(identifier: "en_US")
+
+					if let parsedDate = dateFormatter.date(from: input) {
+						date = parsedDate
+						break
+					}
+				}
+
+				if date != nil {
+					break
+				}
+			}
+		}
+
+		guard date != nil else {
+			return input
+		}
+
+		let strFormatter = STRFTimeFormatter()
+		strFormatter.setFormatString(formatString)
+
+		return strFormatter.string(from: date!) ?? input
+	}
 }
