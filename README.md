@@ -2,13 +2,60 @@
 
 A Liquid syntax template engine for Swift.
 
-## Fetures
+## Features
 
 - [ ] Comment
 - [ ] Raw
-- [ ] Truthy and falsy
+- [x] Truthy and falsy
 - [ ] Whitespace control
 - [ ] Filters
+  - [x] abs
+  - [x] append
+  - [x] at_least
+  - [x] at_most
+  - [x] capitalize
+  - [x] ceil
+  - [ ] compact
+  - [ ] concat
+  - [x] date
+  - [x] default
+  - [x] divided_by
+  - [x] downcase
+  - [x] escape
+  - [ ] escape_once
+  - [ ] first
+  - [ ] floor
+  - [ ] join
+  - [ ] last
+  - [ ] lstrip
+  - [ ] map
+  - [ ] minus
+  - [ ] modulo
+  - [ ] newline_to_br
+  - [ ] plus
+  - [ ] prepend
+  - [ ] remove
+  - [ ] remove_first
+  - [ ] replace
+  - [ ] replace_first
+  - [ ] reverse
+  - [ ] round
+  - [ ] rstrip
+  - [ ] size
+  - [ ] slice
+  - [ ] sort
+  - [ ] sort_natural
+  - [ ] split
+  - [ ] strip
+  - [ ] strip_html
+  - [ ] strip_newlines
+  - [ ] times
+  - [ ] truncate
+  - [ ] truncatewords
+  - [ ] uniq
+  - [ ] upcase
+  - [ ] url_decode
+  - [ ] url_encode
 - [ ] Variable
   - [ ] `assign`
   - [ ] `capture`
@@ -38,7 +85,7 @@ A Liquid syntax template engine for Swift.
   - [ ] `offset` begins the loop at the specified index (for parameters)
   - [ ] `range` defines a range of numbers to loop through
   - [ ] `reversed` reverses the order of the loop
-- [ ] Default Filter
+- [x] Default Filter
 
 ## Liquid Docs
 
