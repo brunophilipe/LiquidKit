@@ -19,6 +19,8 @@
 		15CB06CD214353AF0023648A /* LiquidTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06C9214353AF0023648A /* LiquidTests.swift */; };
 		15CB06CE214353AF0023648A /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06CA214353AF0023648A /* ParserTests.swift */; };
 		15CB06CF214353AF0023648A /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06CB214353AF0023648A /* LexerTests.swift */; };
+		15CB06D321449D320023648A /* STRFTimeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06D121449D320023648A /* STRFTimeFormatter.m */; };
+		15CB06D621449E8F0023648A /* STRFTimeFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 15CB06D221449D320023648A /* STRFTimeFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		15CB06CA214353AF0023648A /* ParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParserTests.swift; path = Tests/LiquidTests/ParserTests.swift; sourceTree = SOURCE_ROOT; };
 		15CB06CB214353AF0023648A /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LexerTests.swift; path = Tests/LiquidTests/LexerTests.swift; sourceTree = SOURCE_ROOT; };
 		15CB06CC214353AF0023648A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/LiquidTests/Info.plist; sourceTree = SOURCE_ROOT; };
+		15CB06D121449D320023648A /* STRFTimeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STRFTimeFormatter.m; path = Sources/Liquid/STRFTimeFormatter.m; sourceTree = SOURCE_ROOT; };
+		15CB06D221449D320023648A /* STRFTimeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STRFTimeFormatter.h; path = Sources/Liquid/STRFTimeFormatter.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +102,8 @@
 				15CB06BF214353A70023648A /* Parser.swift */,
 				15CB06BD214353A70023648A /* String+Extensions.swift */,
 				15CB06B8214353A70023648A /* Token.swift */,
+				15CB06D221449D320023648A /* STRFTimeFormatter.h */,
+				15CB06D121449D320023648A /* STRFTimeFormatter.m */,
 			);
 			path = Liquid;
 			sourceTree = "<group>";
@@ -121,6 +127,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15CB06C0214353A70023648A /* Liquid.h in Headers */,
+				15CB06D621449E8F0023648A /* STRFTimeFormatter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +229,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15CB06D321449D320023648A /* STRFTimeFormatter.m in Sources */,
 				15CB06C6214353A70023648A /* String+Extensions.swift in Sources */,
 				15CB06C3214353A70023648A /* Error.swift in Sources */,
 				15CB06C5214353A70023648A /* Filter.swift in Sources */,
@@ -269,6 +277,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -352,6 +361,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

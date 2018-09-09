@@ -13,6 +13,6 @@ Pod::Spec.new do |spec|
   spec.macos.deployment_target = '10.12'
   spec.macos.frameworks = ['Foundation', 'CoreServices']
 
-  spec.source_files = 'Sources/Liquid/*.swift'
+  spec.source_files = 'Sources/Liquid/*.{h,m,swift}'
   spec.module_name = 'Liquid'
 end
