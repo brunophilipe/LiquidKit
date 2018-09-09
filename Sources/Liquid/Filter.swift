@@ -277,7 +277,28 @@ extension Filter {
 		return input
 	}
 	
-//	static let divided_by: Filter
+	static let dividedBy = Filter(identifier: "divided_by")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let dividendDouble = input.doubleValue, let divisor = parameters.first else
+		{
+			return input
+		}
+
+		switch divisor
+		{
+		case .integer(let divisorInt):
+			return .integer(Int(floor(dividendDouble / Double(divisorInt))))
+
+		case .decimal:
+			return .decimal(Decimal(dividendDouble / divisor.doubleValue!))
+
+		default:
+			return input
+		}
+	}
+
 //	static let downcase: Filter
 //	static let escape: Filter
 //	static let escape_once: Filter
