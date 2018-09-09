@@ -5,7 +5,7 @@
 //  Created by Bruno Philipe on 8/9/18.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for Liquid.
 FOUNDATION_EXPORT double LiquidVersionNumber;
