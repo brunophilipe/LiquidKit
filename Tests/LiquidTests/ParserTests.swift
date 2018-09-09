@@ -97,5 +97,12 @@ class ParserTests: XCTestCase {
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Mar 14, 16", "Mon, Mar 14, 16", "2016-03-14 00:00"])
 	}
-    
+	
+	func testFilter_default() {
+		let lexer = Lexer(templateString: "{{ the_number | default: \"42\" }}{{ \"the_number\" | default: \"42\" }}{{ \"\" | default: 42 }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["42", "the_number", "42"])
+	}
 }

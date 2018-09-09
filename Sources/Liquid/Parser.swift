@@ -30,6 +30,7 @@ open class TokenParser {
 		filters.append(.capitalize)
 		filters.append(.ceil)
 		filters.append(.date)
+		filters.append(.default)
 	}
     
     /// Parse the given tokens into nodes

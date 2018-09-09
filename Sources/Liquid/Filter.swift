@@ -61,6 +61,37 @@ open class Filter {
 				return nil
 			}
 		}
+		
+		/// Returns `true` if the receiver is either `.nil` or `.bool(false)`. Otherwise returns `false`.
+		var isFalsy: Bool
+		{
+			switch self
+			{
+			case .bool(false), .nil:
+				return true
+				
+			default:
+				return false
+			}
+		}
+		
+		/// Returns `false` if the receiver is either `.nil` or `.bool(false)`. Otherwise returns `true`.
+		var isTruthy: Bool
+		{
+			return !isFalsy
+		}
+		
+		var isEmptyString: Bool
+		{
+			switch self
+			{
+			case .string(let string):
+				return string.isEmpty
+				
+			default:
+				return false
+			}
+		}
 	}
 }
 
@@ -191,7 +222,19 @@ extension Filter {
 		return input
 	}
 
-//	static let `default`: Filter
+	static let `default` = Filter(identifier: "default") { (input, parameters) -> Filter.Value in
+		
+		guard let defaultParameter = parameters.first else {
+			return input
+		}
+		
+		if input.isFalsy || input.isEmptyString {
+			return defaultParameter
+		}
+		
+		return input
+	}
+	
 //	static let divided_by: Filter
 //	static let downcase: Filter
 //	static let escape: Filter
