@@ -40,9 +40,9 @@ public class Context {
 	
 	private func parseValue(_ value: Any?) -> Filter.Value? {
 		if let intLiteral = value as? IntegerLiteralType {
-			return .number(Decimal(integerLiteral: intLiteral))
+			return .decimal(Decimal(integerLiteral: intLiteral))
 		} else if let floatLiteral = value as? FloatLiteralType {
-			return .number(Decimal(floatLiteral: floatLiteral))
+			return .decimal(Decimal(floatLiteral: floatLiteral))
 		} else if let string = value as? String {
 			return .string(string)
 		} else if let boolLiteral = value as? BooleanLiteralType {

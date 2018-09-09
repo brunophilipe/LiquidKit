@@ -69,16 +69,27 @@ open class TokenParser {
     
     private func compileFilter(_ token: String) -> Filter.Value {
 
-		func valueOrLiteral(for token: String) -> Filter.Value {
+		func valueOrLiteral(for token: String) -> Filter.Value
+		{
 			let trimmedToken = token.trimmingWhitespaces
 
-			if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"") {
+			if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"")
+			{
 				// This is a literal string. Strip its quotations.
 				return .string(trimmedToken.trim(character: "\""))
-			} else if let number = Decimal(string: trimmedToken) {
+			}
+			else if let integer = Int(trimmedToken)
+			{
+				// This is an integer literal (the integer constructor fails if a decimal point is found).
+				return .integer(integer)
+			}
+			else if let number = Decimal(string: trimmedToken)
+			{
 				// This is a decimal literal.
-				return .number(number)
-			} else {
+				return .decimal(number)
+			}
+			else
+			{
 				// This is a variable name. Return its value, or an empty string.
 				return self.context.getValue(for: trimmedToken) ?? .nil
 			}

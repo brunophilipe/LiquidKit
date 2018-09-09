@@ -22,41 +22,81 @@ open class Filter {
 		self.identifier = identifier
 		self.lambda = lambda
 	}
-	
+
+	/// An enum whose instances are used to represent filter values and parameters as parsed from the liquid strings.
 	public enum Value
 	{
 		case `nil`
 		case bool(Bool)
 		case string(String)
-		case number(Decimal)
-		
+		case integer(Int)
+		case decimal(Decimal)
+
+		/// Returns a string value or representation of the receiver.
+		///
+		/// * If the receiver is an integer or decimal enum, returns its value embedded in a string using `"\()"`.
+		/// * If the receiver is a string enum, returns its value.
+		/// * For any other enum value, returns an empty string.
 		var stringValue: String
 		{
 			switch self
 			{
 			case .bool(_), .nil: return ""
-			case .number(let number): return "\(number)"
+			case .decimal(let decimal): return "\(decimal)"
+			case .integer(let integer): return "\(integer)"
 			case .string(let string): return string
 			}
 		}
-		
+
+		/// Returns the decimal value of the receiver.
+		///
+		/// * If the receiver is an integer enum, returns its value cast to Decimal.
+		/// * If the receiver is a decimal enum, returns its value.
+		/// * If the receiver is a string enum, attempts to parse its value as a Decimal, which might return `nil`.
+		/// * For any other enum value, returns `nil`.
 		var decimalValue: Decimal?
 		{
 			switch self
 			{
-			case .number(let number): return number
+			case .decimal(let decimal): return decimal
+			case .integer(let integer): return Decimal(integer)
 			case .string(let string): return Decimal(string: string)
 			default:
 				return nil
 			}
 		}
-		
+
+		/// Returns the double value of the receiver.
+		///
+		/// * If the receiver is an integer enum, returns its value cast to Double.
+		/// * If the receiver is a decimal enum, returns its value cast to Double.
+		/// * If the receiver is a string enum, attempts to parse its value as a Double, which might return `nil`.
+		/// * For any other enum value, returns `nil`.
 		var doubleValue: Double?
 		{
 			switch self
 			{
-			case .number(let number): return NSDecimalNumber(decimal: number).doubleValue
+			case .decimal(let decimal): return NSDecimalNumber(decimal: decimal).doubleValue
+			case .integer(let integer): return Double(integer)
 			case .string(let string): return Double(string)
+			default:
+				return nil
+			}
+		}
+
+		/// Returns the integer value of the receiver.
+		///
+		/// * If the receiver is an integer enum, returns its value.
+		/// * If the receiver is a decimal enum, returns its value cast to Int.
+		/// * If the receiver is a string enum, attempts to parse its value as an Int, which might return `nil`.
+		/// * For any other enum value, returns `nil`.
+		var integerValue: Int?
+		{
+			switch self
+			{
+			case .decimal(let decimal): return NSDecimalNumber(decimal: decimal).intValue
+			case .integer(let integer): return integer
+			case .string(let string): return Int(string)
 			default:
 				return nil
 			}
@@ -80,7 +120,9 @@ open class Filter {
 		{
 			return !isFalsy
 		}
-		
+
+		/// Returns `true` if the receiver is a string enum and its value is an empty string. For all other cases
+		/// returns `false`.
 		var isEmptyString: Bool
 		{
 			switch self
@@ -101,7 +143,7 @@ extension Filter {
 			return input
 		}
 		
-		return .number(Swift.abs(decimal))
+		return .decimal(Swift.abs(decimal))
 	}
 
 	static let append = Filter(identifier: "append") { (input, parameters) -> Value in
@@ -120,7 +162,7 @@ extension Filter {
 			return input
 		}
 
-		return .number(max(inputDecimal, parameterDecimal))
+		return .decimal(max(inputDecimal, parameterDecimal))
 	}
 
 	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> Value in
@@ -131,7 +173,7 @@ extension Filter {
 				return input
 		}
 
-		return .number(min(inputDecimal, parameterDecimal))
+		return .decimal(min(inputDecimal, parameterDecimal))
 	}
 
 	static let capitalize = Filter(identifier: "capitalize") { (input, _) -> Value in
@@ -160,7 +202,7 @@ extension Filter {
 				return input
 		}
 
-		return .number(Decimal(Int(Darwin.ceil(inputDouble))))
+		return .decimal(Decimal(Int(Darwin.ceil(inputDouble))))
 	}
 
 	// static let compact: Filter
