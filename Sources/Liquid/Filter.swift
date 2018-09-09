@@ -299,7 +299,17 @@ extension Filter {
 		}
 	}
 
-//	static let downcase: Filter
+	static let downcase = Filter(identifier: "downcase")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .string(let inputString) = input else {
+			return input
+		}
+
+		return .string(inputString.lowercased())
+	}
+
 //	static let escape: Filter
 //	static let escape_once: Filter
 //	static let first: Filter

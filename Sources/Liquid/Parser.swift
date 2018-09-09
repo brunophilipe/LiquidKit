@@ -32,6 +32,7 @@ open class TokenParser {
 		filters.append(.date)
 		filters.append(.default)
 		filters.append(.dividedBy)
+		filters.append(.downcase)
 	}
     
     /// Parse the given tokens into nodes
