@@ -15,91 +15,137 @@ open class Filter {
 	let identifier: String
 
 	/// Function that transforms the input string.
-	let lambda: ((String, [String]) -> String)
+	let lambda: ((Value, [Value]) -> Value)
 
 	/// Filter constructor.
-	init(identifier: String, lambda: @escaping (String, [String]) -> String) {
+	init(identifier: String, lambda: @escaping (Value, [Value]) -> Value) {
 		self.identifier = identifier
 		self.lambda = lambda
+	}
+	
+	public enum Value
+	{
+		case `nil`
+		case bool(Bool)
+		case string(String)
+		case number(Decimal)
+		
+		var stringValue: String
+		{
+			switch self
+			{
+			case .bool(_), .nil: return ""
+			case .number(let number): return "\(number)"
+			case .string(let string): return string
+			}
+		}
+		
+		var decimalValue: Decimal?
+		{
+			switch self
+			{
+			case .number(let number): return number
+			case .string(let string): return Decimal(string: string)
+			default:
+				return nil
+			}
+		}
+		
+		var doubleValue: Double?
+		{
+			switch self
+			{
+			case .number(let number): return NSDecimalNumber(decimal: number).doubleValue
+			case .string(let string): return Double(string)
+			default:
+				return nil
+			}
+		}
 	}
 }
 
 extension Filter {
-	static let abs = Filter(identifier: "abs") { (input, _) -> String in
-		return "\(Swift.abs(Decimal(string: input) ?? 0))"
+	static let abs = Filter(identifier: "abs") { (input, _) -> Value in
+		guard let decimal = input.decimalValue else {
+			return input
+		}
+		
+		return .number(Swift.abs(decimal))
 	}
 
-	static let append = Filter(identifier: "append") { (input, parameters) -> String in
-		guard let firstParameter = parameters.first else {
+	static let append = Filter(identifier: "append") { (input, parameters) -> Value in
+		guard let stringParameter = parameters.first?.stringValue else {
 			return input
 		}
 
-		return input + firstParameter
+		return .string(input.stringValue + stringParameter)
 	}
 
-	static let atLeast = Filter(identifier: "at_least") { (input, parameters) -> String in
+	static let atLeast = Filter(identifier: "at_least") { (input, parameters) -> Value in
 		guard
-			let inputDecimal = Decimal(string: input),
-			let firstParameter = parameters.first,
-			let parameterDecimal = Decimal(string: firstParameter)
+			let inputDecimal = input.decimalValue,
+			let parameterDecimal = parameters.first?.decimalValue
 		else {
 			return input
 		}
 
-		return "\(max(inputDecimal, parameterDecimal))"
+		return .number(max(inputDecimal, parameterDecimal))
 	}
 
-	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> String in
+	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> Value in
 		guard
-			let inputDecimal = Decimal(string: input),
-			let firstParameter = parameters.first,
-			let parameterDecimal = Decimal(string: firstParameter)
+			let inputDecimal = input.decimalValue,
+			let parameterDecimal = parameters.first?.decimalValue
 		else {
 				return input
 		}
 
-		return "\(min(inputDecimal, parameterDecimal))"
+		return .number(min(inputDecimal, parameterDecimal))
 	}
 
-	static let capitalize = Filter(identifier: "capitalize") { (input: String, _) -> String in
+	static let capitalize = Filter(identifier: "capitalize") { (input, _) -> Value in
 
-		guard input.count > 0 else {
+		let inputString = input.stringValue
+		
+		guard inputString.count > 0 else {
 			return input
 		}
 
 		var firstWord: String!
 		var firstWordRange: Range<String.Index>!
 
-		input.enumerateSubstrings(in: input.startIndex..., options: .byWords, { (word, wordRange, _, stop) in
+		inputString.enumerateSubstrings(in: inputString.startIndex..., options: .byWords, { (word, range, _, stop) in
 			firstWord = word
-			firstWordRange = wordRange
+			firstWordRange = range
 			stop = true
 		})
 
-		return input.replacingCharacters(in: firstWordRange, with: firstWord.localizedCapitalized)
+		return .string(inputString.replacingCharacters(in: firstWordRange, with: firstWord.localizedCapitalized))
 	}
 
-	static let ceil = Filter(identifier: "ceil") { (input, _) -> String in
+	static let ceil = Filter(identifier: "ceil") { (input, _) -> Value in
 
-		guard let inputDouble = Double(input) else {
+		guard let inputDouble = input.doubleValue else {
 				return input
 		}
 
-		return "\(Int(Darwin.ceil(inputDouble)))"
+		return .number(Decimal(Int(Darwin.ceil(inputDouble))))
 	}
 
 	// static let compact: Filter
 	// static let concat: Filter
 
-	static let date = Filter(identifier: "date") { (input, parameters) -> String in
+	static let date = Filter(identifier: "date") { (input, parameters) -> Value in
 
-		guard let formatString = parameters.first else {
+		guard let formatString = parameters.first?.stringValue else {
 			return input
 		}
+		
+		let inputString = input.stringValue
 
 		var date: Date? = nil
 
-		if input == "today" || input == "now" {
+		if inputString == "today" || inputString == "now" {
 			date = Date()
 		} else {
 			let styles: [DateFormatter.Style] = [.none, .short, .medium, .long, .full]
@@ -112,14 +158,14 @@ extension Filter {
 
 					dateFormatter.locale = Locale.current
 
-					if let parsedDate = dateFormatter.date(from: input) {
+					if let parsedDate = dateFormatter.date(from: inputString) {
 						date = parsedDate
 						break
 					}
 
 					dateFormatter.locale = Locale(identifier: "en_US")
 
-					if let parsedDate = dateFormatter.date(from: input) {
+					if let parsedDate = dateFormatter.date(from: inputString) {
 						date = parsedDate
 						break
 					}
@@ -138,7 +184,11 @@ extension Filter {
 		let strFormatter = STRFTimeFormatter()
 		strFormatter.setFormatString(formatString)
 
-		return strFormatter.string(from: date!) ?? input
+		if let dateString = strFormatter.string(from: date!) {
+			return .string(dateString)
+		}
+		
+		return input
 	}
 
 //	static let `default`: Filter

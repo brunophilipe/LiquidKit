@@ -48,7 +48,7 @@ open class TokenParser {
                 nodes.append(text)
 
             case .variable:
-                nodes.append(compileFilter(token.contents))
+                nodes.append(compileFilter(token.contents).stringValue)
 
             case .tag:
 				continue
@@ -66,20 +66,20 @@ open class TokenParser {
         return nil
     }
     
-    private func compileFilter(_ token: String) -> String {
+    private func compileFilter(_ token: String) -> Filter.Value {
 
-		func valueOrLiteral(for token: String) -> String {
+		func valueOrLiteral(for token: String) -> Filter.Value {
 			let trimmedToken = token.trimmingWhitespaces
 
 			if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"") {
 				// This is a literal string. Strip its quotations.
-				return trimmedToken.trim(character: "\"")
-			} else if Decimal(string: trimmedToken) != nil {
-				// This is a decimal literal. Return the token itself.
-				return trimmedToken
+				return .string(trimmedToken.trim(character: "\""))
+			} else if let number = Decimal(string: trimmedToken) {
+				// This is a decimal literal.
+				return .number(number)
 			} else {
 				// This is a variable name. Return its value, or an empty string.
-				return self.context.dictionaries[trimmedToken] as? String ?? ""
+				return self.context.getValue(for: trimmedToken) ?? .nil
 			}
 		}
 
@@ -100,7 +100,7 @@ open class TokenParser {
 			}
 
 			let filterIdentifier = String(filterComponents.first!).trimmingWhitespaces
-			let filterParameters: [String]?
+			let filterParameters: [Filter.Value]?
 
 			if filterComponents.count == 1 {
 				filterParameters = []
