@@ -319,7 +319,13 @@ extension Filter {
 		return .string(input.stringValue.htmlEscape(decimal: true, useNamedReferences: true))
 	}
 
-//	static let escape_once: Filter
+	static let escapeOnce = Filter(identifier: "escape_once")
+	{
+		(input, parameters) -> Filter.Value in
+
+		return .string(input.stringValue.htmlUnescape().htmlEscape(decimal: true, useNamedReferences: true))
+	}
+
 //	static let first: Filter
 //	static let floor: Filter
 //	static let join: Filter

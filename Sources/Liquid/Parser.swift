@@ -34,6 +34,7 @@ open class TokenParser {
 		filters.append(.dividedBy)
 		filters.append(.downcase)
 		filters.append(.escape)
+		filters.append(.escapeOnce)
 	}
     
     /// Parse the given tokens into nodes

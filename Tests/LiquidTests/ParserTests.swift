@@ -129,4 +129,12 @@ class ParserTests: XCTestCase {
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Have you read &apos;James &amp; the Giant Peach&apos;?", "Tetsuro Takara"])
 	}
+
+	func testFilter_escapeOnce() {
+		let lexer = Lexer(templateString: "{{ \"1 < 2 & 3\" | escape_once }}{{ \"1 &lt; 2 &amp; 3\" | escape_once }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["1 &lt; 2 &amp; 3", "1 &lt; 2 &amp; 3"])
+	}
 }
