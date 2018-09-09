@@ -1,0 +1,29 @@
+PODS:
+  - HTMLEntities (3.0.10)
+  - STRFTimeFormatter (1.1)
+
+DEPENDENCIES:
+  - HTMLEntities (from `https://github.com/IBM-Swift/swift-html-entities.git`)
+  - STRFTimeFormatter (from `https://github.com/brunophilipe/STRFTimeFormatter.git`)
+
+EXTERNAL SOURCES:
+  HTMLEntities:
+    :git: https://github.com/IBM-Swift/swift-html-entities.git
+  STRFTimeFormatter:
+    :git: https://github.com/brunophilipe/STRFTimeFormatter.git
+
+CHECKOUT OPTIONS:
+  HTMLEntities:
+    :commit: 2f582d1f927824045cbbcc5d72614799a8e7f35a
+    :git: https://github.com/IBM-Swift/swift-html-entities.git
+  STRFTimeFormatter:
+    :commit: 964d9e072153d35ac33b4be6451670818f104e4e
+    :git: https://github.com/brunophilipe/STRFTimeFormatter.git
+
+SPEC CHECKSUMS:
+  HTMLEntities: 3d89d72a9aa3b6ad095c584bc2f1383bbed4581c
+  STRFTimeFormatter: 9d13f33cfd392b5ca1445a912691398bc4b73be6
+
+PODFILE CHECKSUM: 6af1c3a6f004cc615bb56edb7bb26261f9cf80a5
+
+COCOAPODS: 1.5.3

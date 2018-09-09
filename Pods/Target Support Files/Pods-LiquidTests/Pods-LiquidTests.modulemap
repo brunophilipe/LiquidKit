@@ -1,0 +1,6 @@
+framework module Pods_LiquidTests {
+  umbrella header "Pods-LiquidTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

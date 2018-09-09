@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-@import Foundation;
 
 /**
  *  Instances of `STRFTimeFormatter` create string representations of `NSDate` objects, and convert textual representations of dates and times into `NSDate` objects using the `strftime_l(3)` and `strptime_l(3)` functions.

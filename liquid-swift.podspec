@@ -8,11 +8,14 @@ Pod::Spec.new do |spec|
   spec.license = { :type => 'MIT' }
 
   spec.ios.deployment_target = '10.0'
-  spec.ios.frameworks = ['Foundation', 'CoreServices']
+  spec.ios.frameworks = ['Foundation']
 
   spec.macos.deployment_target = '10.12'
-  spec.macos.frameworks = ['Foundation', 'CoreServices']
+  spec.macos.frameworks = ['Foundation']
 
   spec.source_files = 'Sources/Liquid/*.{h,m,swift}'
   spec.module_name = 'Liquid'
+  
+  spec.dependency 'HTMLEntities'
+  spec.dependency 'STRFTimeFormatter'
 end

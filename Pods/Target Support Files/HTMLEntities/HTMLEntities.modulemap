@@ -1,0 +1,6 @@
+framework module HTMLEntities {
+  umbrella header "HTMLEntities-umbrella.h"
+
+  export *
+  module * { export * }
+}

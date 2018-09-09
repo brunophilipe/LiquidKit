@@ -19,8 +19,8 @@
 		15CB06CD214353AF0023648A /* LiquidTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06C9214353AF0023648A /* LiquidTests.swift */; };
 		15CB06CE214353AF0023648A /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06CA214353AF0023648A /* ParserTests.swift */; };
 		15CB06CF214353AF0023648A /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06CB214353AF0023648A /* LexerTests.swift */; };
-		15CB06D321449D320023648A /* STRFTimeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06D121449D320023648A /* STRFTimeFormatter.m */; };
-		15CB06D621449E8F0023648A /* STRFTimeFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 15CB06D221449D320023648A /* STRFTimeFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		60F544947799CCAF054B1258 /* Pods_LiquidTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFBB966467B345AC36B068C9 /* Pods_LiquidTests.framework */; };
+		F9039C00EFC3181666DDC112 /* Pods_Liquid.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E25A21878450F21290306779 /* Pods_Liquid.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,8 +49,12 @@
 		15CB06CA214353AF0023648A /* ParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParserTests.swift; path = Tests/LiquidTests/ParserTests.swift; sourceTree = SOURCE_ROOT; };
 		15CB06CB214353AF0023648A /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LexerTests.swift; path = Tests/LiquidTests/LexerTests.swift; sourceTree = SOURCE_ROOT; };
 		15CB06CC214353AF0023648A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/LiquidTests/Info.plist; sourceTree = SOURCE_ROOT; };
-		15CB06D121449D320023648A /* STRFTimeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STRFTimeFormatter.m; path = Sources/Liquid/STRFTimeFormatter.m; sourceTree = SOURCE_ROOT; };
-		15CB06D221449D320023648A /* STRFTimeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STRFTimeFormatter.h; path = Sources/Liquid/STRFTimeFormatter.h; sourceTree = SOURCE_ROOT; };
+		4879FDB1F23A02878D218BEC /* Pods-LiquidTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LiquidTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LiquidTests/Pods-LiquidTests.release.xcconfig"; sourceTree = "<group>"; };
+		56A043B9373D66E61E4AE9F9 /* Pods-Liquid.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Liquid.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Liquid/Pods-Liquid.debug.xcconfig"; sourceTree = "<group>"; };
+		69B82FE65BD2E68ACDF00409 /* Pods-Liquid.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Liquid.release.xcconfig"; path = "Pods/Target Support Files/Pods-Liquid/Pods-Liquid.release.xcconfig"; sourceTree = "<group>"; };
+		AFBB966467B345AC36B068C9 /* Pods_LiquidTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LiquidTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E25A21878450F21290306779 /* Pods_Liquid.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Liquid.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F65DEF7DAFF690CF3D4E6632 /* Pods-LiquidTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LiquidTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LiquidTests/Pods-LiquidTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9039C00EFC3181666DDC112 /* Pods_Liquid.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15CB06A9214353360023648A /* Liquid.framework in Frameworks */,
+				60F544947799CCAF054B1258 /* Pods_LiquidTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +84,8 @@
 				15CB06A1214353360023648A /* Liquid */,
 				15CB06AC214353360023648A /* LiquidTests */,
 				15CB06A0214353360023648A /* Products */,
+				DA70FF29A76844B609CC4ACF /* Pods */,
+				4F7537F6AAB900CA8D2B75F0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,8 +110,6 @@
 				15CB06BF214353A70023648A /* Parser.swift */,
 				15CB06BD214353A70023648A /* String+Extensions.swift */,
 				15CB06B8214353A70023648A /* Token.swift */,
-				15CB06D221449D320023648A /* STRFTimeFormatter.h */,
-				15CB06D121449D320023648A /* STRFTimeFormatter.m */,
 			);
 			path = Liquid;
 			sourceTree = "<group>";
@@ -119,6 +125,26 @@
 			path = LiquidTests;
 			sourceTree = "<group>";
 		};
+		4F7537F6AAB900CA8D2B75F0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E25A21878450F21290306779 /* Pods_Liquid.framework */,
+				AFBB966467B345AC36B068C9 /* Pods_LiquidTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DA70FF29A76844B609CC4ACF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				56A043B9373D66E61E4AE9F9 /* Pods-Liquid.debug.xcconfig */,
+				69B82FE65BD2E68ACDF00409 /* Pods-Liquid.release.xcconfig */,
+				F65DEF7DAFF690CF3D4E6632 /* Pods-LiquidTests.debug.xcconfig */,
+				4879FDB1F23A02878D218BEC /* Pods-LiquidTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -127,7 +153,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				15CB06C0214353A70023648A /* Liquid.h in Headers */,
-				15CB06D621449E8F0023648A /* STRFTimeFormatter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +163,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15CB06B5214353360023648A /* Build configuration list for PBXNativeTarget "Liquid" */;
 			buildPhases = (
+				93A0A6A429907230A98ED708 /* [CP] Check Pods Manifest.lock */,
 				15CB069A214353360023648A /* Headers */,
 				15CB069B214353360023648A /* Sources */,
 				15CB069C214353360023648A /* Frameworks */,
@@ -156,9 +182,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15CB06B6214353360023648A /* Build configuration list for PBXNativeTarget "LiquidTests" */;
 			buildPhases = (
+				36EF5894FC5C1280C2794382 /* [CP] Check Pods Manifest.lock */,
 				15CB06A4214353360023648A /* Sources */,
 				15CB06A5214353360023648A /* Frameworks */,
 				15CB06A6214353360023648A /* Resources */,
+				3E6D5F8D900538EDB6BD0F8C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -224,12 +252,70 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		36EF5894FC5C1280C2794382 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LiquidTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3E6D5F8D900538EDB6BD0F8C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-LiquidTests/Pods-LiquidTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/HTMLEntities/HTMLEntities.framework",
+				"${BUILT_PRODUCTS_DIR}/STRFTimeFormatter/STRFTimeFormatter.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTMLEntities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/STRFTimeFormatter.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LiquidTests/Pods-LiquidTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		93A0A6A429907230A98ED708 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Liquid-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		15CB069B214353360023648A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15CB06D321449D320023648A /* STRFTimeFormatter.m in Sources */,
 				15CB06C6214353A70023648A /* String+Extensions.swift in Sources */,
 				15CB06C3214353A70023648A /* Error.swift in Sources */,
 				15CB06C5214353A70023648A /* Filter.swift in Sources */,
@@ -275,6 +361,7 @@
 		};
 		15CB06B1214353360023648A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 56A043B9373D66E61E4AE9F9 /* Pods-Liquid.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -359,6 +446,7 @@
 		};
 		15CB06B2214353360023648A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69B82FE65BD2E68ACDF00409 /* Pods-Liquid.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -436,6 +524,7 @@
 		};
 		15CB06B3214353360023648A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65DEF7DAFF690CF3D4E6632 /* Pods-LiquidTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -510,6 +599,7 @@
 		};
 		15CB06B4214353360023648A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4879FDB1F23A02878D218BEC /* Pods-LiquidTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;

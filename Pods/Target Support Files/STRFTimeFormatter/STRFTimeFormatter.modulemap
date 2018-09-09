@@ -1,0 +1,6 @@
+framework module STRFTimeFormatter {
+  umbrella header "STRFTimeFormatter-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import STRFTimeFormatter
 
 /// A class representing a template
 open class Filter {
