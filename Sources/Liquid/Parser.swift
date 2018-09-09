@@ -92,7 +92,7 @@ open class TokenParser {
 
 		for filterString in splitToken[1...] {
 
-			let filterComponents = filterString.split(separator: ":")
+			let filterComponents = String(filterString).smartSplit(separator: ":")
 			guard filterComponents.count <= 2 else {
 				NSLog("Error: bad filter syntax: \(filterString). Stopping filter processing.")
 				return filteredValue
@@ -104,7 +104,7 @@ open class TokenParser {
 			if filterComponents.count == 1 {
 				filterParameters = []
 			} else {
-				filterParameters = filterComponents.last?.split(separator: ",").map({ valueOrLiteral(for: String($0)) })
+				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ valueOrLiteral(for: String($0)) })
 			}
 
 			guard let filter = filters.first(where: { $0.identifier == filterIdentifier }) else {
