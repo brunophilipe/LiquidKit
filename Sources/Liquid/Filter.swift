@@ -88,6 +88,9 @@ extension Filter {
 		return "\(Int(Darwin.ceil(inputDouble)))"
 	}
 
+	// static let compact: Filter
+	// static let concat: Filter
+
 	static let date = Filter(identifier: "date") { (input, parameters) -> String in
 
 		guard let formatString = parameters.first else {
@@ -137,4 +140,43 @@ extension Filter {
 
 		return strFormatter.string(from: date!) ?? input
 	}
+
+//	static let `default`: Filter
+//	static let divided_by: Filter
+//	static let downcase: Filter
+//	static let escape: Filter
+//	static let escape_once: Filter
+//	static let first: Filter
+//	static let floor: Filter
+//	static let join: Filter
+//	static let last: Filter
+//	static let lstrip: Filter
+//	static let map: Filter
+//	static let minus: Filter
+//	static let modulo: Filter
+//	static let newline_to_br: Filter
+//	static let plus: Filter
+//	static let prepend: Filter
+//	static let remove: Filter
+//	static let remove_first: Filter
+//	static let replace: Filter
+//	static let replace_first: Filter
+//	static let reverse: Filter
+//	static let round: Filter
+//	static let rstrip: Filter
+//	static let size: Filter
+//	static let slice: Filter
+//	static let sort: Filter
+//	static let sort_natural: Filter
+//	static let split: Filter
+//	static let strip: Filter
+//	static let strip_html: Filter
+//	static let strip_newlines: Filter
+//	static let times: Filter
+//	static let truncate: Filter
+//	static let truncatewords: Filter
+//	static let uniq: Filter
+//	static let upcase: Filter
+//	static let url_decode: Filter
+//	static let url_encode: Filter
 }
