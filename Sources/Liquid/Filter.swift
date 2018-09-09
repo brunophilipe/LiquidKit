@@ -8,6 +8,7 @@
 
 import Foundation
 import STRFTimeFormatter
+import HTMLEntities
 
 /// A class representing a template
 open class Filter {
@@ -311,7 +312,13 @@ extension Filter {
 		return .string(inputString.lowercased())
 	}
 
-//	static let escape: Filter
+	static let escape = Filter(identifier: "escape")
+	{
+		(input, parameters) -> Filter.Value in
+
+		return .string(input.stringValue.htmlEscape(decimal: true, useNamedReferences: true))
+	}
+
 //	static let escape_once: Filter
 //	static let first: Filter
 //	static let floor: Filter

@@ -121,4 +121,12 @@ class ParserTests: XCTestCase {
 		let res = parser.parse()
 		XCTAssertEqual(res, ["parker moore", "apple"])
 	}
+
+	func testFilter_escape() {
+		let lexer = Lexer(templateString: "{{ \"Have you read 'James & the Giant Peach'?\" | escape }}{{ \"Tetsuro Takara\" | escape }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Have you read &apos;James &amp; the Giant Peach&apos;?", "Tetsuro Takara"])
+	}
 }

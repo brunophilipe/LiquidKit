@@ -33,6 +33,7 @@ open class TokenParser {
 		filters.append(.default)
 		filters.append(.dividedBy)
 		filters.append(.downcase)
+		filters.append(.escape)
 	}
     
     /// Parse the given tokens into nodes
