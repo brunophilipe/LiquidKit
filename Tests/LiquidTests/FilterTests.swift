@@ -130,6 +130,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["1", "2", "183", "3"])
 	}
+
+	func testFilter_leftStrip()
+	{
+		let lexer = Lexer(templateString: "{{ \"          So much room for activities!          \" | lstrip }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["So much room for activities!          "])
+	}
 	
 	func testFilter_split_join()
 	{

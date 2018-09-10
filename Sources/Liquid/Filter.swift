@@ -362,7 +362,37 @@ extension Filter {
 	}
 
 //	static let last: Filter
-//	static let lstrip: Filter
+
+	static let leftStrip = Filter(identifier: "lstrip")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .string(let inputString) = input else
+		{
+			return input
+		}
+
+		let charset = CharacterSet.whitespacesAndNewlines
+		let firstNonBlankIndex = inputString.firstIndex()
+		{
+			char -> Bool in
+
+			guard char.unicodeScalars.count == 1, let unichar = char.unicodeScalars.first else
+			{
+				return true
+			}
+
+			return !charset.contains(unichar)
+		}
+
+		guard let index = firstNonBlankIndex else
+		{
+			return input
+		}
+
+		return .string(String(inputString[index...]))
+	}
+
 //	static let map: Filter
 //	static let minus: Filter
 //	static let modulo: Filter
