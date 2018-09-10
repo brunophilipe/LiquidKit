@@ -166,6 +166,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<br />Hello<br />there<br />"])
 	}
+
+	func testFilter_plus()
+	{
+		let lexer = Lexer(templateString: "{{ 4 | plus: 2 }}{{ 16 | plus: 4 }}{{ 183.357 | plus: 12 }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["6", "20", "195.357"])
+	}
 	
 	func testFilter_split_join()
 	{

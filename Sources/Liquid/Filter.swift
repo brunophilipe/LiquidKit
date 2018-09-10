@@ -432,7 +432,18 @@ extension Filter {
 								  .replacingOccurrences(of: "\n", with: "<br />"))
 	}
 
-//	static let plus: Filter
+	static let plus = Filter(identifier: "plus")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
+		{
+			return input
+		}
+
+		return .decimal(decimalInput + decimalParameter)
+	}
+
 //	static let prepend: Filter
 //	static let remove: Filter
 //	static let remove_first: Filter
