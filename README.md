@@ -24,16 +24,16 @@ A Liquid syntax template engine for Swift.
   - [x] escape
   - [x] escape_once
   - [ ] first
-  - [ ] floor
+  - [x] floor
   - [x] join
   - [ ] last
-  - [ ] lstrip
+  - [x] lstrip
   - [ ] map
-  - [ ] minus
-  - [ ] modulo
-  - [ ] newline_to_br
-  - [ ] plus
-  - [ ] prepend
+  - [x] minus
+  - [x] modulo
+  - [x] newline_to_br
+  - [x] plus
+  - [x] prepend
   - [ ] remove
   - [ ] remove_first
   - [ ] replace
