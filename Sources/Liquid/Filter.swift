@@ -583,7 +583,19 @@ extension Filter {
 		return .string(String(inputString[...index]))
 	}
 
-//	static let size: Filter
+	static let size = Filter(identifier: "size")
+	{
+		(input, _) -> Filter.Value in
+
+		switch input
+		{
+		case .string(let string): return .integer(string.count)
+		case .array(let array): return .integer(array.count)
+		default:
+			return .nil
+		}
+	}
+
 //	static let slice: Filter
 //	static let sort: Filter
 //	static let sort_natural: Filter

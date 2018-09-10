@@ -50,6 +50,7 @@ open class TokenParser {
 		filters.append(.reverse)
 		filters.append(.round)
 		filters.append(.rightStrip)
+		filters.append(.size)
 
 		filters.append(.split)
 	}

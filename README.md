@@ -41,7 +41,7 @@ A Liquid syntax template engine for Swift.
   - [x] reverse
   - [x] round
   - [x] rstrip
-  - [ ] size
+  - [x] size
   - [ ] slice
   - [ ] sort
   - [ ] sort_natural
