@@ -456,7 +456,18 @@ extension Filter {
 		return .string(stringParameter + input.stringValue)
 	}
 
-//	static let remove: Filter
+	static let remove = Filter(identifier: "remove")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let needle = parameters.first?.stringValue else
+		{
+			return input
+		}
+
+		return .string(input.stringValue.replacingOccurrences(of: needle, with: ""))
+	}
+	
 //	static let remove_first: Filter
 //	static let replace: Filter
 //	static let replace_first: Filter

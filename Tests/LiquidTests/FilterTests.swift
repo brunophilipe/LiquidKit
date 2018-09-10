@@ -188,6 +188,15 @@ class FilterTests: XCTestCase
 //		{% assign url = "liquidmarkup.com" %}
 //		{{ "/index.html" | prepend: url }}
 	}
+
+	func testFilter_remove()
+	{
+		let lexer = Lexer(templateString: "{{ \"I strained to see the train through the rain\" | remove: \"rain\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["I sted to see the t through the "])
+	}
 	
 	func testFilter_split_join()
 	{
