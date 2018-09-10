@@ -49,7 +49,7 @@ A Liquid syntax template engine for Swift.
   - [x] strip
   - [x] strip_html
   - [x] strip_newlines
-  - [ ] times
+  - [x] times
   - [ ] truncate
   - [ ] truncatewords
   - [ ] uniq

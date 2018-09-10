@@ -701,7 +701,18 @@ extension Filter {
 										.replacingOccurrences(of: "\n", with: ""))
 	}
 
-//	static let times: Filter
+	static let times = Filter(identifier: "times")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
+		{
+			return input
+		}
+
+		return .decimal(decimalInput * decimalParameter)
+	}
+
 //	static let truncate: Filter
 //	static let truncatewords: Filter
 //	static let uniq: Filter

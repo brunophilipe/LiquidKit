@@ -323,4 +323,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Hellothere"])
 	}
+
+	func testFilter_times()
+	{
+		let lexer = Lexer(templateString: "{{ 3 | times: 2 }}{{ 24 | times: 7 }}{{ 183.357 | times: 12 }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["6", "168", "2200.284"])
+	}
 }
