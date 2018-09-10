@@ -215,6 +215,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Take your protein pills and put your helmet on"])
 	}
+
+	func testFilter_replaceFirst()
+	{
+		let lexer = Lexer(templateString: "{{ \"Take my protein pills and put my helmet on\" | replace_first: \"my\", \"your\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Take your protein pills and put my helmet on"])
+	}
 	
 	func testFilter_split_join()
 	{

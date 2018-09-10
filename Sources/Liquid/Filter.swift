@@ -500,7 +500,27 @@ extension Filter {
 
 		return .string(input.stringValue.replacingOccurrences(of: needle, with: replacement))
 	}
-//	static let replace_first: Filter
+
+	static let replaceFirst = Filter(identifier: "replace_first")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard parameters.count == 2 else
+		{
+			return input
+		}
+
+		let needle		= parameters[0].stringValue
+		let replacement	= parameters[1].stringValue
+		let inputString	= input.stringValue
+
+		guard let needleRange = inputString.range(of: needle) else
+		{
+			return input
+		}
+
+		return .string(inputString.replacingCharacters(in: needleRange, with: replacement))
+	}
 //	static let reverse: Filter
 //	static let round: Filter
 //	static let rstrip: Filter
