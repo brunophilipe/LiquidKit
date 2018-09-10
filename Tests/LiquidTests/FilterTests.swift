@@ -314,4 +314,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Have you read Ulysses?"])
 	}
+
+	func testFilter_stripNewlines()
+	{
+		let lexer = Lexer(templateString: "{{ \"Hello\nthere\n\" | strip_newlines }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Hellothere"])
+	}
 }

@@ -693,7 +693,14 @@ extension Filter {
 		return .string(input.stringValue.replacingOccurrences(of: htmlRegex, with: "", options: .regularExpression))
 	}
 
-//	static let strip_newlines: Filter
+	static let stripNewlines = Filter(identifier: "strip_newlines")
+	{
+		(input, _) -> Filter.Value in
+
+		return .string(input.stringValue.replacingOccurrences(of: "\r\n", with: "")
+										.replacingOccurrences(of: "\n", with: ""))
+	}
+
 //	static let times: Filter
 //	static let truncate: Filter
 //	static let truncatewords: Filter

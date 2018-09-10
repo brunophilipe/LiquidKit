@@ -57,6 +57,7 @@ open class TokenParser {
 		filters.append(.split)
 		filters.append(.strip)
 		filters.append(.stripHTML)
+		filters.append(.stripNewlines)
 	}
     
     /// Parse the given tokens into nodes
