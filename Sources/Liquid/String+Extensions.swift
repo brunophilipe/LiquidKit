@@ -42,6 +42,29 @@ extension String {
 	var trimmingWhitespaces: String {
 		return trimmingCharacters(in: .whitespacesAndNewlines)
 	}
+
+	public func firstIndex(reverse: Bool, where predicate: (Character) throws -> Bool) rethrows -> String.Index?
+	{
+		guard reverse, count > 0 else
+		{
+			return try firstIndex(where: predicate)
+		}
+
+		var index = self.index(before: endIndex)
+
+		repeat
+		{
+			if try predicate(self[index])
+			{
+				return index
+			}
+
+			index = self.index(before: index)
+		}
+		while index != startIndex
+
+		return nil
+	}
 }
 
 extension String {
