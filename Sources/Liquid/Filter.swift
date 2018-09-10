@@ -26,13 +26,14 @@ open class Filter {
 	}
 
 	/// An enum whose instances are used to represent filter values and parameters as parsed from the liquid strings.
-	public enum Value
+	public indirect enum Value
 	{
 		case `nil`
 		case bool(Bool)
 		case string(String)
 		case integer(Int)
 		case decimal(Decimal)
+		case array([Value])
 
 		/// Returns a string value or representation of the receiver.
 		///
@@ -47,6 +48,7 @@ open class Filter {
 			case .decimal(let decimal): return "\(decimal)"
 			case .integer(let integer): return "\(integer)"
 			case .string(let string): return string
+			case .array: return ""
 			}
 		}
 
