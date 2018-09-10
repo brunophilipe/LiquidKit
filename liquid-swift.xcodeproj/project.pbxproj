@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		152FDD25214709A6003C2C63 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152FDD24214709A6003C2C63 /* Double+Extensions.swift */; };
 		154F3380214661E00022B689 /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F337F214661E00022B689 /* FilterTests.swift */; };
 		15CB06A9214353360023648A /* Liquid.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CB069F214353360023648A /* Liquid.framework */; };
 		15CB06C0214353A70023648A /* Liquid.h in Headers */ = {isa = PBXBuildFile; fileRef = 15CB06B7214353A70023648A /* Liquid.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		152FDD24214709A6003C2C63 /* Double+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Double+Extensions.swift"; path = "Sources/Liquid/Double+Extensions.swift"; sourceTree = SOURCE_ROOT; };
 		154F337F214661E00022B689 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterTests.swift; path = Tests/LiquidTests/FilterTests.swift; sourceTree = SOURCE_ROOT; };
 		15CB069F214353360023648A /* Liquid.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Liquid.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		15CB06A8214353360023648A /* LiquidTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LiquidTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,6 +113,7 @@
 				15CB06B7214353A70023648A /* Liquid.h */,
 				15CB06BF214353A70023648A /* Parser.swift */,
 				15CB06BD214353A70023648A /* String+Extensions.swift */,
+				152FDD24214709A6003C2C63 /* Double+Extensions.swift */,
 				15CB06B8214353A70023648A /* Token.swift */,
 			);
 			path = Liquid;
@@ -319,6 +322,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				152FDD25214709A6003C2C63 /* Double+Extensions.swift in Sources */,
 				15CB06C6214353A70023648A /* String+Extensions.swift in Sources */,
 				15CB06C3214353A70023648A /* Error.swift in Sources */,
 				15CB06C5214353A70023648A /* Filter.swift in Sources */,
