@@ -233,6 +233,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["plums, peaches, oranges, apples"])
 	}
+
+	func testFilter_round()
+	{
+		let lexer = Lexer(templateString: "{{ 1.2 | round }}{{ 2.7 | round }}{{ 183.357 | round: 2 }}{{ \"3.5\" | round }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["1", "3", "183.36", "4"])
+	}
 	
 	func testFilter_split_join()
 	{

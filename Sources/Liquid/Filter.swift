@@ -534,7 +534,25 @@ extension Filter {
 		return .array(inputArray.reversed())
 	}
 
-//	static let round: Filter
+	static let round = Filter(identifier: "round")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let inputDouble = input.doubleValue else
+		{
+			return input
+		}
+
+		if let decimalCount = parameters.first?.integerValue
+		{
+			return .decimal(Decimal(inputDouble.truncatingDecimals(to: decimalCount)))
+		}
+		else
+		{
+			return .integer(Int(Darwin.round(inputDouble)))
+		}
+	}
+
 //	static let rstrip: Filter
 //	static let size: Filter
 //	static let slice: Filter
