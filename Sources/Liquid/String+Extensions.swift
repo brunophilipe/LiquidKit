@@ -81,4 +81,35 @@ extension String {
         
         return components
     }
+
+	func split(boundary: String, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = false) -> [Substring]
+	{
+		var splits = [Substring]()
+		var scannedIndex = startIndex
+
+		while let separatorRange = range(of: boundary, range: scannedIndex..<endIndex), splits.count < maxSplits
+		{
+			let substringRange = scannedIndex..<separatorRange.lowerBound
+			let substring = self[substringRange]
+
+			if !(omittingEmptySubsequences && substring.count == 0)
+			{
+				splits.append(substring)
+			}
+
+			scannedIndex = separatorRange.upperBound
+		}
+
+		if splits.count < maxSplits - 1
+		{
+			let remainderSubstring = self[scannedIndex..<endIndex]
+
+			if !(omittingEmptySubsequences && remainderSubstring.count == 0)
+			{
+				splits.append(remainderSubstring)
+			}
+		}
+
+		return splits
+	}
 }

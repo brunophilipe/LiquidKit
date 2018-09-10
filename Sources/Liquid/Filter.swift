@@ -330,7 +330,23 @@ extension Filter {
 
 //	static let first: Filter
 //	static let floor: Filter
-//	static let join: Filter
+
+	static let join = Filter(identifier: "join")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard
+			let firstParameter = parameters.first,
+			case .string(let glue) = firstParameter,
+			case .array(let inputArray) = input
+		else
+		{
+			return input
+		}
+
+		return .string(inputArray.map({ $0.stringValue }).joined(separator: glue))
+	}
+
 //	static let last: Filter
 //	static let lstrip: Filter
 //	static let map: Filter
@@ -350,7 +366,23 @@ extension Filter {
 //	static let slice: Filter
 //	static let sort: Filter
 //	static let sort_natural: Filter
-//	static let split: Filter
+
+	static let split = Filter(identifier: "split")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard
+			let firstParameter = parameters.first,
+			case .string(let boundary) = firstParameter,
+			case .string(let inputString) = input
+		else
+		{
+			return input
+		}
+
+		return .array(inputString.split(boundary: boundary).map({ Filter.Value.string(String($0)) }))
+	}
+
 //	static let strip: Filter
 //	static let strip_html: Filter
 //	static let strip_newlines: Filter

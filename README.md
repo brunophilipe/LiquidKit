@@ -22,10 +22,10 @@ A Liquid syntax template engine for Swift.
   - [x] divided_by
   - [x] downcase
   - [x] escape
-  - [ ] escape_once
+  - [x] escape_once
   - [ ] first
   - [ ] floor
-  - [ ] join
+  - [x] join
   - [ ] last
   - [ ] lstrip
   - [ ] map
@@ -45,7 +45,7 @@ A Liquid syntax template engine for Swift.
   - [ ] slice
   - [ ] sort
   - [ ] sort_natural
-  - [ ] split
+  - [x] split
   - [ ] strip
   - [ ] strip_html
   - [ ] strip_newlines

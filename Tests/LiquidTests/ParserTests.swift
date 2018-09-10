@@ -137,4 +137,12 @@ class ParserTests: XCTestCase {
 		let res = parser.parse()
 		XCTAssertEqual(res, ["1 &lt; 2 &amp; 3", "1 &lt; 2 &amp; 3"])
 	}
+
+	func testFilter_split_join() {
+		let lexer = Lexer(templateString: "{{ \"John, Paul, George, Ringo\" | split: \", \" | join: \"-\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["John-Paul-George-Ringo"])
+	}
 }
