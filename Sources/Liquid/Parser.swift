@@ -38,6 +38,7 @@ open class TokenParser {
 		filters.append(.floor)
 		filters.append(.leftStrip)
 		filters.append(.minus)
+		filters.append(.modulo)
 
 		filters.append(.join)
 

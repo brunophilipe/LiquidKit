@@ -407,7 +407,18 @@ extension Filter {
 		return .decimal(decimalInput - decimalParameter)
 	}
 
-	//	static let modulo: Filter
+	static let modulo = Filter(identifier: "modulo")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let doubleInput = input.doubleValue, let doubleParameter = parameters.first?.doubleValue else
+		{
+			return input
+		}
+
+		return .decimal(Decimal(doubleInput.truncatingRemainder(dividingBy: doubleParameter)))
+	}
+
 //	static let newline_to_br: Filter
 //	static let plus: Filter
 //	static let prepend: Filter

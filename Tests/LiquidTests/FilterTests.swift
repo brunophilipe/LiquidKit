@@ -148,6 +148,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["2", "12", "171.357"])
 	}
+
+	func testFilter_modulo()
+	{
+		let lexer = Lexer(templateString: "{{ 3 | modulo: 2 }}{{ 24 | modulo: 7 }}{{ 183.357 | modulo: 12 }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["1", "3", "3.357000000000028672"])
+	}
 	
 	func testFilter_split_join()
 	{
