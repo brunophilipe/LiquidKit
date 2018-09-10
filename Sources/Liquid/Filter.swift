@@ -628,7 +628,18 @@ extension Filter {
 		return .string(String(stringInput[startIndex..<endIndex]))
 	}
 
-//	static let sort: Filter
+	static let sort = Filter(identifier: "sort")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .array(let arrayInput) = input else
+		{
+			return input
+		}
+
+		return .array(arrayInput.map({ $0.stringValue }).sorted().map({ .string($0) }))
+	}
+
 //	static let sort_natural: Filter
 
 	static let split = Filter(identifier: "split")

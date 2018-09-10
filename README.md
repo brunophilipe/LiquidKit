@@ -43,7 +43,7 @@ A Liquid syntax template engine for Swift.
   - [x] rstrip
   - [x] size
   - [x] slice
-  - [ ] sort
+  - [x] sort
   - [ ] sort_natural
   - [x] split
   - [ ] strip

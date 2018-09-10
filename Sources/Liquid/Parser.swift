@@ -52,6 +52,7 @@ open class TokenParser {
 		filters.append(.rightStrip)
 		filters.append(.size)
 		filters.append(.slice)
+		filters.append(.sort)
 
 		filters.append(.split)
 	}

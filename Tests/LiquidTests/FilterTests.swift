@@ -269,7 +269,16 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["L", "q", "quid", "ui"])
 	}
-	
+
+	func testFilter_sort()
+	{
+		let lexer = Lexer(templateString: "{{ \"zebra, octopus, giraffe, Sally Snake\" | split: \", \" | sort | join: \", \" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Sally Snake, giraffe, octopus, zebra"])
+	}
+
 	func testFilter_split_join()
 	{
 		let lexer = Lexer(templateString: "{{ \"John, Paul, George, Ringo\" | split: \", \" | join: \"-\" }}")
