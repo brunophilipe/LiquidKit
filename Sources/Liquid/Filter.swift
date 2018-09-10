@@ -596,7 +596,38 @@ extension Filter {
 		}
 	}
 
-//	static let slice: Filter
+	static let slice = Filter(identifier: "slice")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard
+			case .string(let stringInput) = input,
+			(1...2).contains(parameters.count),
+			let slice = parameters[0].integerValue
+		else
+		{
+			return .nil
+		}
+
+		let startIndex: String.Index
+		let splice: Substring
+
+		if slice >= 0
+		{
+			startIndex = stringInput.index(stringInput.startIndex, offsetBy: slice)
+		}
+		else
+		{
+			startIndex = stringInput.index(stringInput.endIndex, offsetBy: slice)
+		}
+
+		let length = parameters.count == 2 ? parameters[1].integerValue ?? 1 : 1
+		let effectiveLength = min(length, stringInput.distance(from: startIndex, to: stringInput.endIndex))
+		let endIndex = stringInput.index(startIndex, offsetBy: effectiveLength)
+
+		return .string(String(stringInput[startIndex..<endIndex]))
+	}
+
 //	static let sort: Filter
 //	static let sort_natural: Filter
 

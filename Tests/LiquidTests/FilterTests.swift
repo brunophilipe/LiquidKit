@@ -260,6 +260,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["4", "28"])
 	}
+
+	func testFilter_slice()
+	{
+		let lexer = Lexer(templateString: "{{ \"Liquid\" | slice: 0 }}{{ \"Liquid\" | slice: 2 }}{{ \"Liquid\" | slice: 2, 5 }}{{ \"Liquid\" | slice: -3, 2 }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["L", "q", "quid", "ui"])
+	}
 	
 	func testFilter_split_join()
 	{
