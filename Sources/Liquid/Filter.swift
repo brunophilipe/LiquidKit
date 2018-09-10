@@ -444,7 +444,18 @@ extension Filter {
 		return .decimal(decimalInput + decimalParameter)
 	}
 
-//	static let prepend: Filter
+	static let prepend = Filter(identifier: "prepend")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let stringParameter = parameters.first?.stringValue else
+		{
+			return input
+		}
+
+		return .string(stringParameter + input.stringValue)
+	}
+
 //	static let remove: Filter
 //	static let remove_first: Filter
 //	static let replace: Filter

@@ -175,6 +175,19 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["6", "20", "195.357"])
 	}
+
+	func testFilter_prepend()
+	{
+		let lexer = Lexer(templateString: "{{ \"apples, oranges, and bananas\" | prepend: \"Some fruit: \" }}{{ \"a\" | prepend: \"b\" | prepend: \"c\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Some fruit: apples, oranges, and bananas", "cba"])
+
+		// TODO:
+//		{% assign url = "liquidmarkup.com" %}
+//		{{ "/index.html" | prepend: url }}
+	}
 	
 	func testFilter_split_join()
 	{
