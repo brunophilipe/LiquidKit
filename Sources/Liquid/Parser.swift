@@ -36,14 +36,13 @@ open class TokenParser {
 		filters.append(.escape)
 		filters.append(.escapeOnce)
 		filters.append(.floor)
+		filters.append(.join)
 		filters.append(.leftStrip)
 		filters.append(.minus)
 		filters.append(.modulo)
 		filters.append(.newlineToBr)
 		filters.append(.plus)
 		filters.append(.prepend)
-
-		filters.append(.join)
 		filters.append(.remove)
 
 		filters.append(.split)
