@@ -640,7 +640,22 @@ extension Filter {
 		return .array(arrayInput.map({ $0.stringValue }).sorted().map({ .string($0) }))
 	}
 
-//	static let sort_natural: Filter
+	static let sortNatural = Filter(identifier: "sort_natural")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .array(let arrayInput) = input else
+		{
+			return input
+		}
+
+		func naturallyAscending(_ s1: String, _ s2: String) -> Bool
+		{
+			return s1.localizedCaseInsensitiveCompare(s2) == .orderedAscending
+		}
+
+		return .array(arrayInput.map({ $0.stringValue }).sorted(by: naturallyAscending).map({ .string($0) }))
+	}
 
 	static let split = Filter(identifier: "split")
 	{
