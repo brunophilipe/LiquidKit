@@ -296,4 +296,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["John-Paul-George-Ringo"])
 	}
+
+	func testFilter_strip()
+	{
+		let lexer = Lexer(templateString: "{{ \"          So much room for activities!          \" | strip }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["So much room for activities!"])
+	}
 }

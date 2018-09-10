@@ -46,7 +46,7 @@ A Liquid syntax template engine for Swift.
   - [x] sort
   - [x] sort_natural
   - [x] split
-  - [ ] strip
+  - [x] strip
   - [ ] strip_html
   - [ ] strip_newlines
   - [ ] times

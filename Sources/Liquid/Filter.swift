@@ -673,7 +673,18 @@ extension Filter {
 		return .array(inputString.split(boundary: boundary).map({ Filter.Value.string(String($0)) }))
 	}
 
-//	static let strip: Filter
+	static let strip = Filter(identifier: "strip")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .string(let inputString) = input else
+		{
+			return input
+		}
+
+		return .string(inputString.trimmingWhitespaces)
+	}
+
 //	static let strip_html: Filter
 //	static let strip_newlines: Filter
 //	static let times: Filter

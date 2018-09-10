@@ -54,8 +54,8 @@ open class TokenParser {
 		filters.append(.slice)
 		filters.append(.sort)
 		filters.append(.sortNatural)
-
 		filters.append(.split)
+		filters.append(.strip)
 	}
     
     /// Parse the given tokens into nodes
