@@ -305,4 +305,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["So much room for activities!"])
 	}
+
+	func testFilter_stripHTML()
+	{
+		let lexer = Lexer(templateString: "{{ \"Have <em>you</em> read <strong>Ulysses</strong>?\" | strip_html }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Have you read Ulysses?"])
+	}
 }

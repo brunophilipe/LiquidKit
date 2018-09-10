@@ -685,7 +685,14 @@ extension Filter {
 		return .string(inputString.trimmingWhitespaces)
 	}
 
-//	static let strip_html: Filter
+	static let stripHTML = Filter(identifier: "strip_html")
+	{
+		(input, _) -> Filter.Value in
+
+		let htmlRegex = "<[^>]+>"
+		return .string(input.stringValue.replacingOccurrences(of: htmlRegex, with: "", options: .regularExpression))
+	}
+
 //	static let strip_newlines: Filter
 //	static let times: Filter
 //	static let truncate: Filter
