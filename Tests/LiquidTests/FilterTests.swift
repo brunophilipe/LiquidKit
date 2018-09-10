@@ -139,6 +139,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["So much room for activities!          "])
 	}
+
+	func testFilter_minus()
+	{
+		let lexer = Lexer(templateString: "{{ 4 | minus: 2 }}{{ 16 | minus: 4 }}{{ 183.357 | minus: 12 }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["2", "12", "171.357"])
+	}
 	
 	func testFilter_split_join()
 	{

@@ -394,8 +394,20 @@ extension Filter {
 	}
 
 //	static let map: Filter
-//	static let minus: Filter
-//	static let modulo: Filter
+
+	static let minus = Filter(identifier: "minus")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
+		{
+			return input
+		}
+
+		return .decimal(decimalInput - decimalParameter)
+	}
+
+	//	static let modulo: Filter
 //	static let newline_to_br: Filter
 //	static let plus: Filter
 //	static let prepend: Filter
