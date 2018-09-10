@@ -521,7 +521,19 @@ extension Filter {
 
 		return .string(inputString.replacingCharacters(in: needleRange, with: replacement))
 	}
-//	static let reverse: Filter
+
+	static let reverse = Filter(identifier: "reverse")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .array(let inputArray) = input else
+		{
+			return input
+		}
+
+		return .array(inputArray.reversed())
+	}
+
 //	static let round: Filter
 //	static let rstrip: Filter
 //	static let size: Filter

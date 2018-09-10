@@ -224,6 +224,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Take your protein pills and put my helmet on"])
 	}
+
+	func testFilter_reverse()
+	{
+		let lexer = Lexer(templateString: "{{ \"apples, oranges, peaches, plums\" | split: \", \" | reverse | join: \", \" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["plums, peaches, oranges, apples"])
+	}
 	
 	func testFilter_split_join()
 	{

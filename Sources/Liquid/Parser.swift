@@ -47,6 +47,7 @@ open class TokenParser {
 		filters.append(.removeFirst)
 		filters.append(.replace)
 		filters.append(.replaceFirst)
+		filters.append(.reverse)
 
 		filters.append(.split)
 	}
@@ -113,7 +114,7 @@ open class TokenParser {
 			}
 		}
 
-		let splitToken = token.split(separator: "|", maxSplits: 2)
+		let splitToken = token.split(separator: "|")
 
 		if splitToken.count == 1 {
 			return valueOrLiteral(for: token)
