@@ -40,7 +40,7 @@ A Liquid syntax template engine for Swift.
   - [x] replace_first
   - [x] reverse
   - [x] round
-  - [ ] rstrip
+  - [x] rstrip
   - [ ] size
   - [ ] slice
   - [ ] sort

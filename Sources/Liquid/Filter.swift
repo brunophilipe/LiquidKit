@@ -553,7 +553,36 @@ extension Filter {
 		}
 	}
 
-//	static let rstrip: Filter
+	static let rightStrip = Filter(identifier: "rstrip")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard case .string(let inputString) = input else
+		{
+			return input
+		}
+
+		let charset = CharacterSet.whitespacesAndNewlines
+		let lastNonBlankIndex = inputString.firstIndex(reverse: true)
+		{
+			char -> Bool in
+
+			guard char.unicodeScalars.count == 1, let unichar = char.unicodeScalars.first else
+			{
+				return true
+			}
+
+			return !charset.contains(unichar)
+		}
+
+		guard let index = lastNonBlankIndex else
+		{
+			return input
+		}
+
+		return .string(String(inputString[...index]))
+	}
+
 //	static let size: Filter
 //	static let slice: Filter
 //	static let sort: Filter
