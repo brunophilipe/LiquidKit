@@ -486,7 +486,20 @@ extension Filter {
 		return .string(inputString.replacingCharacters(in: needleRange, with: ""))
 	}
 
-//	static let replace: Filter
+	static let replace = Filter(identifier: "replace")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard parameters.count == 2 else
+		{
+			return input
+		}
+
+		let needle		= parameters[0].stringValue
+		let replacement	= parameters[1].stringValue
+
+		return .string(input.stringValue.replacingOccurrences(of: needle, with: replacement))
+	}
 //	static let replace_first: Filter
 //	static let reverse: Filter
 //	static let round: Filter
