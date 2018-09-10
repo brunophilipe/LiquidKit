@@ -35,6 +35,7 @@ open class TokenParser {
 		filters.append(.downcase)
 		filters.append(.escape)
 		filters.append(.escapeOnce)
+		filters.append(.floor)
 
 		filters.append(.join)
 

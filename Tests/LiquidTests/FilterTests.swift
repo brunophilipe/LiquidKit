@@ -121,6 +121,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["1 &lt; 2 &amp; 3", "1 &lt; 2 &amp; 3"])
 	}
+
+	func testFilter_floor()
+	{
+		let lexer = Lexer(templateString: "{{ 1.2 | floor }}{{ 2.0 | floor }}{{ 183.357 | floor }}{{ \"3.5\" | floor }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["1", "2", "183", "3"])
+	}
 	
 	func testFilter_split_join()
 	{

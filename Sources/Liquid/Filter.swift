@@ -200,9 +200,12 @@ extension Filter {
 		return .string(inputString.replacingCharacters(in: firstWordRange, with: firstWord.localizedCapitalized))
 	}
 
-	static let ceil = Filter(identifier: "ceil") { (input, _) -> Value in
+	static let ceil = Filter(identifier: "ceil")
+	{
+		(input, _) -> Value in
 
-		guard let inputDouble = input.doubleValue else {
+		guard let inputDouble = input.doubleValue else
+		{
 				return input
 		}
 
@@ -293,7 +296,7 @@ extension Filter {
 		switch divisor
 		{
 		case .integer(let divisorInt):
-			return .integer(Int(floor(dividendDouble / Double(divisorInt))))
+			return .integer(Int(Darwin.floor(dividendDouble / Double(divisorInt))))
 
 		case .decimal:
 			return .decimal(Decimal(dividendDouble / divisor.doubleValue!))
@@ -329,7 +332,18 @@ extension Filter {
 	}
 
 //	static let first: Filter
-//	static let floor: Filter
+
+	static let floor = Filter(identifier: "floor")
+	{
+		(input, _) -> Filter.Value in
+
+		guard let inputDouble = input.doubleValue else
+		{
+			return input
+		}
+
+		return .decimal(Decimal(Int(Darwin.floor(inputDouble))))
+	}
 
 	static let join = Filter(identifier: "join")
 	{
