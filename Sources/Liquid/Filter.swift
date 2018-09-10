@@ -468,7 +468,24 @@ extension Filter {
 		return .string(input.stringValue.replacingOccurrences(of: needle, with: ""))
 	}
 	
-//	static let remove_first: Filter
+	static let removeFirst = Filter(identifier: "remove_first")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard let needle = parameters.first?.stringValue else
+		{
+			return input
+		}
+
+		let inputString = input.stringValue
+		guard let needleRange = inputString.range(of: needle) else
+		{
+			return input
+		}
+
+		return .string(inputString.replacingCharacters(in: needleRange, with: ""))
+	}
+
 //	static let replace: Filter
 //	static let replace_first: Filter
 //	static let reverse: Filter

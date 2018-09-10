@@ -197,6 +197,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["I sted to see the t through the "])
 	}
+
+	func testFilter_removeFirst()
+	{
+		let lexer = Lexer(templateString: "{{ \"I strained to see the train through the rain\" | remove_first: \"rain\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["I sted to see the train through the rain"])
+	}
 	
 	func testFilter_split_join()
 	{

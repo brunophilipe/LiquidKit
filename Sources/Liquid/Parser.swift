@@ -44,6 +44,7 @@ open class TokenParser {
 		filters.append(.plus)
 		filters.append(.prepend)
 		filters.append(.remove)
+		filters.append(.removeFirst)
 
 		filters.append(.split)
 	}

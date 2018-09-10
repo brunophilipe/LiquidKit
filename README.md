@@ -35,7 +35,7 @@ A Liquid syntax template engine for Swift.
   - [x] plus
   - [x] prepend
   - [x] remove
-  - [ ] remove_first
+  - [x] remove_first
   - [ ] replace
   - [ ] replace_first
   - [ ] reverse
