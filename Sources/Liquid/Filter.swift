@@ -419,7 +419,19 @@ extension Filter {
 		return .decimal(Decimal(doubleInput.truncatingRemainder(dividingBy: doubleParameter)))
 	}
 
-//	static let newline_to_br: Filter
+	static let newlineToBr = Filter(identifier: "newline_to_br")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .string(let inputString) = input else
+		{
+			return input
+		}
+
+		return .string(inputString.replacingOccurrences(of: "\r\n", with: "<br />")
+								  .replacingOccurrences(of: "\n", with: "<br />"))
+	}
+
 //	static let plus: Filter
 //	static let prepend: Filter
 //	static let remove: Filter

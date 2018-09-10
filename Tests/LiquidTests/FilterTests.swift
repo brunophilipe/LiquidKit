@@ -157,6 +157,15 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["1", "3", "3.357000000000028672"])
 	}
+
+	func testFilter_newlineToBr()
+	{
+		let lexer = Lexer(templateString: "{{ \"\nHello\r\nthere\n\" | newline_to_br }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<br />Hello<br />there<br />"])
+	}
 	
 	func testFilter_split_join()
 	{

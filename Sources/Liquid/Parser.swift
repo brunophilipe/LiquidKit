@@ -39,6 +39,7 @@ open class TokenParser {
 		filters.append(.leftStrip)
 		filters.append(.minus)
 		filters.append(.modulo)
+		filters.append(.newlineToBr)
 
 		filters.append(.join)
 
