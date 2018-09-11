@@ -54,7 +54,7 @@ A Liquid syntax template engine for Swift.
   - [x] truncatewords
   - [x] uniq
   - [x] upcase
-  - [ ] url_decode
+  - [x] url_decode
   - [ ] url_encode
 - [ ] Variable
   - [ ] `assign`

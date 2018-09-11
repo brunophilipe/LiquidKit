@@ -812,6 +812,16 @@ extension Filter {
 		return .string(input.stringValue.uppercased())
 	}
 	
-//	static let url_decode: Filter
+	static let urlDecode = Filter(identifier: "url_decode")
+	{
+		(input, _) -> Filter.Value in
+
+		guard let decodedString = input.stringValue.removingPercentEncoding else
+		{
+			return .nil
+		}
+
+		return .string(decodedString.replacingOccurrences(of: "+", with: " "))
+	}
 //	static let url_encode: Filter
 }

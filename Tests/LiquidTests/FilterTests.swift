@@ -368,4 +368,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["PARKER MOORE", "APPLE"])
 	}
+
+	func testFilter_urlDecode()
+	{
+		let lexer = Lexer(templateString: "{{ \"%27Stop%21%27+said+Fred\" | url_decode }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["'Stop!' said Fred"])
+	}
 }
