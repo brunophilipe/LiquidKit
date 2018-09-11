@@ -22,44 +22,14 @@ open class TokenParser {
 		registerFilters()
     }
 
-	open func registerFilters() {
-		filters.append(.abs)
-		filters.append(.append)
-		filters.append(.atLeast)
-		filters.append(.atMost)
-		filters.append(.capitalize)
-		filters.append(.ceil)
-		filters.append(.date)
-		filters.append(.default)
-		filters.append(.dividedBy)
-		filters.append(.downcase)
-		filters.append(.escape)
-		filters.append(.escapeOnce)
-		filters.append(.floor)
-		filters.append(.join)
-		filters.append(.leftStrip)
-		filters.append(.minus)
-		filters.append(.modulo)
-		filters.append(.newlineToBr)
-		filters.append(.plus)
-		filters.append(.prepend)
-		filters.append(.remove)
-		filters.append(.removeFirst)
-		filters.append(.replace)
-		filters.append(.replaceFirst)
-		filters.append(.reverse)
-		filters.append(.round)
-		filters.append(.rightStrip)
-		filters.append(.size)
-		filters.append(.slice)
-		filters.append(.sort)
-		filters.append(.sortNatural)
-		filters.append(.split)
-		filters.append(.strip)
-		filters.append(.stripHTML)
-		filters.append(.stripNewlines)
-		filters.append(.times)
-		filters.append(.truncate)
+	open func registerFilters()
+	{
+		filters.append(contentsOf: [
+			.abs, .append, .atLeast, .atMost, .capitalize, .ceil, .date, .default, .dividedBy, .downcase, .escape,
+			.escapeOnce, .floor, .join, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
+			.removeFirst, .replace, .replaceFirst, .reverse, .round, .rightStrip, .size, .slice, .sort, .sortNatural,
+			.split, .strip, .stripHTML, .stripNewlines, .times, .truncate
+		])
 	}
     
     /// Parse the given tokens into nodes
