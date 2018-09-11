@@ -341,4 +341,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Ground control to...", "Ground control, and so on", "Ground control to Ma"])
 	}
+
+	func testFilter_truncateWords()
+	{
+		let lexer = Lexer(templateString: "{{ \"Ground control to Major Tom.\" | truncatewords: 3 }}{{ \"Ground control to Major Tom.\" | truncatewords: 4, \"--\" }}{{ \"Ground control to Major Tom.\" | truncatewords: 2, \"\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Ground control to...", "Ground control to Major--", "Ground control"])
+	}
 }

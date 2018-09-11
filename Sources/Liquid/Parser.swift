@@ -28,7 +28,7 @@ open class TokenParser {
 			.abs, .append, .atLeast, .atMost, .capitalize, .ceil, .date, .default, .dividedBy, .downcase, .escape,
 			.escapeOnce, .floor, .join, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
 			.removeFirst, .replace, .replaceFirst, .reverse, .round, .rightStrip, .size, .slice, .sort, .sortNatural,
-			.split, .strip, .stripHTML, .stripNewlines, .times, .truncate
+			.split, .strip, .stripHTML, .stripNewlines, .times, .truncate, .truncateWords
 		])
 	}
     

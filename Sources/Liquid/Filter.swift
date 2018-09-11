@@ -734,7 +734,46 @@ extension Filter {
 		return .string(inputString.prefix(max(length - suffix.count, 0)) + suffix)
 	}
 
-//	static let truncatewords: Filter
+	static let truncateWords = Filter(identifier: "truncatewords")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard (1...2).contains(parameters.count), let wordCount = parameters[0].integerValue else
+		{
+			return input
+		}
+
+		let inputString = input.stringValue
+		let suffix = parameters.count == 2 ? parameters[1].stringValue : "..."
+		var lastEnumeratedIndex = inputString.startIndex
+		var words = [String]()
+
+		let _ = inputString.enumerateSubstrings(in: inputString.startIndex..., options: [.localized, .byWords])
+		{
+			(word, range, _, stop) in
+
+			guard let word = word else
+			{
+				return
+			}
+
+			words.append(word)
+			lastEnumeratedIndex = range.upperBound
+
+			if words.count >= wordCount
+			{
+				stop = true
+			}
+		}
+
+		if lastEnumeratedIndex == inputString.endIndex
+		{
+			return .string(inputString)
+		}
+
+		return .string(words.joined(separator: " ") + suffix)
+	}
+
 //	static let uniq: Filter
 //	static let upcase: Filter
 //	static let url_decode: Filter
