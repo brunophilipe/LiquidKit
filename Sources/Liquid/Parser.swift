@@ -59,6 +59,7 @@ open class TokenParser {
 		filters.append(.stripHTML)
 		filters.append(.stripNewlines)
 		filters.append(.times)
+		filters.append(.truncate)
 	}
     
     /// Parse the given tokens into nodes

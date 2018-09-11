@@ -50,7 +50,7 @@ A Liquid syntax template engine for Swift.
   - [x] strip_html
   - [x] strip_newlines
   - [x] times
-  - [ ] truncate
+  - [x] truncate
   - [ ] truncatewords
   - [ ] uniq
   - [ ] upcase

@@ -713,7 +713,27 @@ extension Filter {
 		return .decimal(decimalInput * decimalParameter)
 	}
 
-//	static let truncate: Filter
+	static let truncate = Filter(identifier: "truncate")
+	{
+		(input, parameters) -> Filter.Value in
+
+		guard (1...2).contains(parameters.count), let length = parameters[0].integerValue else
+		{
+			return input
+		}
+
+		let inputString = input.stringValue
+
+		if length >= inputString.count
+		{
+			return .string(inputString)
+		}
+
+		let suffix = parameters.count == 2 ? parameters[1].stringValue : "..."
+
+		return .string(inputString.prefix(max(length - suffix.count, 0)) + suffix)
+	}
+
 //	static let truncatewords: Filter
 //	static let uniq: Filter
 //	static let upcase: Filter
