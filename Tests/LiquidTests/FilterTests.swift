@@ -350,4 +350,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Ground control to...", "Ground control to Major--", "Ground control"])
 	}
+
+	func testFilter_uniq()
+	{
+		let lexer = Lexer(templateString: "{{ \"ants, bugs, bees, bugs, ants\" | split: \", \" | uniq | join: \", \" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["ants, bugs, bees"])
+	}
 }

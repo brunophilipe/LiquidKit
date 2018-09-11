@@ -26,7 +26,7 @@ open class Filter {
 	}
 
 	/// An enum whose instances are used to represent filter values and parameters as parsed from the liquid strings.
-	public indirect enum Value
+	public indirect enum Value: Hashable
 	{
 		case `nil`
 		case bool(Bool)
@@ -136,6 +136,25 @@ open class Filter {
 				
 			default:
 				return false
+			}
+		}
+
+		public var hashValue: Int
+		{
+			switch self
+			{
+			case .nil:
+				return Int.min
+			case .bool(let boolValue):
+				return boolValue.hashValue
+			case .string(let stringValue):
+				return stringValue.hashValue
+			case .integer(let integerValue):
+				return integerValue.hashValue
+			case .decimal(let decimalValue):
+				return decimalValue.hashValue
+			case .array(let arrayValue):
+				return arrayValue.hashValue
 			}
 		}
 	}
@@ -774,7 +793,18 @@ extension Filter {
 		return .string(words.joined(separator: " ") + suffix)
 	}
 
-//	static let uniq: Filter
+	static let uniq = Filter(identifier: "uniq")
+	{
+		(input, _) -> Filter.Value in
+
+		guard case .array(let inputArray) = input else
+		{
+			return input
+		}
+
+		return .array(NSOrderedSet(array: inputArray).array.compactMap({ $0 as? Filter.Value }))
+	}
+
 //	static let upcase: Filter
 //	static let url_decode: Filter
 //	static let url_encode: Filter
