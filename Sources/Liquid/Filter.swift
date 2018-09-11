@@ -805,7 +805,13 @@ extension Filter {
 		return .array(NSOrderedSet(array: inputArray).array.compactMap({ $0 as? Filter.Value }))
 	}
 
-//	static let upcase: Filter
+	static let upcase = Filter(identifier: "upcase")
+	{
+		(input, _) -> Filter.Value in
+
+		return .string(input.stringValue.uppercased())
+	}
+	
 //	static let url_decode: Filter
 //	static let url_encode: Filter
 }

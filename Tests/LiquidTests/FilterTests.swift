@@ -359,4 +359,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["ants, bugs, bees"])
 	}
+
+	func testFilter_upcase()
+	{
+		let lexer = Lexer(templateString: "{{ \"Parker Moore\" | upcase }}{{ \"APPLE\" | upcase }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["PARKER MOORE", "APPLE"])
+	}
 }
