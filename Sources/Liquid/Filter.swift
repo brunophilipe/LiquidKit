@@ -4,15 +4,14 @@
 //
 //  Created by brunophilipe on 08/09/2018.
 //
-//
 
 import Foundation
 import STRFTimeFormatter
 import HTMLEntities
 
-/// A class representing a template
-open class Filter {
-
+/// A class representing a filter
+open class Filter
+{
 	/// Keyword used to identify the filter.
 	let identifier: String
 

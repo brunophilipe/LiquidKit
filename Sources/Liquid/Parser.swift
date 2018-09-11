@@ -44,10 +44,8 @@ open class TokenParser
 	{
         var nodes = [String]()
         
-        while tokens.count > 0
+        while let token = nextToken()
 		{
-            let token = nextToken()!
-            
             switch token
 			{
             case .text(let text):
