@@ -823,5 +823,21 @@ extension Filter {
 
 		return .string(decodedString.replacingOccurrences(of: "+", with: " "))
 	}
-//	static let url_encode: Filter
+
+	static let urlEncode = Filter(identifier: "url_encode")
+	{
+		(input, _) -> Filter.Value in
+
+		let inputString = input.stringValue.replacingOccurrences(of: " ", with: "+")
+
+		// Based on RFC3986: https://tools.ietf.org/html/rfc3986#page-13, and including the `+` char which was already
+		// escaped above.
+		let allowedCharset = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~/?+"))
+		guard let encodedString = inputString.addingPercentEncoding(withAllowedCharacters: allowedCharset) else
+		{
+			return .nil
+		}
+
+		return .string(encodedString)
+	}
 }

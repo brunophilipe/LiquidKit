@@ -377,4 +377,13 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["'Stop!' said Fred"])
 	}
+
+	func testFilter_urlEncode()
+	{
+		let lexer = Lexer(templateString: "{{ \"john@liquid.com\" | url_encode }}{{ \"Tetsuro Takara\" | url_encode }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["john%40liquid.com", "Tetsuro+Takara"])
+	}
 }
