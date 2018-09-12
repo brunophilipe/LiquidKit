@@ -6,35 +6,44 @@
 //
 //
 /// A container for template variables.
-public class Context {
+public class Context
+{
     private var variables: [String: Token.Value]
 	private var counters: [String: Int] = [:]
 
-    public init(dictionary: [String: Token.Value]? = nil) {
+    public init(dictionary: [String: Token.Value]? = nil)
+	{
 		variables = dictionary ?? [:]
     }
 	
-	public init(dictionary: [String: Any?]) {
+	public init(dictionary: [String: Any?])
+	{
 		variables = [:]
 		
-		for (key, value) in dictionary {
-			if let value = parseValue(value) {
+		for (key, value) in dictionary
+		{
+			if let value = parseValue(value)
+			{
 				variables[key] = value
 			}
 		}
 	}
 	
-	public func getValue(for key: String) -> Token.Value? {
+	public func getValue(for key: String) -> Token.Value?
+	{
 		return variables[key]
 	}
 	
-	public func set(value: Token.Value, for key: String) {
+	public func set(value: Token.Value, for key: String)
+	{
 		variables[key] = value
 	}
 	
-	public func set(value: Any?, for key: String) {
+	public func set(value: Any?, for key: String)
+	{
 		
-		if let value = parseValue(value) {
+		if let value = parseValue(value)
+		{
 			variables[key] = value
 		}
 	}
@@ -55,18 +64,30 @@ public class Context {
 		return counter
 	}
 	
-	private func parseValue(_ value: Any?) -> Token.Value? {
-		if let intLiteral = value as? IntegerLiteralType {
+	private func parseValue(_ value: Any?) -> Token.Value?
+	{
+		if let intLiteral = value as? IntegerLiteralType
+		{
 			return .decimal(Decimal(integerLiteral: intLiteral))
-		} else if let floatLiteral = value as? FloatLiteralType {
+		}
+		else if let floatLiteral = value as? FloatLiteralType
+		{
 			return .decimal(Decimal(floatLiteral: floatLiteral))
-		} else if let string = value as? String {
+		}
+		else if let string = value as? String
+		{
 			return .string(string)
-		} else if let boolLiteral = value as? BooleanLiteralType {
+		}
+		else if let boolLiteral = value as? BooleanLiteralType
+		{
 			return .bool(boolLiteral)
-		} else if value == nil {
+		}
+		else if value == nil
+		{
 			return .nil
-		} else {
+		}
+		else
+		{
 			return nil
 		}
 	}
