@@ -8,24 +8,28 @@
 import Foundation
 
 /// A class representing a filter
-class Tag
+public class Tag
 {
+	public class var keyword: String
+	{
+		return ""
+	}
+
 	internal var tagExpression: [ExpressionSegment]
 	{
 		return []
 	}
 
 	internal var compiledExpression: [String: Any] = [:]
+	internal var context: Context
 
-	var context: Context
-
-	init(context: Context)
+	public required init(context: Context)
 	{
 		self.context = context
 	}
 
 	/// Given a string statement, attempts to compile the receiver tag.
-	func compile(from statement: String) throws
+	open func parse(statement: String, using parser: TokenParser) throws
 	{
 		let scanner = Scanner(statement.trimmingWhitespaces)
 
@@ -57,38 +61,18 @@ class Tag
 				let foundWord = scanner.scan(until: .whitespaces, skipEarlyMatches: true)
 				compiledExpression[name] = foundWord
 
-			case .value(let name):
+			case .variable(let name):
 				guard !scanner.isEmpty else
 				{
 					throw Errors.malformedStatement("Expected identifier or literal, found nothing.")
 				}
 
-				var foundWord = scanner.scan(until: .whitespaces, skipEarlyMatches: true)
-
-				if foundWord.hasPrefix("\"")
-				{
-					// will need to find matching closing double quote
-
-					while !scanner.isEmpty
-					{
-						let nextWord = scanner.scan(until: "\"")
-						foundWord.append(nextWord)
-
-						if !nextWord.hasSuffix("\"")
-						{
-							// We found the closing double quote
-							foundWord.append("\"")
-							break
-						}
-					}
-				}
-
-				compiledExpression[name] = context.valueOrLiteral(for: foundWord)
+				compiledExpression[name] = parser.compileFilter(scanner.content)
 			}
 		}
 	}
 
-	enum ExpressionSegment
+	public enum ExpressionSegment
 	{
 		/// A literal string. This segment must be matched exactly.
 		case literal(String)
@@ -97,11 +81,12 @@ class Tag
 		case identifier(String)
 
 		/// A valid token value. This segment will match any token value, such as a quoted string, a number, or a
-		/// variable defined in the receiver's context. If none of these are matched, is assigned `Token.Value.nil`.
-		case value(String)
+		/// variable defined in the receiver's context, and any filters applied to it afterwards. If none of these are
+		/// matched, is assigned `Token.Value.nil`.
+		case variable(String)
 	}
 
-	enum Errors: Error
+	public enum Errors: Error
 	{
 		case malformedStatement(String)
 		case missingArtifacts
@@ -117,17 +102,29 @@ class Tag
 	}
 }
 
+extension Tag
+{
+	static let builtInTags: [Tag.Type] = [
+		TagAssign.self
+	]
+}
+
 class TagAssign: Tag
 {
 	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% assign IDENTIFIER = "value" %}
-		return [.literal("assign"), .identifier("assignee"), .literal("="), .value("value")]
+		return [.identifier("assignee"), .literal("="), .variable("value")]
 	}
 
-	override func compile(from statement: String) throws
+	override class var keyword: String
 	{
-		try super.compile(from: statement)
+		return "assign"
+	}
+
+	override func parse(statement: String, using parser: TokenParser) throws
+	{
+		try super.parse(statement: statement, using: parser)
 
 		guard
 			let assignee = compiledExpression["assignee"] as? String,

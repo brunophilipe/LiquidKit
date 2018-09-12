@@ -14,6 +14,7 @@ open class TokenParser
     private var tokens: [Token]
     private let context: Context
 	private var filters: [Filter] = []
+	private var tags: [String: [Tag.Type]] = [:]
     
     public init(tokens: [Token], context: Context)
 	{
@@ -21,6 +22,7 @@ open class TokenParser
         self.context = context
 
 		registerFilters()
+		registerTags()
     }
 
 	open func registerFilters()
@@ -33,6 +35,11 @@ open class TokenParser
 			.urlEncode
 		])
 	}
+
+	open func registerTags()
+	{
+		Tag.builtInTags.forEach(register)
+	}
     
     /// Parse the given tokens into nodes
     public func parse() -> [String]
@@ -43,14 +50,14 @@ open class TokenParser
 		{
             switch token
 			{
-            case .text(let text):
-                nodes.append(text)
+            case .text:
+                nodes.append(token.contents)
 
             case .variable:
                 nodes.append(compileFilter(token.contents).stringValue)
 
             case .tag:
-				continue
+				compileTag(token.contents)
             }
         }
         
@@ -66,8 +73,25 @@ open class TokenParser
         
         return nil
     }
+
+	public func register(filter: Filter)
+	{
+		filters.append(filter)
+	}
+
+	public func register(tag: Tag.Type)
+	{
+		if tags[tag.keyword] == nil
+		{
+			tags[tag.keyword] = [tag]
+		}
+		else
+		{
+			tags[tag.keyword]?.append(tag)
+		}
+	}
     
-    private func compileFilter(_ token: String) -> Token.Value
+    internal func compileFilter(_ token: String) -> Token.Value
 	{
 		let splitToken = token.split(separator: "|")
 
@@ -111,4 +135,40 @@ open class TokenParser
 
         return filteredValue
     }
+
+	private func compileTag(_ contents: String)
+	{
+		let contentScanner = Scanner(contents.trimmingWhitespaces)
+		let keyword = contentScanner.scan(until: .whitespaces)
+
+		guard keyword.count > 0 else
+		{
+			NSLog("Malformed tag: “\(contents)”")
+			return
+		}
+
+		guard let tags = self.tags[String(keyword)], tags.count > 0 else
+		{
+			NSLog("Unknown tag keyword: “\(keyword)”")
+			return
+		}
+
+		let statement = contentScanner.content
+
+		for tag in tags
+		{
+			let tagInstance = tag.init(context: context)
+
+			do
+			{
+				try tagInstance.parse(statement: statement, using: self)
+				break
+			}
+			catch
+			{
+				NSLog("Error parsing tag: \(error.localizedDescription)")
+			}
+		}
+	}
+	
 }

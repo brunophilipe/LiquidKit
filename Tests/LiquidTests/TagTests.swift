@@ -12,9 +12,10 @@ class TagTests: XCTestCase
 {
 	func testTagAssign()
 	{
-		let context = Context()
-		let tag = TagAssign(context: context)
-		XCTAssertNoThrow(try tag.compile(from: "assign my_variable = \"bananas to the beat\""))
-		XCTAssertEqual(context.getValue(for: "my_variable"), .string("bananas to the beat"))
+		let lexer = Lexer(templateString: "{% assign filename = \"/index.html\" %}{{ filename }}{% assign reversed = \"abc\" | split: \"\" | reverse | join: \"\" %}{{ reversed }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["/index.html", "cba"])
 	}
 }
