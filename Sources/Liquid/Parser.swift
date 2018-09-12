@@ -37,11 +37,6 @@ open class TokenParser
     /// Parse the given tokens into nodes
     public func parse() -> [String]
 	{
-        return parse(nil)
-    }
-    
-    public func parse(_ parse_until:((_ parser:TokenParser, _ token:Token) -> (Bool))?) -> [String]
-	{
         var nodes = [String]()
         
         while let token = nextToken()
@@ -78,10 +73,10 @@ open class TokenParser
 
 		if splitToken.count == 1
 		{
-			return valueOrLiteral(for: token)
+			return context.valueOrLiteral(for: token)
 		}
 
-		var filteredValue = valueOrLiteral(for: String(splitToken.first!))
+		var filteredValue = context.valueOrLiteral(for: String(splitToken.first!))
 
 		for filterString in splitToken[1...]
 		{
@@ -102,7 +97,7 @@ open class TokenParser
 			}
 			else
 			{
-				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ valueOrLiteral(for: String($0)) })
+				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ context.valueOrLiteral(for: String($0)) })
 			}
 
 			guard let filter = filters.first(where: { $0.identifier == filterIdentifier }) else
