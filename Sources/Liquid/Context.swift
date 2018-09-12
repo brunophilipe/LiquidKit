@@ -8,6 +8,7 @@
 /// A container for template variables.
 public class Context {
     private var variables: [String: Token.Value]
+	private var counters: [String: Int] = [:]
 
     public init(dictionary: [String: Token.Value]? = nil) {
 		variables = dictionary ?? [:]
@@ -36,6 +37,22 @@ public class Context {
 		if let value = parseValue(value) {
 			variables[key] = value
 		}
+	}
+
+	/// Creates a new number variable, and increases its value by one every time it is called. The initial value is 0.
+	public func incrementCounter(for key: String) -> Int
+	{
+		let counter = counters[key] ?? 0
+		counters[key] = counter + 1
+		return counter
+	}
+
+	/// Creates a new number variable, and decreases its value by one every time it is called. The initial value is -1.
+	public func decrementCounter(for key: String) -> Int
+	{
+		let counter = counters[key] ?? -1
+		counters[key] = counter - 1
+		return counter
 	}
 	
 	private func parseValue(_ value: Any?) -> Token.Value? {
