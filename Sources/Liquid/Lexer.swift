@@ -101,16 +101,21 @@ class Scanner {
         return ""
     }
     
-    func scan(until: [String]) -> (String, String)? {
-        if until.isEmpty {
+    func scan(until: [String]) -> (String, String)?
+	{
+        if until.isEmpty
+		{
             return nil
         }
         
         var index = content.startIndex
-        while index != content.endIndex {
+        while index != content.endIndex
+		{
             let substring = String(content[index...])
-            for string in until {
-                if substring.hasPrefix(string) {
+            for string in until
+			{
+                if substring.hasPrefix(string)
+				{
                     let result = String(content[..<index])
                     content = substring
                     return (string, result)
@@ -122,4 +127,23 @@ class Scanner {
         
         return nil
     }
+
+	/// Scans the content until a character from the provided character set is found. If no such character is found,
+	/// scans to the end of the content and returns its value.
+	///
+	/// - Parameter charset: The lookup character set.
+	/// - Returns: The scanned string.
+	func scan(until charset: CharacterSet, skipEarlyMatches: Bool = false) -> String
+	{
+		// If skipEarlyMatches is true, we first scan to chars that would not match the provided charset.
+		if skipEarlyMatches
+		{
+			_ = scan(until: charset.inverted)
+		}
+
+		let finalIndex = content.rangeOfCharacter(from: charset)?.lowerBound ?? content.endIndex
+		let scannedString = String(content[..<finalIndex])
+		content = String(content[finalIndex...])
+		return scannedString
+	}
 }
