@@ -2,7 +2,7 @@
 //  Filter.swift
 //  Liquid
 //
-//  Created by brunophilipe on 08/09/2018.
+//  Created by Bruno Philipe on 12/09/18.
 //
 
 import Foundation

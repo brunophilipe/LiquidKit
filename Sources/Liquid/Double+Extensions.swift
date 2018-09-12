@@ -2,7 +2,7 @@
 //  Double+Extensions.swift
 //  LiquidTests
 //
-//  Created by Bruno Philipe on 10/10/18.
+//  Created by Bruno Philipe on 10/09/18.
 //
 
 extension Double
