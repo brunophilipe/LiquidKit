@@ -29,7 +29,7 @@ public class Tag
 	}
 
 	/// Given a string statement, attempts to compile the receiver tag.
-	open func parse(statement: String, using parser: TokenParser) throws
+	open func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
 	{
 		let scanner = Scanner(statement.trimmingWhitespaces)
 
@@ -70,6 +70,8 @@ public class Tag
 				compiledExpression[name] = parser.compileFilter(scanner.content)
 			}
 		}
+
+		return nil
 	}
 
 	public enum ExpressionSegment
@@ -122,9 +124,9 @@ class TagAssign: Tag
 		return "assign"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
 	{
-		try super.parse(statement: statement, using: parser)
+		_ = try super.parse(statement: statement, using: parser)
 
 		guard
 			let assignee = compiledExpression["assignee"] as? String,
@@ -135,5 +137,7 @@ class TagAssign: Tag
 		}
 
 		context.set(value: value, for: assignee)
+
+		return nil
 	}
 }

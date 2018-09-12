@@ -57,7 +57,10 @@ open class TokenParser
                 nodes.append(compileFilter(token.contents).stringValue)
 
             case .tag:
-				compileTag(token.contents)
+				if let result = compileTag(token.contents)
+				{
+					nodes.append(result.stringValue)
+				}
             }
         }
         
@@ -136,7 +139,7 @@ open class TokenParser
         return filteredValue
     }
 
-	private func compileTag(_ contents: String)
+	private func compileTag(_ contents: String) -> Token.Value?
 	{
 		let contentScanner = Scanner(contents.trimmingWhitespaces)
 		let keyword = contentScanner.scan(until: .whitespaces)
@@ -144,13 +147,13 @@ open class TokenParser
 		guard keyword.count > 0 else
 		{
 			NSLog("Malformed tag: “\(contents)”")
-			return
+			return nil
 		}
 
 		guard let tags = self.tags[String(keyword)], tags.count > 0 else
 		{
 			NSLog("Unknown tag keyword: “\(keyword)”")
-			return
+			return nil
 		}
 
 		let statement = contentScanner.content
@@ -161,14 +164,15 @@ open class TokenParser
 
 			do
 			{
-				try tagInstance.parse(statement: statement, using: self)
-				break
+				return try tagInstance.parse(statement: statement, using: self)
 			}
 			catch
 			{
 				NSLog("Error parsing tag: \(error.localizedDescription)")
 			}
 		}
+
+		return nil
 	}
 	
 }
