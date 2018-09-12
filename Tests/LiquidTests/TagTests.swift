@@ -18,4 +18,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["/index.html", "cba"])
 	}
+
+	func testTagIncrement()
+	{
+		let lexer = Lexer(templateString: "{% increment counter %}{% increment counter %}{% increment counter %}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["0", "1", "2"])
+	}
 }

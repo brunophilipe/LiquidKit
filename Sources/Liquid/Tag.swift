@@ -107,7 +107,7 @@ public class Tag
 extension Tag
 {
 	static let builtInTags: [Tag.Type] = [
-		TagAssign.self
+		TagAssign.self, TagIncrement.self
 	]
 }
 
@@ -139,5 +139,31 @@ class TagAssign: Tag
 		context.set(value: value, for: assignee)
 
 		return nil
+	}
+}
+
+class TagIncrement: Tag
+{
+	internal override var tagExpression: [ExpressionSegment]
+	{
+		// example: {% increment IDENTIFIER %}
+		return [.identifier("assignee")]
+	}
+
+	override class var keyword: String
+	{
+		return "increment"
+	}
+
+	override func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
+	{
+		_ = try super.parse(statement: statement, using: parser)
+
+		guard let assignee = compiledExpression["assignee"] as? String else
+		{
+			throw Errors.missingArtifacts
+		}
+
+		return .integer(context.incrementCounter(for: assignee))
 	}
 }
