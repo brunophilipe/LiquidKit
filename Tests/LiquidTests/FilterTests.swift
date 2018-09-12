@@ -21,11 +21,16 @@ class FilterTests: XCTestCase
 	
 	func testFilter_append()
 	{
-		let lexer = Lexer(templateString: "{% assign filename = \"/index.html\" %}{{ \"/my/fancy/url\" | append: \".html\" }}{{ \"a\" | append: \"b\" | append: \"c\" }}{{ \"website.com\" | append: filename }}")
+		let lexer = Lexer(templateString: """
+{% assign filename = \"/index.html\" %}
+{{ \"/my/fancy/url\" | append: \".html\" }}
+{{ \"a\" | append: \"b\" | append: \"c\" }}
+{{ \"website.com\" | append: filename }}
+""")
 		let tokenize = lexer.tokenize()
 		let parser = TokenParser(tokens: tokenize, context: Context())
 		let res = parser.parse()
-		XCTAssertEqual(res, ["/my/fancy/url.html", "abc", "website.com/index.html"])
+		XCTAssertEqual(res, ["\n", "/my/fancy/url.html", "\n", "abc", "\n", "website.com/index.html"])
 	}
 	
 	func testFilter_atLeast()
