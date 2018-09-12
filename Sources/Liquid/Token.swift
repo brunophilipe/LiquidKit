@@ -8,8 +8,8 @@
 
 import Foundation
 
-public enum Token : Equatable {
-    
+public enum Token : Equatable
+{
     /// A token representing a piece of text.
     case text(value: String)
     
@@ -19,26 +19,25 @@ public enum Token : Equatable {
     /// A token representing a template tag.
     case tag(value: String)
 
-    public var contents: String {
-        switch self {
-        case .text(let value):
-            return value
-        case .variable(let value):
-            return value
-        case .tag(let value):
-            return value
+    public var contents: String
+	{
+        switch self
+		{
+        case .text(let value):			return value
+        case .variable(let value):		return value
+        case .tag(let value):			return value
         }
     }
     
-    public static func ==(lhs: Token, rhs: Token) -> Bool {
-        switch (lhs, rhs) {
-        case (.text(let lhsValue), .text(let rhsValue)):
-            return lhsValue == rhsValue
-        case (.variable(let lhsValue), .variable(let rhsValue)):
-            return lhsValue == rhsValue
-        case (.tag(let lhsValue), .tag(let rhsValue)):
-            return lhsValue == rhsValue
-        default:
+    public static func ==(lhs: Token, rhs: Token) -> Bool
+	{
+        switch (lhs, rhs)
+		{
+        case (.text(let lhsValue), .text(let rhsValue)):			return lhsValue == rhsValue
+        case (.variable(let lhsValue), .variable(let rhsValue)):	return lhsValue == rhsValue
+        case (.tag(let lhsValue), .tag(let rhsValue)):				return lhsValue == rhsValue
+
+		default:
             return false
         }
     }
@@ -161,18 +160,12 @@ public enum Token : Equatable {
 		{
 			switch self
 			{
-			case .nil:
-				return Int.min
-			case .bool(let boolValue):
-				return boolValue.hashValue
-			case .string(let stringValue):
-				return stringValue.hashValue
-			case .integer(let integerValue):
-				return integerValue.hashValue
-			case .decimal(let decimalValue):
-				return decimalValue.hashValue
-			case .array(let arrayValue):
-				return arrayValue.hashValue
+			case .nil:							return Int.min
+			case .bool(let boolValue):			return boolValue.hashValue
+			case .string(let stringValue):		return stringValue.hashValue
+			case .integer(let integerValue):	return integerValue.hashValue
+			case .decimal(let decimalValue):	return decimalValue.hashValue
+			case .array(let arrayValue):		return arrayValue.hashValue
 			}
 		}
 	}
