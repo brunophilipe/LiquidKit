@@ -27,4 +27,22 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["0", "1", "2"])
 	}
+
+	func testTagDecrement()
+	{
+		let lexer = Lexer(templateString: "{% decrement counter %}{% decrement counter %}{% decrement counter %}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["-1", "-2", "-3"])
+	}
+
+	func testTagIncrementDecrement()
+	{
+		let lexer = Lexer(templateString: "{% decrement counter %}{% decrement counter %}{% decrement counter %}{% increment counter %}{% increment counter %}{% increment counter %}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["-1", "-2", "-3", "-3", "-2", "-1"])
+	}
 }

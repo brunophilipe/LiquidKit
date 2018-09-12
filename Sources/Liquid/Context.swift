@@ -50,8 +50,8 @@ public class Context {
 	/// Creates a new number variable, and decreases its value by one every time it is called. The initial value is -1.
 	public func decrementCounter(for key: String) -> Int
 	{
-		let counter = counters[key] ?? -1
-		counters[key] = counter - 1
+		let counter = (counters[key] ?? 0) - 1
+		counters[key] = counter
 		return counter
 	}
 	
