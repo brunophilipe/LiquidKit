@@ -554,6 +554,12 @@ extension Filter {
 			return input
 		}
 
+		if boundary.count == 0
+		{
+			// Special case: Empty boundary means we need to split into an array of strings holding each char.
+			return .array(inputString.map({ Token.Value.string(String($0)) }))
+		}
+
 		return .array(inputString.split(boundary: boundary).map({ Token.Value.string(String($0)) }))
 	}
 

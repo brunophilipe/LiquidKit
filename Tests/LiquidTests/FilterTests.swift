@@ -288,6 +288,15 @@ class FilterTests: XCTestCase
 		XCTAssertEqual(res, ["giraffe, octopus, Sally Snake, zebra"])
 	}
 
+	func testFilter_split()
+	{
+		let lexer = Lexer(templateString: "{{ \"banana\" | split: \"\" | join: \"-\" }}")
+		let tokenize = lexer.tokenize()
+		let parser = TokenParser(tokens: tokenize, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["b-a-n-a-n-a"])
+	}
+
 	func testFilter_split_join()
 	{
 		let lexer = Lexer(templateString: "{{ \"John, Paul, George, Ringo\" | split: \", \" | join: \"-\" }}")
