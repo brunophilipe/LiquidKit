@@ -16,151 +16,17 @@ open class Filter
 	let identifier: String
 
 	/// Function that transforms the input string.
-	let lambda: ((Value, [Value]) -> Value)
+	let lambda: ((Token.Value, [Token.Value]) -> Token.Value)
 
 	/// Filter constructor.
-	init(identifier: String, lambda: @escaping (Value, [Value]) -> Value) {
+	init(identifier: String, lambda: @escaping (Token.Value, [Token.Value]) -> Token.Value) {
 		self.identifier = identifier
 		self.lambda = lambda
-	}
-
-	/// An enum whose instances are used to represent filter values and parameters as parsed from the liquid strings.
-	public indirect enum Value: Hashable
-	{
-		case `nil`
-		case bool(Bool)
-		case string(String)
-		case integer(Int)
-		case decimal(Decimal)
-		case array([Value])
-
-		/// Returns a string value or representation of the receiver.
-		///
-		/// * If the receiver is an integer or decimal enum, returns its value embedded in a string using `"\()"`.
-		/// * If the receiver is a string enum, returns its value.
-		/// * For any other enum value, returns an empty string.
-		var stringValue: String
-		{
-			switch self
-			{
-			case .bool(_), .nil: return ""
-			case .decimal(let decimal): return "\(decimal)"
-			case .integer(let integer): return "\(integer)"
-			case .string(let string): return string
-			case .array: return ""
-			}
-		}
-
-		/// Returns the decimal value of the receiver.
-		///
-		/// * If the receiver is an integer enum, returns its value cast to Decimal.
-		/// * If the receiver is a decimal enum, returns its value.
-		/// * If the receiver is a string enum, attempts to parse its value as a Decimal, which might return `nil`.
-		/// * For any other enum value, returns `nil`.
-		var decimalValue: Decimal?
-		{
-			switch self
-			{
-			case .decimal(let decimal): return decimal
-			case .integer(let integer): return Decimal(integer)
-			case .string(let string): return Decimal(string: string)
-			default:
-				return nil
-			}
-		}
-
-		/// Returns the double value of the receiver.
-		///
-		/// * If the receiver is an integer enum, returns its value cast to Double.
-		/// * If the receiver is a decimal enum, returns its value cast to Double.
-		/// * If the receiver is a string enum, attempts to parse its value as a Double, which might return `nil`.
-		/// * For any other enum value, returns `nil`.
-		var doubleValue: Double?
-		{
-			switch self
-			{
-			case .decimal(let decimal): return NSDecimalNumber(decimal: decimal).doubleValue
-			case .integer(let integer): return Double(integer)
-			case .string(let string): return Double(string)
-			default:
-				return nil
-			}
-		}
-
-		/// Returns the integer value of the receiver.
-		///
-		/// * If the receiver is an integer enum, returns its value.
-		/// * If the receiver is a decimal enum, returns its value cast to Int.
-		/// * If the receiver is a string enum, attempts to parse its value as an Int, which might return `nil`.
-		/// * For any other enum value, returns `nil`.
-		var integerValue: Int?
-		{
-			switch self
-			{
-			case .decimal(let decimal): return NSDecimalNumber(decimal: decimal).intValue
-			case .integer(let integer): return integer
-			case .string(let string): return Int(string)
-			default:
-				return nil
-			}
-		}
-		
-		/// Returns `true` if the receiver is either `.nil` or `.bool(false)`. Otherwise returns `false`.
-		var isFalsy: Bool
-		{
-			switch self
-			{
-			case .bool(false), .nil:
-				return true
-				
-			default:
-				return false
-			}
-		}
-		
-		/// Returns `false` if the receiver is either `.nil` or `.bool(false)`. Otherwise returns `true`.
-		var isTruthy: Bool
-		{
-			return !isFalsy
-		}
-
-		/// Returns `true` if the receiver is a string enum and its value is an empty string. For all other cases
-		/// returns `false`.
-		var isEmptyString: Bool
-		{
-			switch self
-			{
-			case .string(let string):
-				return string.isEmpty
-				
-			default:
-				return false
-			}
-		}
-
-		public var hashValue: Int
-		{
-			switch self
-			{
-			case .nil:
-				return Int.min
-			case .bool(let boolValue):
-				return boolValue.hashValue
-			case .string(let stringValue):
-				return stringValue.hashValue
-			case .integer(let integerValue):
-				return integerValue.hashValue
-			case .decimal(let decimalValue):
-				return decimalValue.hashValue
-			case .array(let arrayValue):
-				return arrayValue.hashValue
-			}
-		}
 	}
 }
 
 extension Filter {
-	static let abs = Filter(identifier: "abs") { (input, _) -> Value in
+	static let abs = Filter(identifier: "abs") { (input, _) -> Token.Value in
 		guard let decimal = input.decimalValue else {
 			return input
 		}
@@ -168,7 +34,7 @@ extension Filter {
 		return .decimal(Swift.abs(decimal))
 	}
 
-	static let append = Filter(identifier: "append") { (input, parameters) -> Value in
+	static let append = Filter(identifier: "append") { (input, parameters) -> Token.Value in
 		guard let stringParameter = parameters.first?.stringValue else {
 			return input
 		}
@@ -176,7 +42,7 @@ extension Filter {
 		return .string(input.stringValue + stringParameter)
 	}
 
-	static let atLeast = Filter(identifier: "at_least") { (input, parameters) -> Value in
+	static let atLeast = Filter(identifier: "at_least") { (input, parameters) -> Token.Value in
 		guard
 			let inputDecimal = input.decimalValue,
 			let parameterDecimal = parameters.first?.decimalValue
@@ -187,7 +53,7 @@ extension Filter {
 		return .decimal(max(inputDecimal, parameterDecimal))
 	}
 
-	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> Value in
+	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> Token.Value in
 		guard
 			let inputDecimal = input.decimalValue,
 			let parameterDecimal = parameters.first?.decimalValue
@@ -198,7 +64,7 @@ extension Filter {
 		return .decimal(min(inputDecimal, parameterDecimal))
 	}
 
-	static let capitalize = Filter(identifier: "capitalize") { (input, _) -> Value in
+	static let capitalize = Filter(identifier: "capitalize") { (input, _) -> Token.Value in
 
 		let inputString = input.stringValue
 		
@@ -220,7 +86,7 @@ extension Filter {
 
 	static let ceil = Filter(identifier: "ceil")
 	{
-		(input, _) -> Value in
+		(input, _) -> Token.Value in
 
 		guard let inputDouble = input.doubleValue else
 		{
@@ -233,7 +99,7 @@ extension Filter {
 	// static let compact: Filter
 	// static let concat: Filter
 
-	static let date = Filter(identifier: "date") { (input, parameters) -> Value in
+	static let date = Filter(identifier: "date") { (input, parameters) -> Token.Value in
 
 		guard let formatString = parameters.first?.stringValue else {
 			return input
@@ -289,7 +155,7 @@ extension Filter {
 		return input
 	}
 
-	static let `default` = Filter(identifier: "default") { (input, parameters) -> Filter.Value in
+	static let `default` = Filter(identifier: "default") { (input, parameters) -> Token.Value in
 		
 		guard let defaultParameter = parameters.first else {
 			return input
@@ -304,7 +170,7 @@ extension Filter {
 	
 	static let dividedBy = Filter(identifier: "divided_by")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let dividendDouble = input.doubleValue, let divisor = parameters.first else
 		{
@@ -326,7 +192,7 @@ extension Filter {
 
 	static let downcase = Filter(identifier: "downcase")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .string(let inputString) = input else {
 			return input
@@ -337,14 +203,14 @@ extension Filter {
 
 	static let escape = Filter(identifier: "escape")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		return .string(input.stringValue.htmlEscape(decimal: true, useNamedReferences: true))
 	}
 
 	static let escapeOnce = Filter(identifier: "escape_once")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		return .string(input.stringValue.htmlUnescape().htmlEscape(decimal: true, useNamedReferences: true))
 	}
@@ -353,7 +219,7 @@ extension Filter {
 
 	static let floor = Filter(identifier: "floor")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard let inputDouble = input.doubleValue else
 		{
@@ -365,7 +231,7 @@ extension Filter {
 
 	static let join = Filter(identifier: "join")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard
 			let firstParameter = parameters.first,
@@ -383,7 +249,7 @@ extension Filter {
 
 	static let leftStrip = Filter(identifier: "lstrip")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .string(let inputString) = input else
 		{
@@ -415,7 +281,7 @@ extension Filter {
 
 	static let minus = Filter(identifier: "minus")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
 		{
@@ -427,7 +293,7 @@ extension Filter {
 
 	static let modulo = Filter(identifier: "modulo")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let doubleInput = input.doubleValue, let doubleParameter = parameters.first?.doubleValue else
 		{
@@ -439,7 +305,7 @@ extension Filter {
 
 	static let newlineToBr = Filter(identifier: "newline_to_br")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .string(let inputString) = input else
 		{
@@ -452,7 +318,7 @@ extension Filter {
 
 	static let plus = Filter(identifier: "plus")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
 		{
@@ -464,7 +330,7 @@ extension Filter {
 
 	static let prepend = Filter(identifier: "prepend")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let stringParameter = parameters.first?.stringValue else
 		{
@@ -476,7 +342,7 @@ extension Filter {
 
 	static let remove = Filter(identifier: "remove")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let needle = parameters.first?.stringValue else
 		{
@@ -488,7 +354,7 @@ extension Filter {
 	
 	static let removeFirst = Filter(identifier: "remove_first")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let needle = parameters.first?.stringValue else
 		{
@@ -506,7 +372,7 @@ extension Filter {
 
 	static let replace = Filter(identifier: "replace")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard parameters.count == 2 else
 		{
@@ -521,7 +387,7 @@ extension Filter {
 
 	static let replaceFirst = Filter(identifier: "replace_first")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard parameters.count == 2 else
 		{
@@ -542,7 +408,7 @@ extension Filter {
 
 	static let reverse = Filter(identifier: "reverse")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .array(let inputArray) = input else
 		{
@@ -554,7 +420,7 @@ extension Filter {
 
 	static let round = Filter(identifier: "round")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let inputDouble = input.doubleValue else
 		{
@@ -573,7 +439,7 @@ extension Filter {
 
 	static let rightStrip = Filter(identifier: "rstrip")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard case .string(let inputString) = input else
 		{
@@ -603,7 +469,7 @@ extension Filter {
 
 	static let size = Filter(identifier: "size")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		switch input
 		{
@@ -616,7 +482,7 @@ extension Filter {
 
 	static let slice = Filter(identifier: "slice")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard
 			case .string(let stringInput) = input,
@@ -648,7 +514,7 @@ extension Filter {
 
 	static let sort = Filter(identifier: "sort")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .array(let arrayInput) = input else
 		{
@@ -660,7 +526,7 @@ extension Filter {
 
 	static let sortNatural = Filter(identifier: "sort_natural")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .array(let arrayInput) = input else
 		{
@@ -677,7 +543,7 @@ extension Filter {
 
 	static let split = Filter(identifier: "split")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard
 			let firstParameter = parameters.first,
@@ -688,12 +554,12 @@ extension Filter {
 			return input
 		}
 
-		return .array(inputString.split(boundary: boundary).map({ Filter.Value.string(String($0)) }))
+		return .array(inputString.split(boundary: boundary).map({ Token.Value.string(String($0)) }))
 	}
 
 	static let strip = Filter(identifier: "strip")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .string(let inputString) = input else
 		{
@@ -705,7 +571,7 @@ extension Filter {
 
 	static let stripHTML = Filter(identifier: "strip_html")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		let htmlRegex = "<[^>]+>"
 		return .string(input.stringValue.replacingOccurrences(of: htmlRegex, with: "", options: .regularExpression))
@@ -713,7 +579,7 @@ extension Filter {
 
 	static let stripNewlines = Filter(identifier: "strip_newlines")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		return .string(input.stringValue.replacingOccurrences(of: "\r\n", with: "")
 										.replacingOccurrences(of: "\n", with: ""))
@@ -721,7 +587,7 @@ extension Filter {
 
 	static let times = Filter(identifier: "times")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
 		{
@@ -733,7 +599,7 @@ extension Filter {
 
 	static let truncate = Filter(identifier: "truncate")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard (1...2).contains(parameters.count), let length = parameters[0].integerValue else
 		{
@@ -754,7 +620,7 @@ extension Filter {
 
 	static let truncateWords = Filter(identifier: "truncatewords")
 	{
-		(input, parameters) -> Filter.Value in
+		(input, parameters) -> Token.Value in
 
 		guard (1...2).contains(parameters.count), let wordCount = parameters[0].integerValue else
 		{
@@ -794,26 +660,26 @@ extension Filter {
 
 	static let uniq = Filter(identifier: "uniq")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard case .array(let inputArray) = input else
 		{
 			return input
 		}
 
-		return .array(NSOrderedSet(array: inputArray).array.compactMap({ $0 as? Filter.Value }))
+		return .array(NSOrderedSet(array: inputArray).array.compactMap({ $0 as? Token.Value }))
 	}
 
 	static let upcase = Filter(identifier: "upcase")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		return .string(input.stringValue.uppercased())
 	}
 	
 	static let urlDecode = Filter(identifier: "url_decode")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		guard let decodedString = input.stringValue.removingPercentEncoding else
 		{
@@ -825,7 +691,7 @@ extension Filter {
 
 	static let urlEncode = Filter(identifier: "url_encode")
 	{
-		(input, _) -> Filter.Value in
+		(input, _) -> Token.Value in
 
 		let inputString = input.stringValue.replacingOccurrences(of: " ", with: "+")
 

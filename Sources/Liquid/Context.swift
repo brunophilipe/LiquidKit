@@ -7,9 +7,9 @@
 //
 /// A container for template variables.
 public class Context {
-    private var variables: [String: Filter.Value]
+    private var variables: [String: Token.Value]
 
-    public init(dictionary: [String: Filter.Value]? = nil) {
+    public init(dictionary: [String: Token.Value]? = nil) {
 		variables = dictionary ?? [:]
     }
 	
@@ -23,11 +23,11 @@ public class Context {
 		}
 	}
 	
-	public func getValue(for key: String) -> Filter.Value? {
+	public func getValue(for key: String) -> Token.Value? {
 		return variables[key]
 	}
 	
-	public func set(value: Filter.Value, for key: String) {
+	public func set(value: Token.Value, for key: String) {
 		variables[key] = value
 	}
 	
@@ -38,7 +38,7 @@ public class Context {
 		}
 	}
 	
-	private func parseValue(_ value: Any?) -> Filter.Value? {
+	private func parseValue(_ value: Any?) -> Token.Value? {
 		if let intLiteral = value as? IntegerLiteralType {
 			return .decimal(Decimal(integerLiteral: intLiteral))
 		} else if let floatLiteral = value as? FloatLiteralType {
@@ -51,6 +51,32 @@ public class Context {
 			return .nil
 		} else {
 			return nil
+		}
+	}
+
+	func valueOrLiteral(for token: String) -> Token.Value
+	{
+		let trimmedToken = token.trimmingWhitespaces
+
+		if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"")
+		{
+			// This is a literal string. Strip its quotations.
+			return .string(trimmedToken.trim(character: "\""))
+		}
+		else if let integer = Int(trimmedToken)
+		{
+			// This is an integer literal (the integer constructor fails if a decimal point is found).
+			return .integer(integer)
+		}
+		else if let number = Decimal(string: trimmedToken)
+		{
+			// This is a decimal literal.
+			return .decimal(number)
+		}
+		else
+		{
+			// This is a variable name. Return its value, or an empty string.
+			return getValue(for: trimmedToken) ?? .nil
 		}
 	}
 }
