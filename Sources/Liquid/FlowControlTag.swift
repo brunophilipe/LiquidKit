@@ -55,6 +55,37 @@ class TagEndIf: Tag
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
+		return [TagIf.self, TagElse.self]
+	}
+}
+
+class TagElse: Tag
+{
+	override class var keyword: String
+	{
+		return "else"
+	}
+
+	override var definesScope: Bool
+	{
+		return true
+	}
+
+	override var shouldEnterScope: Bool
+	{
+		// An `else` tag should be executed if an immediatelly prior `if` tag is not executed.
+		if let ifTag = terminatedScopeTag as? TagIf
+		{
+			return !ifTag.shouldEnterScope
+		}
+		else
+		{
+			return false
+		}
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
 		return [TagIf.self]
 	}
 }

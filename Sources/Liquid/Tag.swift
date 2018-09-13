@@ -136,7 +136,7 @@ public class Tag
 extension Tag
 {
 	static let builtInTags: [Tag.Type] = [
-		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self
+		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self
 	]
 }
 
