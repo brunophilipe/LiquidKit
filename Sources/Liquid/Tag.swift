@@ -20,19 +20,28 @@ public class Tag
 		return []
 	}
 
+	/// Storage for the compiled statement expression, which is populated after a successful compilation.
 	internal var compiledExpression: [String: Any] = [:]
-	internal var context: Context
 
+	/// The context where variables, counters, and other properties are stored.
+	internal let context: Context
+
+	/// If true, will create a scope for this tag upon compiling it. One or more closing tgas will need to be defined
+	/// to close that scope. Those tags will need the name of this class in its `terminatesScopesWithTags` property.
 	public var definesScope: Bool
 	{
 		return false
 	}
 
+	/// If defined, lists which scopes this this tag will close, based on their opener tags.
 	public var terminatesScopesWithTags: [Tag.Type]?
 	{
 		return nil
 	}
 
+	/// Whether the statement provided to this tag causes its scope to be executed.
+	///
+	/// *Notice:* This value is only evaluated if `definesScope` returns `true`.
 	public var shouldEnterScope: Bool
 	{
 		return false
