@@ -27,6 +27,7 @@ class TagIf: Tag
 
 	override var shouldEnterScope: Bool
 	{
+		// An `if` tag should execute if its statement evaluates to `true`
 		if case .some(.bool(true)) = (compiledExpression["conditional"] as? Token.Value)
 		{
 			return true
@@ -55,7 +56,7 @@ class TagEndIf: Tag
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
-		return [TagIf.self, TagElse.self]
+		return [TagIf.self, TagElse.self, TagElsif.self]
 	}
 }
 
@@ -86,6 +87,33 @@ class TagElse: Tag
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
+		return [TagIf.self, TagElsif.self]
+	}
+}
+
+class TagElsif: TagIf
+{
+	override class var keyword: String
+	{
+		return "elsif"
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
 		return [TagIf.self]
+	}
+
+	override var shouldEnterScope: Bool
+	{
+		// An `elsif` tag should be executed if an immediatelly prior `if` tag is not executed, and its statement
+		// evaluates to `true`
+		if let ifTag = terminatedScopeTag as? TagIf
+		{
+			return !ifTag.shouldEnterScope && super.shouldEnterScope
+		}
+		else
+		{
+			return false
+		}
 	}
 }

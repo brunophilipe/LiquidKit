@@ -73,9 +73,27 @@ class TagTests: XCTestCase
 		XCTAssertEqual(res, ["<p>", "20", "</p>"])
 	}
 
-	func testTagIfElseEndIf_reverse()
+	func testTagIfElseEndIf_inverse()
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% if check %}10{% else %}20{% endif %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "10", "</p>"])
+	}
+
+	func testTagIfElseIfEndIf()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% assign check_inverse = true %}{% if check %}10{% elsif check_inverse %}20{% endif %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "20", "</p>"])
+	}
+
+	func testTagIfElseIfEndIf_inverse()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% assign check_inverse = false %}{% if check %}10{% elsif check_inverse %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
 		let parser = TokenParser(tokens: tokens, context: Context())
 		let res = parser.parse()
