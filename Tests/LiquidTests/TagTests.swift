@@ -48,10 +48,19 @@ class TagTests: XCTestCase
 
 	func testTagIfEndIf()
 	{
-		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% if check %}10{% endif %}</p>")
+		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% if check %}{% if check %}10{% endif %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
 		let parser = TokenParser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "</p>"])
+	}
+
+	func testTagIfEndIf_inverse()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% if check %}{% if check %}10{% endif %}20{% endif %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "10", "20", "</p>"])
 	}
 }

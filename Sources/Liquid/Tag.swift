@@ -23,6 +23,21 @@ public class Tag
 	internal var compiledExpression: [String: Any] = [:]
 	internal var context: Context
 
+	public var definesScope: Bool
+	{
+		return false
+	}
+
+	public var terminatesScope: Bool
+	{
+		return false
+	}
+
+	public var shouldEnterScope: Bool
+	{
+		return false
+	}
+
 	/// If compiling this tag produces an output, this value will be stored here.
 	public internal(set) var output: [Token.Value]? = nil
 

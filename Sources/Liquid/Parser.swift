@@ -11,19 +11,19 @@ import Foundation
 /// A class for parsing an array of tokens and converts them into a collection of Node's
 open class TokenParser
 {
-    private var tokens: [Token]
-    private let context: Context
+	private var tokens: [Token]
+	private let context: Context
 	private var filters: [Filter] = []
 	private var tags: [String: [Tag.Type]] = [:]
-    
-    public init(tokens: [Token], context: Context)
+
+	public init(tokens: [Token], context: Context)
 	{
-        self.tokens = tokens
-        self.context = context
+		self.tokens = tokens
+		self.context = context
 
 		registerFilters()
 		registerTags()
-    }
+	}
 
 	open func registerFilters()
 	{
@@ -40,69 +40,22 @@ open class TokenParser
 	{
 		Tag.builtInTags.forEach(register)
 	}
-    
-    /// Parse the given tokens into nodes
-    public func parse() -> [String]
+
+	/// Parse the given tokens into nodes
+	public func parse() -> [String]
 	{
-        var nodes = [String]()
-		var skipUntil: [Tag.Type]? = nil
+		return preprocessTokens().compile(using: self) ?? []
+	}
 
-        while let token = nextToken()
-		{
-            switch token
-			{
-            case .text where skipUntil == nil:
-                nodes.append(token.contents)
-
-            case .variable where skipUntil == nil:
-                nodes.append(compileFilter(token.contents).stringValue)
-
-			case .tag:
-				guard let tag = compileTag(token.contents) else
-				{
-					// Unknown tag keyword or invalid statement
-					break
-				}
-
-				if let wantedTags = skipUntil, !wantedTags.contains(where: { type(of: tag) == $0 })
-				{
-					// We were told to ignore this tag type
-					break
-				}
-
-				if let output = tag.output
-				{
-					// This tag produced an output (incremend/decrement, for example). Append it to the nodes.
-					nodes.append(contentsOf: output.map({ $0.stringValue }))
-				}
-
-				if let flowControlTag = tag as? FlowControlTag, let skipUntilTags = flowControlTag.skipUntil
-				{
-					// This is a flow control tag, and it told us to skip until the given tag type.
-					skipUntil = skipUntilTags
-				}
-				else
-				{
-					skipUntil = nil
-				}
-
-			default:
-				break
-            }
-        }
-        
-        return nodes
-    }
-    
-    public func nextToken() -> Token?
+	public func nextToken() -> Token?
 	{
-        if tokens.count > 0
+		if tokens.count > 0
 		{
-            return tokens.remove(at: 0)
-        }
-        
-        return nil
-    }
+			return tokens.remove(at: 0)
+		}
+
+		return nil
+	}
 
 	public func register(filter: Filter)
 	{
@@ -120,8 +73,62 @@ open class TokenParser
 			tags[tag.keyword]?.append(tag)
 		}
 	}
-    
-    internal func compileFilter(_ token: String) -> Token.Value
+
+	private func preprocessTokens() -> ScopeLevel
+	{
+		let rootScope = ScopeLevel()
+		var currentScope = rootScope
+
+		while let token = nextToken()
+		{
+			switch token
+			{
+			case .text(let contents):
+				currentScope.append(rawOutput: contents)
+
+			case .variable(let contents):
+				currentScope.append(filteredOutput: contents)
+
+			case .tag(let contents):
+				guard let tag = compileTag(contents) else
+				{
+					// Unknown tag keyword or invalid statement
+					break
+				}
+
+				if tag.terminatesScope
+				{
+					if let parentScope = currentScope.parentScopeLevel
+					{
+						currentScope = parentScope
+					}
+					else
+					{
+						NSLog("terminating scope tag scope has no parent scope!!!")
+					}
+				}
+
+				if let output = tag.output
+				{
+					output.map({ $0.stringValue }).forEach(currentScope.append(rawOutput:))
+				}
+
+				if tag.definesScope
+				{
+					currentScope = currentScope.appendScope(for: tag)
+				}
+			}
+		}
+
+		if currentScope !== rootScope
+		{
+			NSLog("Unbalanced scopes!!")
+		}
+
+		return rootScope
+	}
+
+	internal func compileFilter(_ token: String) -> Token.Value
 	{
 		let splitToken = token.split(separator: "|")
 
@@ -163,8 +170,8 @@ open class TokenParser
 			filteredValue = filter.lambda(filteredValue, filterParameters ?? [])
 		}
 
-        return filteredValue
-    }
+		return filteredValue
+	}
 
 	private func compileTag(_ contents: String) -> Tag?
 	{
@@ -203,5 +210,80 @@ open class TokenParser
 
 		return nil
 	}
-	
+
+	fileprivate class ScopeLevel
+	{
+		let tag: Tag?
+
+		let parentScopeLevel: ScopeLevel?
+
+		var processedStatements: [ProcessedStatement] = []
+
+		init(tag: Tag? = nil, parent: ScopeLevel? = nil)
+		{
+			self.tag = tag
+			self.parentScopeLevel = parent
+
+			parent?.processedStatements.append(.scope(self))
+		}
+
+		func append(rawOutput: String)
+		{
+			processedStatements.append(.rawOutput(rawOutput))
+		}
+
+		func append(filteredOutput: String)
+		{
+			processedStatements.append(.filteredOutput(filteredOutput))
+		}
+
+		func appendScope(for tag: Tag) -> ScopeLevel
+		{
+			return ScopeLevel(tag: tag, parent: self)
+		}
+
+		enum ProcessedStatement
+		{
+			case rawOutput(String)
+			case filteredOutput(String)
+			case scope(ScopeLevel)
+		}
+	}
+}
+
+private extension TokenParser.ScopeLevel
+{
+	func compile(using parser: TokenParser) -> [String]?
+	{
+		var nodes = [String]()
+
+		if let tag = self.tag, tag.definesScope && !tag.shouldEnterScope
+		{
+			return tag.output?.map { $0.stringValue }
+		}
+		else if let outputNodes = tag?.output?.map({ $0.stringValue })
+		{
+			nodes.append(contentsOf: outputNodes)
+		}
+
+		for statement in processedStatements
+		{
+			switch statement
+			{
+			case .rawOutput(let output):
+				nodes.append(output)
+
+			case .filteredOutput(let filterStatement):
+				nodes.append(parser.compileFilter(filterStatement).stringValue)
+
+			case .scope(let childScope):
+				if let childNodes = childScope.compile(using: parser)
+				{
+					nodes.append(contentsOf: childNodes)
+				}
+			}
+		}
+
+		return nodes
+	}
 }
