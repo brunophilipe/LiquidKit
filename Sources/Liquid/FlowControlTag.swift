@@ -53,8 +53,8 @@ class TagEndIf: Tag
 		return "endif"
 	}
 
-	override var terminatesScope: Bool
+	override var terminatesScopesWithTags: [Tag.Type]?
 	{
-		return true
+		return [TagIf.self]
 	}
 }

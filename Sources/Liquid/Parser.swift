@@ -96,7 +96,8 @@ open class TokenParser
 					break
 				}
 
-				if tag.terminatesScope
+				if let openerTag = currentScope.tag, let terminatedTags = tag.terminatesScopesWithTags,
+					terminatedTags.contains(where: { type(of: openerTag) == $0 })
 				{
 					if let parentScope = currentScope.parentScopeLevel
 					{

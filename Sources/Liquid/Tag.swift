@@ -28,9 +28,9 @@ public class Tag
 		return false
 	}
 
-	public var terminatesScope: Bool
+	public var terminatesScopesWithTags: [Tag.Type]?
 	{
-		return false
+		return nil
 	}
 
 	public var shouldEnterScope: Bool
