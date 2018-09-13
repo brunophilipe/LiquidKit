@@ -13,8 +13,8 @@ class ParserTests: XCTestCase {
     
     func testParseText() {
         let lexer = Lexer(templateString: "aab  cc dd")
-        let tokenize = lexer.tokenize()
-        let parser = TokenParser(tokens: tokenize, context: Context())
+        let tokens = lexer.tokenize()
+        let parser = TokenParser(tokens: tokens, context: Context())
         let res = parser.parse()
         XCTAssertEqual(res, ["aab  cc dd"])
     }
@@ -22,8 +22,8 @@ class ParserTests: XCTestCase {
     func testParseVariable() {
         let dic = ["a": "A", "b": "BB", "c": "CCcCC"]
         let lexer = Lexer(templateString: "aab {{ a }} {{b}}c{{c}} d")
-        let tokenize = lexer.tokenize()
-        let parser = TokenParser(tokens: tokenize, context: Context(dictionary: dic))
+        let tokens = lexer.tokenize()
+        let parser = TokenParser(tokens: tokens, context: Context(dictionary: dic))
         let res = parser.parse()
         XCTAssertEqual(res, ["aab ", "A", " ","BB","c", "CCcCC"," d"])
     }
@@ -31,8 +31,8 @@ class ParserTests: XCTestCase {
     func testParseVariablePerformance() {
         let dic = ["a": "A", "b": "BB", "c": "CCcCC"]
         let lexer = Lexer(templateString: "aab {{ a }} {{b}}c{{c}} d")
-        let tokenize = lexer.tokenize()
-        let parser = TokenParser(tokens: tokenize, context: Context(dictionary: dic))
+        let tokens = lexer.tokenize()
+        let parser = TokenParser(tokens: tokens, context: Context(dictionary: dic))
         measure {
             _ = parser.parse()
         }

@@ -24,13 +24,13 @@ class LexerTests: XCTestCase {
     
     func testTokenize() {
         let lexer = Lexer(templateString: "aab {{ a }} cc{%d%}{{ e}}")
-        let tokenize = lexer.tokenize()
-        XCTAssertEqual(tokenize.count, 5)
-        XCTAssertEqual(tokenize[0], .text(value: "aab "))
-        XCTAssertEqual(tokenize[1], .variable(value: "a"))
-        XCTAssertEqual(tokenize[2], .text(value: " cc"))
-        XCTAssertEqual(tokenize[3], .tag(value: "d"))
-        XCTAssertEqual(tokenize[4], .variable(value: "e"))
+        let tokens = lexer.tokenize()
+        XCTAssertEqual(tokens.count, 5)
+        XCTAssertEqual(tokens[0], .text(value: "aab "))
+        XCTAssertEqual(tokens[1], .variable(value: "a"))
+        XCTAssertEqual(tokens[2], .text(value: " cc"))
+        XCTAssertEqual(tokens[3], .tag(value: "d"))
+        XCTAssertEqual(tokens[4], .variable(value: "e"))
         
         let empty = Lexer(templateString: "{{ a").tokenize()
         XCTAssertEqual(empty.count, 1)
