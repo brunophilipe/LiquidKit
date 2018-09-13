@@ -45,22 +45,49 @@ open class TokenParser
     public func parse() -> [String]
 	{
         var nodes = [String]()
-        
+		var skipUntil: [Tag.Type]? = nil
+
         while let token = nextToken()
 		{
             switch token
 			{
-            case .text:
+            case .text where skipUntil == nil:
                 nodes.append(token.contents)
 
-            case .variable:
+            case .variable where skipUntil == nil:
                 nodes.append(compileFilter(token.contents).stringValue)
 
-            case .tag:
-				if let result = compileTag(token.contents)
+			case .tag:
+				guard let tag = compileTag(token.contents) else
 				{
-					nodes.append(result.stringValue)
+					// Unknown tag keyword or invalid statement
+					break
 				}
+
+				if let wantedTags = skipUntil, !wantedTags.contains(where: { type(of: tag) == $0 })
+				{
+					// We were told to ignore this tag type
+					break
+				}
+
+				if let output = tag.output
+				{
+					// This tag produced an output (incremend/decrement, for example). Append it to the nodes.
+					nodes.append(contentsOf: output.map({ $0.stringValue }))
+				}
+
+				if let flowControlTag = tag as? FlowControlTag, let skipUntilTags = flowControlTag.skipUntil
+				{
+					// This is a flow control tag, and it told us to skip until the given tag type.
+					skipUntil = skipUntilTags
+				}
+				else
+				{
+					skipUntil = nil
+				}
+
+			default:
+				break
             }
         }
         
@@ -139,7 +166,7 @@ open class TokenParser
         return filteredValue
     }
 
-	private func compileTag(_ contents: String) -> Token.Value?
+	private func compileTag(_ contents: String) -> Tag?
 	{
 		let contentScanner = Scanner(contents.trimmingWhitespaces)
 		let keyword = contentScanner.scan(until: .whitespaces)
@@ -164,7 +191,9 @@ open class TokenParser
 
 			do
 			{
-				return try tagInstance.parse(statement: statement, using: self)
+				try tagInstance.parse(statement: statement, using: self)
+
+				return tagInstance
 			}
 			catch
 			{

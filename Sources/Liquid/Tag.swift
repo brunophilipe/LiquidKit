@@ -23,13 +23,16 @@ public class Tag
 	internal var compiledExpression: [String: Any] = [:]
 	internal var context: Context
 
+	/// If compiling this tag produces an output, this value will be stored here.
+	public internal(set) var output: [Token.Value]? = nil
+
 	public required init(context: Context)
 	{
 		self.context = context
 	}
 
 	/// Given a string statement, attempts to compile the receiver tag.
-	open func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
+	open func parse(statement: String, using parser: TokenParser) throws
 	{
 		let scanner = Scanner(statement.trimmingWhitespaces)
 
@@ -70,8 +73,6 @@ public class Tag
 				compiledExpression[name] = parser.compileFilter(scanner.content)
 			}
 		}
-
-		return nil
 	}
 
 	public enum ExpressionSegment
@@ -107,7 +108,7 @@ public class Tag
 extension Tag
 {
 	static let builtInTags: [Tag.Type] = [
-		TagAssign.self, TagIncrement.self, TagDecrement.self
+		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self
 	]
 }
 
@@ -124,9 +125,9 @@ class TagAssign: Tag
 		return "assign"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
+	override func parse(statement: String, using parser: TokenParser) throws
 	{
-		_ = try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser)
 
 		guard
 			let assignee = compiledExpression["assignee"] as? String,
@@ -137,8 +138,6 @@ class TagAssign: Tag
 		}
 
 		context.set(value: value, for: assignee)
-
-		return nil
 	}
 }
 
@@ -155,16 +154,16 @@ class TagIncrement: Tag
 		return "increment"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
+	override func parse(statement: String, using parser: TokenParser) throws
 	{
-		_ = try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser)
 
 		guard let assignee = compiledExpression["assignee"] as? String else
 		{
 			throw Errors.missingArtifacts
 		}
 
-		return .integer(context.incrementCounter(for: assignee))
+		output = [.integer(context.incrementCounter(for: assignee))]
 	}
 }
 
@@ -181,15 +180,15 @@ class TagDecrement: Tag
 		return "decrement"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws -> Token.Value?
+	override func parse(statement: String, using parser: TokenParser) throws
 	{
-		_ = try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser)
 
 		guard let assignee = compiledExpression["assignee"] as? String else
 		{
 			throw Errors.missingArtifacts
 		}
 
-		return .integer(context.decrementCounter(for: assignee))
+		output = [.integer(context.decrementCounter(for: assignee))]
 	}
 }
