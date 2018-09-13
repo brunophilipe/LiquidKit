@@ -50,6 +50,10 @@ public class Tag
 	/// If compiling this tag produces an output, this value will be stored here.
 	public internal(set) var output: [Token.Value]? = nil
 
+	/// If this tag terminates a scope during preprocessing, the parser will set this property to the opener tag of
+	/// that scope.
+	internal var terminatedScopeTag: Tag? = nil
+
 	public required init(context: Context)
 	{
 		self.context = context

@@ -102,6 +102,9 @@ open class TokenParser
 				if let openerTag = currentScope.tag, let terminatedTags = tag.terminatesScopesWithTags,
 					terminatedTags.contains(where: { type(of: openerTag) == $0 })
 				{
+					// Inform this tag instance that it has closed a tag.
+					tag.terminatedScopeTag = currentScope.tag
+
 					if let parentScope = currentScope.parentScopeLevel
 					{
 						currentScope = parentScope
