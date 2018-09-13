@@ -74,6 +74,8 @@ open class TokenParser
 		}
 	}
 
+	/// This method will traverse the provided tokens (which is a linear structure) and create a scoped (nested) data
+	/// structure of the code, so that it can be compiled later.
 	private func preprocessTokens() -> ScopeLevel
 	{
 		let rootScope = ScopeLevel()
@@ -96,6 +98,7 @@ open class TokenParser
 					break
 				}
 
+				// If this tag closes the opener tag, then leave the current scope.
 				if let openerTag = currentScope.tag, let terminatedTags = tag.terminatesScopesWithTags,
 					terminatedTags.contains(where: { type(of: openerTag) == $0 })
 				{
@@ -109,11 +112,13 @@ open class TokenParser
 					}
 				}
 
+				// If this tag produces output, append that to the current scope's nodes.
 				if let output = tag.output
 				{
 					output.map({ $0.stringValue }).forEach(currentScope.append(rawOutput:))
 				}
 
+				// If this tag defines a scope, create it and make it ther current scope.
 				if tag.definesScope
 				{
 					currentScope = currentScope.appendScope(for: tag)
@@ -254,6 +259,8 @@ open class TokenParser
 
 private extension TokenParser.ScopeLevel
 {
+	/// This method will compile the nodes of the receiver scope, depending on its opener tag and the contents of is
+	/// nodes and child scopes.
 	func compile(using parser: TokenParser) -> [String]?
 	{
 		var nodes = [String]()
