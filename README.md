@@ -57,10 +57,10 @@ A Liquid syntax template engine for Swift.
   - [x] url_decode
   - [x] url_encode
 - [ ] Variable
-  - [ ] `assign`
+  - [x] `assign`
   - [ ] `capture`
-  - [ ] `increment`
-  - [ ] `decrement`
+  - [x] `increment`
+  - [x] `decrement`
 - [ ] Operators
   - [ ] `==` equals
   - [ ] `!=` does not equal
@@ -72,10 +72,10 @@ A Liquid syntax template engine for Swift.
   - [ ] `and` logical and
   - [ ] `contains` checks substring inside a string
 - [ ] Control flow
-  - [ ] `if` if a certain condition is true
+  - [x] `if` if a certain condition is true
   - [ ] `unless` if a certain condition is not met
-  - [ ] `elsif` more conditions
-  - [ ] `else` else conditions
+  - [x] `elsif` more conditions
+  - [x] `else` else conditions
   - [ ] `case/when` switch statement
 - [ ] Iteration
   - [ ] `for`
