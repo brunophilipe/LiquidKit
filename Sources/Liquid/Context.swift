@@ -96,7 +96,15 @@ public class Context
 	{
 		let trimmedToken = token.trimmingWhitespaces
 
-		if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"")
+		if trimmedToken == "true"
+		{
+			return .bool(true)
+		}
+		else if trimmedToken == "false"
+		{
+			return .bool(false)
+		}
+		else if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"")
 		{
 			// This is a literal string. Strip its quotations.
 			return .string(trimmedToken.trim(character: "\""))
