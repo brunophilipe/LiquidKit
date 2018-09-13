@@ -15,7 +15,6 @@ class LexerTests: XCTestCase {
         let lexer = Lexer(templateString: "")
         
         let variable = lexer.createToken(string: "{{ a }}")
-        XCTAssertEqual(variable.contents, "a")
         XCTAssertEqual(variable, .variable(value: "a"))
         
         let tag = lexer.createToken(string: "{% b %}")

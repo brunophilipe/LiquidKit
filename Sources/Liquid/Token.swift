@@ -18,16 +18,6 @@ public enum Token : Equatable
     
     /// A token representing a template tag.
     case tag(value: String)
-
-    public var contents: String
-	{
-        switch self
-		{
-        case .text(let value):			return value
-        case .variable(let value):		return value
-        case .tag(let value):			return value
-        }
-    }
     
     public static func ==(lhs: Token, rhs: Token) -> Bool
 	{
