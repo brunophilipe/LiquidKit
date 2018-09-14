@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
   spec.macos.deployment_target = '10.12'
   spec.macos.frameworks = ['Foundation']
 
-  spec.source_files = 'Sources/Liquid/*.{h,m,swift}'
+  spec.source_files = 'Sources/LiquidKit/*.{h,m,swift}'
   spec.module_name = 'LiquidKit'
   
   spec.dependency 'HTMLEntities'
