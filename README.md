@@ -1,4 +1,4 @@
-# Liquid Swift
+# LiquidKit
 
 Liquid template language parser engine in Swift.
 
