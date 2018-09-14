@@ -4,7 +4,7 @@ Pod::Spec.new do |spec|
   spec.homepage = 'https://github.com/brunophilipe/LiquidKit'
   spec.source = {:path => '.'}
   spec.authors = {'Bruno Philipe' => 'git@bruno.ph'}
-  spec.summary = 'Liquid template language parser in Swift.'
+  spec.summary = 'Liquid template language parser engine in Swift.'
   spec.license = { :type => 'MIT' }
 
   spec.ios.deployment_target = '10.0'

@@ -1,8 +1,14 @@
 # Liquid Swift
 
-Liquid template language parser in Swift.
+Liquid template language parser engine in Swift.
 
-This project is a fork of [yourtion/liquid-swift](https://github.com/yourtion/liquid-swift).
+## About
+
+Liquid is a template language that is used by several projects, such as Shopify and Jekyll (which powers GitHub pages). Liquid allows conditional injection of content into html pages through a simple and elegant syntax.
+
+LiquidKit brings the power of Liquid to iOS and macOS. It is currently under development, so not all features are available.
+
+This project is based on the [liquid-swift](https://github.com/yourtion/liquid-swift) project by [yourtion](https://github.com/yourtion), which provided a barebones implementation of the Lexer and the Parser. However, it was lacking any logical parsing or filters, which I have added. It has been renamed and rehosted since I decided to maintain this project myself.
 
 ## Features
 
