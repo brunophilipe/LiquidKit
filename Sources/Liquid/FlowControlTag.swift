@@ -100,7 +100,7 @@ class TagElsif: TagIf
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
-		return [TagIf.self]
+		return [TagIf.self, TagElsif.self]
 	}
 
 	override var shouldEnterScope: Bool
