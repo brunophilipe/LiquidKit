@@ -1,0 +1,6 @@
+framework module Pods_LiquidKit {
+  umbrella header "Pods-LiquidKit-umbrella.h"
+
+  export *
+  module * { export * }
+}

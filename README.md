@@ -1,6 +1,8 @@
 # Liquid Swift
 
-A Liquid syntax template engine for Swift.
+Liquid template language parser in Swift.
+
+This project is a fork of [yourtion/liquid-swift](https://github.com/yourtion/liquid-swift).
 
 ## Features
 

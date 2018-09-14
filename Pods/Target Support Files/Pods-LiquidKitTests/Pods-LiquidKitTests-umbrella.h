@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_LiquidVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_LiquidVersionString[];
+FOUNDATION_EXPORT double Pods_LiquidKitTestsVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_LiquidKitTestsVersionString[];
 

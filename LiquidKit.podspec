@@ -1,10 +1,10 @@
 Pod::Spec.new do |spec|
-  spec.name = 'liquid-swift'
+  spec.name = 'LiquidKit'
   spec.version = '1.0'
-  spec.homepage = 'https://github.com/brunophilipe/liquid-swift'
+  spec.homepage = 'https://github.com/brunophilipe/LiquidKit'
   spec.source = {:path => '.'}
-  spec.authors = {'郭宇翔' => 'yourtion@gmail.com'}
-  spec.summary = 'Liquid syntax template engine for Swift.'
+  spec.authors = {'Bruno Philipe' => 'git@bruno.ph'}
+  spec.summary = 'Liquid template language parser in Swift.'
   spec.license = { :type => 'MIT' }
 
   spec.ios.deployment_target = '10.0'
@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
   spec.macos.frameworks = ['Foundation']
 
   spec.source_files = 'Sources/Liquid/*.{h,m,swift}'
-  spec.module_name = 'Liquid'
+  spec.module_name = 'LiquidKit'
   
   spec.dependency 'HTMLEntities'
   spec.dependency 'STRFTimeFormatter'

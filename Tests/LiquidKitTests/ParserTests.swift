@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import Liquid
+@testable import LiquidKit
 
 class ParserTests: XCTestCase {
     

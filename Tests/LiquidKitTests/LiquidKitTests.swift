@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Liquid
+@testable import LiquidKit
 
 #if os(Linux)
 import SwiftGlibc
