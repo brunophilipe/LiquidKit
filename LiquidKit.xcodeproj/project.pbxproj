@@ -126,7 +126,8 @@
 				152FDD24214709A6003C2C63 /* Double+Extensions.swift */,
 				15CB06B8214353A70023648A /* Token.swift */,
 			);
-			path = LiquidKit;
+			path = Sources/LiquidKit;
+			name = LiquidKit;
 			sourceTree = "<group>";
 		};
 		15CB06AC214353360023648A /* LiquidKitTests */ = {
@@ -139,7 +140,8 @@
 				154F337F214661E00022B689 /* FilterTests.swift */,
 				152FDD2821488989003C2C63 /* TagTests.swift */,
 			);
-			path = LiquidKitTests;
+			path = Tests/LiquidKitTests;
+			name = LiquidKitTests;
 			sourceTree = "<group>";
 		};
 		4F7537F6AAB900CA8D2B75F0 /* Frameworks */ = {
