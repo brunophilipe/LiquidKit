@@ -137,18 +137,18 @@ open class TokenParser
 		return rootScope
 	}
 
-	internal func compileFilter(_ token: String) -> Token.Value
+	internal func compileFilter(_ statement: String) -> Token.Value
 	{
-		let splitToken = token.split(separator: "|")
+		let splitStatement = statement.split(separator: "|")
 
-		if splitToken.count == 1
+		if splitStatement.count == 1
 		{
-			return context.valueOrLiteral(for: token)
+			return context.valueOrLiteral(for: statement)
 		}
 
-		var filteredValue = context.valueOrLiteral(for: String(splitToken.first!))
+		var filteredValue = context.valueOrLiteral(for: String(splitStatement.first!))
 
-		for filterString in splitToken[1...]
+		for filterString in splitStatement[1...]
 		{
 			let filterComponents = String(filterString).smartSplit(separator: ":")
 
@@ -182,14 +182,14 @@ open class TokenParser
 		return filteredValue
 	}
 
-	private func compileTag(_ contents: String) -> Tag?
+	private func compileTag(_ statement: String) -> Tag?
 	{
-		let contentScanner = Scanner(contents.trimmingWhitespaces)
-		let keyword = contentScanner.scan(until: .whitespaces)
+		let statementScanner = Scanner(statement.trimmingWhitespaces)
+		let keyword = statementScanner.scan(until: .whitespaces)
 
 		guard keyword.count > 0 else
 		{
-			NSLog("Malformed tag: “\(contents)”")
+			NSLog("Malformed tag: “\(statement)”")
 			return nil
 		}
 
@@ -199,7 +199,7 @@ open class TokenParser
 			return nil
 		}
 
-		let statement = contentScanner.content
+		let statement = statementScanner.content
 
 		for tag in tags
 		{
