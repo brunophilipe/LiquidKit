@@ -8,7 +8,7 @@ Liquid is a template language that is used by several projects, such as Shopify 
 
 LiquidKit brings the power of Liquid to iOS and macOS. It is currently under development, so not all features are available.
 
-This project is based on the [liquid-swift](https://github.com/yourtion/liquid-swift) project by [yourtion](https://github.com/yourtion), which provided a barebones implementation of the Lexer and the Parser. However, it was lacking any logical parsing or filters, which I have added. It has been renamed and rehosted since I decided to maintain this project myself.
+This project is based on the [liquid-swift](https://github.com/yourtion/liquid-swift) project by [yourtion](https://github.com/yourtion), which provided a barebones implementation of the Lexer and the Parser. However, it was lacking any logical parsing or filters, which I have added. It has been renamed and re-hosted since I intend to maintain this project myself.
 
 ## Features
 
@@ -97,5 +97,6 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
 
 ## Liquid Docs
 
-- [English](https://shopify.github.io/liquid/)
+- [English](https://shopify.github.io/liquid/) (Official Documentation - Inconsistent and Incomplete)
+- [English (Shopify)](https://help.shopify.com/en/themes/liquid) (More complete and accurate)
 - [Chinese](https://liquid.bootcss.com/)
