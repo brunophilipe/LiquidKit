@@ -97,6 +97,5 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
 
 ## Liquid Docs
 
-- [English](https://shopify.github.io/liquid/) (Official Documentation - Inconsistent and Incomplete)
-- [English (Shopify)](https://help.shopify.com/en/themes/liquid) (More complete and accurate)
+- [English](https://shopify.github.io/liquid/)
 - [Chinese](https://liquid.bootcss.com/)
