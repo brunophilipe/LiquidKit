@@ -30,13 +30,7 @@ open class TokenParser
 
 	open func registerFilters()
 	{
-		filters.append(contentsOf: [
-			.abs, .append, .atLeast, .atMost, .capitalize, .ceil, .date, .default, .dividedBy, .downcase, .escape,
-			.escapeOnce, .floor, .join, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
-			.removeFirst, .replace, .replaceFirst, .reverse, .round, .rightStrip, .size, .slice, .sort, .sortNatural,
-			.split, .strip, .stripHTML, .stripNewlines, .times, .truncate, .truncateWords, .uniq, .upcase, .urlDecode,
-			.urlEncode
-		])
+		Filter.builtInFilters.forEach(register)
 	}
 
 	open func registerTags()

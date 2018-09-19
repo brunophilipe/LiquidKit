@@ -25,6 +25,17 @@ open class Filter
 	}
 }
 
+extension Filter
+{
+	static let builtInFilters: [Filter] = [
+		.abs, .append, .atLeast, .atMost, .capitalize, .ceil, .date, .default, .dividedBy, .downcase, .escape,
+		.escapeOnce, .floor, .join, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
+		.removeFirst, .replace, .replaceFirst, .reverse, .round, .rightStrip, .size, .slice, .sort, .sortNatural,
+		.split, .strip, .stripHTML, .stripNewlines, .times, .truncate, .truncateWords, .uniq, .upcase, .urlDecode,
+		.urlEncode
+	]
+}
+
 extension Filter {
 	static let abs = Filter(identifier: "abs") { (input, _) -> Token.Value in
 		guard let decimal = input.decimalValue else {
