@@ -13,6 +13,7 @@
 		1532BE53214E8A47009AE815 /* Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1532BE52214E8A47009AE815 /* Operator.swift */; };
 		154097742149DE6B005F471B /* FlowControlTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154097732149DE6B005F471B /* FlowControlTag.swift */; };
 		154F3380214661E00022B689 /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F337F214661E00022B689 /* FilterTests.swift */; };
+		1580EC622151A2DB0084A182 /* OperatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1580EC612151A2DB0084A182 /* OperatorTests.swift */; };
 		15CB06A9214353360023648A /* LiquidKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CB069F214353360023648A /* LiquidKit.framework */; };
 		15CB06C0214353A70023648A /* LiquidKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 15CB06B7214353A70023648A /* LiquidKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		15CB06C1214353A70023648A /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB06B8214353A70023648A /* Token.swift */; };
@@ -46,6 +47,7 @@
 		1532BE52214E8A47009AE815 /* Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operator.swift; sourceTree = "<group>"; };
 		154097732149DE6B005F471B /* FlowControlTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FlowControlTag.swift; path = Sources/LiquidKit/FlowControlTag.swift; sourceTree = SOURCE_ROOT; };
 		154F337F214661E00022B689 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterTests.swift; path = Tests/LiquidKitTests/FilterTests.swift; sourceTree = SOURCE_ROOT; };
+		1580EC612151A2DB0084A182 /* OperatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorTests.swift; sourceTree = "<group>"; };
 		15CB069F214353360023648A /* LiquidKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LiquidKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		15CB06A8214353360023648A /* LiquidKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LiquidKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15CB06B7214353A70023648A /* LiquidKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LiquidKit.h; path = Sources/LiquidKit/LiquidKit.h; sourceTree = SOURCE_ROOT; };
@@ -142,6 +144,7 @@
 				15CB06CA214353AF0023648A /* ParserTests.swift */,
 				154F337F214661E00022B689 /* FilterTests.swift */,
 				152FDD2821488989003C2C63 /* TagTests.swift */,
+				1580EC612151A2DB0084A182 /* OperatorTests.swift */,
 			);
 			name = LiquidKitTests;
 			path = Tests/LiquidKitTests;
@@ -359,6 +362,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15CB06CE214353AF0023648A /* ParserTests.swift in Sources */,
+				1580EC622151A2DB0084A182 /* OperatorTests.swift in Sources */,
 				154F3380214661E00022B689 /* FilterTests.swift in Sources */,
 				152FDD2A21488A06003C2C63 /* TagTests.swift in Sources */,
 				15CB06CF214353AF0023648A /* LexerTests.swift in Sources */,

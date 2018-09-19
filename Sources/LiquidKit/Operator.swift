@@ -25,12 +25,17 @@ open class Operator
 
 extension Operator
 {
+	static let builtInOperators: [Operator] = [
+		equals, notEquals, greaterThan, lessThan, greaterThanOrEquals, lessThanOrEquals
+	]
+}
+
+extension Operator
+{
 	static let equals = Operator(identifier: "==") { .bool($0 == $1) }
 	static let notEquals = Operator(identifier: "!=") { .bool($0 != $1) }
 	static let greaterThan = Operator(identifier: ">") { .bool($0.doubleValue ?? 0 > $1.doubleValue ?? 0) }
 	static let lessThan = Operator(identifier: "<") { .bool($0.doubleValue ?? 0 < $1.doubleValue ?? 0) }
 	static let greaterThanOrEquals = Operator(identifier: ">=") { .bool($0.doubleValue ?? 0 >= $1.doubleValue ?? 0) }
 	static let lessThanOrEquals = Operator(identifier: "<=") { .bool($0.doubleValue ?? 0 <= $1.doubleValue ?? 0) }
-	static let literalOr = Operator(identifier: "or") { .bool($0.isTruthy || $1.isTruthy) }
-	static let literalAnd = Operator(identifier: "and") { .bool($0.isTruthy && $1.isTruthy) }
 }

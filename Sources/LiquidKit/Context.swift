@@ -92,7 +92,7 @@ public class Context
 		}
 	}
 
-	func valueOrLiteral(for token: String) -> Token.Value
+	func valueOrLiteral(for token: String) -> Token.Value?
 	{
 		let trimmedToken = token.trimmingWhitespaces
 
@@ -122,7 +122,7 @@ public class Context
 		else
 		{
 			// This is a variable name. Return its value, or an empty string.
-			return getValue(for: trimmedToken) ?? .nil
+			return getValue(for: trimmedToken)
 		}
 	}
 }

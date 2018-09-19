@@ -14,7 +14,9 @@ open class TokenParser
 	private var tokens: [Token]
 	private let context: Context
 	private var filters: [Filter] = []
+	private var operators: [Operator] = []
 	private var tags: [String: [Tag.Type]] = [:]
+	private var parseErrors: [Error] = []
 
 	public init(tokens: [Token], context: Context)
 	{
@@ -23,6 +25,7 @@ open class TokenParser
 
 		registerFilters()
 		registerTags()
+		registerOperators()
 	}
 
 	open func registerFilters()
@@ -39,6 +42,11 @@ open class TokenParser
 	open func registerTags()
 	{
 		Tag.builtInTags.forEach(register)
+	}
+
+	open func registerOperators()
+	{
+		Operator.builtInOperators.forEach(register)
 	}
 
 	/// Parse the given tokens into nodes
@@ -60,6 +68,11 @@ open class TokenParser
 	public func register(filter: Filter)
 	{
 		filters.append(filter)
+	}
+
+	public func register(operator: Operator)
+	{
+		operators.append(`operator`)
 	}
 
 	public func register(tag: Tag.Type)
@@ -143,10 +156,10 @@ open class TokenParser
 
 		if splitStatement.count == 1
 		{
-			return context.valueOrLiteral(for: statement)
+			return compileOperators(for: statement)
 		}
 
-		var filteredValue = context.valueOrLiteral(for: String(splitStatement.first!))
+		var filteredValue = compileOperators(for: String(splitStatement.first!))
 
 		for filterString in splitStatement[1...]
 		{
@@ -167,7 +180,7 @@ open class TokenParser
 			}
 			else
 			{
-				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ context.valueOrLiteral(for: String($0)) })
+				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ context.valueOrLiteral(for: String($0)) ?? .nil })
 			}
 
 			guard let filter = filters.first(where: { $0.identifier == filterIdentifier }) else
@@ -220,6 +233,102 @@ open class TokenParser
 		return nil
 	}
 
+	internal func compileOperators(for statement: String) -> Token.Value
+	{
+		if statement.count == 0
+		{
+			return .nil
+		}
+
+		let statementNodes = statement.smartSplit(separator: " ").filter({ $0.count > 0 })
+
+		if statementNodes.count <= 1
+		{
+			return context.valueOrLiteral(for: statement) ?? .nil
+		}
+
+		var iterator = statementNodes.reversed().makeIterator()
+		var lastParsedValue: Token.Value? = nil
+
+		// Liquid parses boolean operators right right to left, and doesn't support parenthesis.
+		while let node = iterator.next()
+		{
+			var secondNode = node
+
+			// Can't perform a logical operation if a previous value wasn't parsed yet.
+			if ["or", "and"].contains(node)
+			{
+				if lastParsedValue == nil
+				{
+					parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Expected value but found logical operator “\(node)”."))
+					return .nil
+				}
+				else if let nextNode = iterator.next()
+				{
+					secondNode = nextNode
+				}
+				else
+				{
+					parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Expected value but found nothing."))
+					return .nil
+				}
+			}
+
+			guard let secondValue = context.valueOrLiteral(for: secondNode) else
+			{
+				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Unknown variable “\(secondNode)”."))
+				return .nil
+			}
+
+			guard let operatorKeyword = iterator.next() else
+			{
+				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Expected operator but found nothing."))
+				return .nil
+			}
+
+			guard let operatorInstance = operators.first(where: { $0.identifier == operatorKeyword }) else
+			{
+				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Unknown operator “\(operatorKeyword)”."))
+				return .nil
+			}
+
+			guard let firstNode = iterator.next() else
+			{
+				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Expected value before operator “\(operatorKeyword)” but found nothing."))
+				return .nil
+			}
+
+			guard let firstValue = context.valueOrLiteral(for: firstNode) else
+			{
+				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Unknown variable “\(node)”."))
+				return .nil
+			}
+
+			if let lastValue = lastParsedValue
+			{
+				let currentValue = operatorInstance.lambda(firstValue, secondValue)
+				switch node
+				{
+				case "and":
+					lastParsedValue = .bool(lastValue.isTruthy && currentValue.isTruthy)
+
+				case "or":
+					lastParsedValue = .bool(lastValue.isTruthy || currentValue.isTruthy)
+
+				default:
+					parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Unknown logical operator “\(node)”."))
+					return .nil
+				}
+			}
+			else
+			{
+				lastParsedValue = operatorInstance.lambda(firstValue, secondValue)
+			}
+		}
+
+		return lastParsedValue ?? .nil
+	}
+
 	/// Defines a level of scope during parsing. Each time a scope-defining tag is found (such as `if`, `else`, etc…),
 	/// a new scope is defined. Closing tags (such as `endif`, `elsif`, etc) terminate scopes.
 	fileprivate class ScopeLevel
@@ -258,6 +367,19 @@ open class TokenParser
 			case rawOutput(String)
 			case filteredOutput(String)
 			case scope(ScopeLevel)
+		}
+	}
+
+	public enum ParseErrors: Error
+	{
+		case malformedExpression(String)
+
+		public var localizedDescription: String
+		{
+			switch self
+			{
+			case .malformedExpression(let description): return description
+			}
 		}
 	}
 }

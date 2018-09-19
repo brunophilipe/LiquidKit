@@ -27,8 +27,8 @@ class TagIf: Tag
 
 	override var shouldEnterScope: Bool
 	{
-		// An `if` tag should execute if its statement evaluates to `true`
-		if case .some(.bool(true)) = (compiledExpression["conditional"] as? Token.Value)
+		// An `if` tag should execute if its statement is considered "truthy".
+		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
 		{
 			return true
 		}
