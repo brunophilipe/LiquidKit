@@ -70,14 +70,14 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `increment`
   - [x] `decrement`
 - [ ] Operators
-  - [ ] `==` equals
-  - [ ] `!=` does not equal
-  - [ ] `>` greater than
-  - [ ] `<` less than
-  - [ ] `>=` greater than or equal to
-  - [ ] `<=` less than or equal to
-  - [ ] `or` logical or
-  - [ ] `and` logical and
+  - [x] `==` equals
+  - [x] `!=` does not equal
+  - [x] `>` greater than
+  - [x] `<` less than
+  - [x] `>=` greater than or equal to
+  - [x] `<=` less than or equal to
+  - [x] `or` logical or
+  - [x] `and` logical and
   - [ ] `contains` checks substring inside a string
 - [ ] Control flow
   - [x] `if` if a certain condition is true
