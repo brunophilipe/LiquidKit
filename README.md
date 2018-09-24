@@ -64,9 +64,9 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] upcase
   - [x] url_decode
   - [x] url_encode
-- [ ] Variable
+- [x] Variable
   - [x] `assign`
-  - [ ] `capture`
+  - [x] `capture`
   - [x] `increment`
   - [x] `decrement`
 - [ ] Operators
