@@ -62,6 +62,8 @@ class TagEndIf: Tag
 
 class TagElse: Tag
 {
+	private var terminatedScopeTag: Tag? = nil
+	
 	override class var keyword: String
 	{
 		return "else"
@@ -84,6 +86,11 @@ class TagElse: Tag
 			return false
 		}
 	}
+	
+	override func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+		terminatedScopeTag = scope.tag
+	}
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
@@ -93,6 +100,8 @@ class TagElse: Tag
 
 class TagElsif: TagIf
 {
+	private var terminatedScopeTag: Tag? = nil
+	
 	override class var keyword: String
 	{
 		return "elsif"
@@ -115,5 +124,10 @@ class TagElsif: TagIf
 		{
 			return false
 		}
+	}
+	
+	override func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+		terminatedScopeTag = scope.tag
 	}
 }

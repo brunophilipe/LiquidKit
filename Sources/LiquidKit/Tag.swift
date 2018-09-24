@@ -52,7 +52,9 @@ public class Tag
 
 	/// If this tag terminates a scope during preprocessing, the parser will set this property to the opener tag of
 	/// that scope.
-	internal var terminatedScopeTag: Tag? = nil
+	internal func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+	}
 
 	public required init(context: Context)
 	{

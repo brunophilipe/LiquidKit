@@ -110,7 +110,7 @@ open class TokenParser
 					terminatedTags.contains(where: { type(of: openerTag) == $0 })
 				{
 					// Inform this tag instance that it has closed a tag.
-					tag.terminatedScopeTag = currentScope.tag
+					tag.didTerminateScope(currentScope, parser: self)
 
 					if let parentScope = currentScope.parentScopeLevel
 					{
@@ -325,13 +325,19 @@ open class TokenParser
 
 	/// Defines a level of scope during parsing. Each time a scope-defining tag is found (such as `if`, `else`, etc…),
 	/// a new scope is defined. Closing tags (such as `endif`, `elsif`, etc) terminate scopes.
-	fileprivate class ScopeLevel
+	internal class ScopeLevel
 	{
+		/// The tag that defined this scope level. Is only `nil` on the root scope level.
 		let tag: Tag?
 
+		/// The parent scope level, that contains the receiver scope. Is only `nil` on the root scope level.
 		let parentScopeLevel: ScopeLevel?
+		
+		/// Whether the processed statements should be compiled and written to the output. Default is `true`.
+		var producesOutput = true
 
-		var processedStatements: [ProcessedStatement] = []
+		/// The statements inside the receiver scope.
+		private(set) var processedStatements: [ProcessedStatement] = []
 
 		init(tag: Tag? = nil, parent: ScopeLevel? = nil)
 		{
@@ -341,16 +347,19 @@ open class TokenParser
 			parent?.processedStatements.append(.scope(self))
 		}
 
+		/// Append a raw string to the processed statements of the receiver scope level.
 		func append(rawOutput: String)
 		{
 			processedStatements.append(.rawOutput(rawOutput))
 		}
 
+		/// Append a string that should be parsed as a filter to the processed statements of the receiver scope level.
 		func append(filteredOutput: String)
 		{
 			processedStatements.append(.filteredOutput(filteredOutput))
 		}
 
+		/// Append a tag to the processed statements of the receiver scope level, thus defining a child scope level.
 		func appendScope(for tag: Tag) -> ScopeLevel
 		{
 			return ScopeLevel(tag: tag, parent: self)
@@ -378,7 +387,7 @@ open class TokenParser
 	}
 }
 
-private extension TokenParser.ScopeLevel
+internal extension TokenParser.ScopeLevel
 {
 	/// This method will compile the nodes of the receiver scope, depending on its opener tag and the contents of is
 	/// nodes and child scopes.
@@ -405,11 +414,14 @@ private extension TokenParser.ScopeLevel
 			case .filteredOutput(let filterStatement):
 				nodes.append(parser.compileFilter(filterStatement).stringValue)
 
-			case .scope(let childScope):
+			case .scope(let childScope) where childScope.producesOutput:
 				if let childNodes = childScope.compile(using: parser)
 				{
 					nodes.append(contentsOf: childNodes)
 				}
+				
+			default:
+				break
 			}
 		}
 
