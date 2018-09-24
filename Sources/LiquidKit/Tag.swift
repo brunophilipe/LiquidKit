@@ -138,7 +138,8 @@ public class Tag
 extension Tag
 {
 	static let builtInTags: [Tag.Type] = [
-		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self
+		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
+		TagCapture.self, TagEndCapture.self
 	]
 }
 
@@ -220,5 +221,63 @@ class TagDecrement: Tag
 		}
 
 		output = [.integer(context.decrementCounter(for: assignee))]
+	}
+}
+
+class TagCapture: Tag
+{
+	internal override var tagExpression: [ExpressionSegment]
+	{
+		// example: {% capture IDENTIFIER %}
+		return [.identifier("assignee")]
+	}
+	
+	override class var keyword: String
+	{
+		return "capture"
+	}
+	
+	override var definesScope: Bool
+	{
+		return true
+	}
+	
+	override var shouldEnterScope: Bool
+	{
+		return true
+	}
+	
+	override func parse(statement: String, using parser: TokenParser) throws
+	{
+		try super.parse(statement: statement, using: parser)
+		
+		guard compiledExpression["assignee"] is String else
+		{
+			throw Errors.missingArtifacts
+		}
+	}
+}
+
+class TagEndCapture: Tag
+{
+	override class var keyword: String
+	{
+		return "endcapture"
+	}
+	
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagCapture.self]
+	}
+	
+	override func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+		scope.producesOutput = false
+		
+		if let assigneeName = scope.tag?.compiledExpression["assignee"] as? String,
+			let compiledCapturedStatements = scope.compile(using: parser)
+		{
+			context.set(value: .string(compiledCapturedStatements.joined()), for: assigneeName)
+		}
 	}
 }
