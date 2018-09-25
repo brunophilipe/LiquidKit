@@ -131,3 +131,35 @@ class TagElsif: TagIf
 		terminatedScopeTag = scope.tag
 	}
 }
+
+class TagUnless: TagIf
+{
+	override class var keyword: String
+	{
+		return "unless"
+	}
+
+	override var shouldEnterScope: Bool
+	{
+		// An `unless` tag should execute if its statement is considered "falsy".
+		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isFalsy
+		{
+			return true
+		}
+
+		return false
+	}
+}
+
+class TagEndUnless: Tag
+{
+	override class var keyword: String
+	{
+		return "endunless"
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagUnless.self]
+	}
+}

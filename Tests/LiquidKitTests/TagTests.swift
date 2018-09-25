@@ -117,4 +117,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["\n", "I am being captured."])
 	}
+
+	func testTagUnlessEndUnless()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% unless check %}{% unless check %}10{% endunless %}20{% endunless %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "</p>"])
+	}
 }

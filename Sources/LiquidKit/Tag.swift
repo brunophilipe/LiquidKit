@@ -139,7 +139,7 @@ extension Tag
 {
 	static let builtInTags: [Tag.Type] = [
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
-		TagCapture.self, TagEndCapture.self
+		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self
 	]
 }
 
