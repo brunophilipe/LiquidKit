@@ -68,6 +68,16 @@ class FilterTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["2", "2", "184", "4"])
 	}
+
+	func testFilter_compact()
+	{
+		let values: [String: Token.Value] = ["categories": .array([.nil, .string("A"), .nil, .string("B")])]
+		let lexer = Lexer(templateString: "{{ categories | compact | first }}{{ categories | compact | join: \",\" }}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context(dictionary: values))
+		let res = parser.parse()
+		XCTAssertEqual(res, ["A", "A,B"])
+	}
 	
 	func testFilter_date()
 	{

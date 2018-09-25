@@ -29,9 +29,9 @@ open class Filter
 extension Filter
 {
 	static let builtInFilters: [Filter] = [
-		abs, append, atLeast, atMost, capitalize, ceil, date, `default`, dividedBy, downcase, escape, escapeOnce,
-		first, floor, join, last, leftStrip, minus, modulo, newlineToBr, plus, prepend, remove, removeFirst, replace,
-		replaceFirst, reverse, round, rightStrip, size, slice, sort, sortNatural, split, strip, stripHTML,
+		abs, append, atLeast, atMost, capitalize, ceil, compact, date, `default`, dividedBy, downcase, escape,
+		escapeOnce, first, floor, join, last, leftStrip, minus, modulo, newlineToBr, plus, prepend, remove, removeFirst,
+		replace, replaceFirst, reverse, round, rightStrip, size, slice, sort, sortNatural, split, strip, stripHTML,
 		stripNewlines, times, truncate, truncateWords, uniq, upcase, urlDecode, urlEncode
 	]
 }
@@ -128,7 +128,18 @@ extension Filter
 		return .decimal(Decimal(Int(Darwin.ceil(inputDouble))))
 	}
 
-	// static let compact: Filter
+	static let compact = Filter(identifier: "compact")
+	{
+		(input, _) -> Token.Value in
+
+		guard case .array(let inputArray) = input else
+		{
+			return .nil
+		}
+
+		return .array(inputArray.filter({ $0 != .nil }))
+	}
+
 	// static let concat: Filter
 
 	static let date = Filter(identifier: "date")

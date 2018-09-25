@@ -23,7 +23,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] at_most
   - [x] capitalize
   - [x] ceil
-  - [ ] compact
+  - [x] compact
   - [ ] concat
   - [x] date
   - [x] default
