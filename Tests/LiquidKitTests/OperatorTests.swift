@@ -63,4 +63,13 @@ class OperatorTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["TRUE", "FALSE", "TRUE"])
 	}
+
+	func testContains()
+	{
+		let lexer = Lexer(templateString: "{% assign words = \"alpha,beta,charlie\" | split: \",\" %}{% if words contains \"alpha\" %}TRUE{% else %}FALSE{% endif %}{% if words contains \"delta\" %}TRUE{% else %}FALSE{% endif %}{% if \"astronomy\" contains \"tron\" %}TRUE{% else %}FALSE{% endif %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["TRUE", "FALSE", "TRUE"])
+	}
 }

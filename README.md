@@ -31,10 +31,10 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] downcase
   - [x] escape
   - [x] escape_once
-  - [ ] first
+  - [x] first
   - [x] floor
   - [x] join
-  - [ ] last
+  - [x] last
   - [x] lstrip
   - [ ] map
   - [x] minus
@@ -69,7 +69,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `capture`
   - [x] `increment`
   - [x] `decrement`
-- [ ] Operators
+- [x] Operators
   - [x] `==` equals
   - [x] `!=` does not equal
   - [x] `>` greater than
@@ -78,7 +78,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `<=` less than or equal to
   - [x] `or` logical or
   - [x] `and` logical and
-  - [ ] `contains` checks substring inside a string
+  - [x] `contains` checks substring inside a string
 - [ ] Control flow
   - [x] `if` if a certain condition is true
   - [ ] `unless` if a certain condition is not met
