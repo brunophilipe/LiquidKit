@@ -29,11 +29,10 @@ open class Filter
 extension Filter
 {
 	static let builtInFilters: [Filter] = [
-		.abs, .append, .atLeast, .atMost, .capitalize, .ceil, .date, .default, .dividedBy, .downcase, .escape,
-		.escapeOnce, .first, .floor, .join, .last, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
-		.removeFirst, .replace, .replaceFirst, .reverse, .round, .rightStrip, .size, .slice, .sort, .sortNatural,
-		.split, .strip, .stripHTML, .stripNewlines, .times, .truncate, .truncateWords, .uniq, .upcase, .urlDecode,
-		.urlEncode
+		abs, append, atLeast, atMost, capitalize, ceil, date, `default`, dividedBy, downcase, escape, escapeOnce,
+		first, floor, join, last, leftStrip, minus, modulo, newlineToBr, plus, prepend, remove, removeFirst, replace,
+		replaceFirst, reverse, round, rightStrip, size, slice, sort, sortNatural, split, strip, stripHTML,
+		stripNewlines, times, truncate, truncateWords, uniq, upcase, urlDecode, urlEncode
 	]
 }
 
