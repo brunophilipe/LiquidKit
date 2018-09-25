@@ -123,6 +123,15 @@ class FilterTests: XCTestCase
 		XCTAssertEqual(res, ["1 &lt; 2 &amp; 3", "1 &lt; 2 &amp; 3"])
 	}
 
+	func testFilter_first()
+	{
+		let lexer = Lexer(templateString: "{{ \"4,3,2,1\" | split: \",\" | first }}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["4"])
+	}
+
 	func testFilter_floor()
 	{
 		let lexer = Lexer(templateString: "{{ 1.2 | floor }}{{ 2.0 | floor }}{{ 183.357 | floor }}{{ \"3.5\" | floor }}")
@@ -130,6 +139,15 @@ class FilterTests: XCTestCase
 		let parser = TokenParser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["1", "2", "183", "3"])
+	}
+
+	func testFilter_last()
+	{
+		let lexer = Lexer(templateString: "{{ \"4,3,2,1\" | split: \",\" | last }}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["1"])
 	}
 
 	func testFilter_leftStrip()

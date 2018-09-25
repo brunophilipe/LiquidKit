@@ -29,7 +29,7 @@ extension Filter
 {
 	static let builtInFilters: [Filter] = [
 		.abs, .append, .atLeast, .atMost, .capitalize, .ceil, .date, .default, .dividedBy, .downcase, .escape,
-		.escapeOnce, .floor, .join, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
+		.escapeOnce, .first, .floor, .join, .last, .leftStrip, .minus, .modulo, .newlineToBr, .plus, .prepend, .remove,
 		.removeFirst, .replace, .replaceFirst, .reverse, .round, .rightStrip, .size, .slice, .sort, .sortNatural,
 		.split, .strip, .stripHTML, .stripNewlines, .times, .truncate, .truncateWords, .uniq, .upcase, .urlDecode,
 		.urlEncode
@@ -226,7 +226,17 @@ extension Filter {
 		return .string(input.stringValue.htmlUnescape().htmlEscape(decimal: true, useNamedReferences: true))
 	}
 
-//	static let first: Filter
+	static let first = Filter(identifier: "first")
+	{
+		(input, _) -> Token.Value in
+
+		guard case .array(let inputArray) = input else
+		{
+			return .nil
+		}
+
+		return inputArray.first ?? .nil
+	}
 
 	static let floor = Filter(identifier: "floor")
 	{
@@ -256,7 +266,17 @@ extension Filter {
 		return .string(inputArray.map({ $0.stringValue }).joined(separator: glue))
 	}
 
-//	static let last: Filter
+	static let last = Filter(identifier: "last")
+	{
+		(input, _) -> Token.Value in
+
+		guard case .array(let inputArray) = input else
+		{
+			return .nil
+		}
+
+		return inputArray.last ?? .nil
+	}
 
 	static let leftStrip = Filter(identifier: "lstrip")
 	{
