@@ -44,7 +44,7 @@ extension Filter
 
 		guard let decimal = input.decimalValue else
 		{
-			return input
+			return .nil
 		}
 		
 		return .decimal(Swift.abs(decimal))
@@ -56,7 +56,7 @@ extension Filter
 
 		guard let stringParameter = parameters.first?.stringValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(input.stringValue + stringParameter)
@@ -70,7 +70,7 @@ extension Filter
 			let inputDecimal = input.decimalValue,
 			let parameterDecimal = parameters.first?.decimalValue
 		else {
-			return input
+			return .nil
 		}
 
 		return .decimal(max(inputDecimal, parameterDecimal))
@@ -84,7 +84,7 @@ extension Filter
 			let inputDecimal = input.decimalValue,
 			let parameterDecimal = parameters.first?.decimalValue
 		else {
-				return input
+				return .nil
 		}
 
 		return .decimal(min(inputDecimal, parameterDecimal))
@@ -98,7 +98,7 @@ extension Filter
 		
 		guard inputString.count > 0 else
 		{
-			return input
+			return .nil
 		}
 
 		var firstWord: String!
@@ -122,7 +122,7 @@ extension Filter
 
 		guard let inputDouble = input.doubleValue else
 		{
-				return input
+				return .nil
 		}
 
 		return .decimal(Decimal(Int(Darwin.ceil(inputDouble))))
@@ -137,7 +137,7 @@ extension Filter
 
 		guard let formatString = parameters.first?.stringValue else
 		{
-			return input
+			return .nil
 		}
 		
 		let inputString = input.stringValue
@@ -186,7 +186,7 @@ extension Filter
 
 		guard date != nil else
 		{
-			return input
+			return .nil
 		}
 
 		let strFormatter = STRFTimeFormatter()
@@ -197,7 +197,7 @@ extension Filter
 			return .string(dateString)
 		}
 		
-		return input
+		return .nil
 	}
 
 	static let `default` = Filter(identifier: "default")
@@ -206,7 +206,7 @@ extension Filter
 		
 		guard let defaultParameter = parameters.first else
 		{
-			return input
+			return .nil
 		}
 		
 		if input.isFalsy || input.isEmptyString
@@ -223,7 +223,7 @@ extension Filter
 
 		guard let dividendDouble = input.doubleValue, let divisor = parameters.first else
 		{
-			return input
+			return .nil
 		}
 
 		switch divisor
@@ -235,7 +235,7 @@ extension Filter
 			return .decimal(Decimal(dividendDouble / divisor.doubleValue!))
 
 		default:
-			return input
+			return .nil
 		}
 	}
 
@@ -243,8 +243,9 @@ extension Filter
 	{
 		(input, _) -> Token.Value in
 
-		guard case .string(let inputString) = input else {
-			return input
+		guard case .string(let inputString) = input else
+		{
+			return .nil
 		}
 
 		return .string(inputString.lowercased())
@@ -282,7 +283,7 @@ extension Filter
 
 		guard let inputDouble = input.doubleValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .decimal(Decimal(Int(Darwin.floor(inputDouble))))
@@ -298,7 +299,7 @@ extension Filter
 			case .array(let inputArray) = input
 		else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(inputArray.map({ $0.stringValue }).joined(separator: glue))
@@ -322,7 +323,7 @@ extension Filter
 
 		guard case .string(let inputString) = input else
 		{
-			return input
+			return .nil
 		}
 
 		let charset = CharacterSet.whitespacesAndNewlines
@@ -340,7 +341,7 @@ extension Filter
 
 		guard let index = firstNonBlankIndex else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(String(inputString[index...]))
@@ -354,7 +355,7 @@ extension Filter
 
 		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .decimal(decimalInput - decimalParameter)
@@ -366,7 +367,7 @@ extension Filter
 
 		guard let doubleInput = input.doubleValue, let doubleParameter = parameters.first?.doubleValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .decimal(Decimal(doubleInput.truncatingRemainder(dividingBy: doubleParameter)))
@@ -378,7 +379,7 @@ extension Filter
 
 		guard case .string(let inputString) = input else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(inputString.replacingOccurrences(of: "\r\n", with: "<br />")
@@ -391,7 +392,7 @@ extension Filter
 
 		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .decimal(decimalInput + decimalParameter)
@@ -403,7 +404,7 @@ extension Filter
 
 		guard let stringParameter = parameters.first?.stringValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(stringParameter + input.stringValue)
@@ -415,7 +416,7 @@ extension Filter
 
 		guard let needle = parameters.first?.stringValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(input.stringValue.replacingOccurrences(of: needle, with: ""))
@@ -427,7 +428,7 @@ extension Filter
 
 		guard let needle = parameters.first?.stringValue else
 		{
-			return input
+			return .nil
 		}
 
 		let inputString = input.stringValue
@@ -445,7 +446,7 @@ extension Filter
 
 		guard parameters.count == 2 else
 		{
-			return input
+			return .nil
 		}
 
 		let needle		= parameters[0].stringValue
@@ -460,7 +461,7 @@ extension Filter
 
 		guard parameters.count == 2 else
 		{
-			return input
+			return .nil
 		}
 
 		let needle		= parameters[0].stringValue
@@ -481,7 +482,7 @@ extension Filter
 
 		guard case .array(let inputArray) = input else
 		{
-			return input
+			return .nil
 		}
 
 		return .array(inputArray.reversed())
@@ -493,7 +494,7 @@ extension Filter
 
 		guard let inputDouble = input.doubleValue else
 		{
-			return input
+			return .nil
 		}
 
 		if let decimalCount = parameters.first?.integerValue
@@ -512,7 +513,7 @@ extension Filter
 
 		guard case .string(let inputString) = input else
 		{
-			return input
+			return .nil
 		}
 
 		let charset = CharacterSet.whitespacesAndNewlines
@@ -530,7 +531,7 @@ extension Filter
 
 		guard let index = lastNonBlankIndex else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(String(inputString[...index]))
@@ -587,7 +588,7 @@ extension Filter
 
 		guard case .array(let arrayInput) = input else
 		{
-			return input
+			return .nil
 		}
 
 		return .array(arrayInput.map({ $0.stringValue }).sorted().map({ .string($0) }))
@@ -599,7 +600,7 @@ extension Filter
 
 		guard case .array(let arrayInput) = input else
 		{
-			return input
+			return .nil
 		}
 
 		func naturallyAscending(_ s1: String, _ s2: String) -> Bool
@@ -620,7 +621,7 @@ extension Filter
 			case .string(let inputString) = input
 		else
 		{
-			return input
+			return .nil
 		}
 
 		if boundary.count == 0
@@ -638,7 +639,7 @@ extension Filter
 
 		guard case .string(let inputString) = input else
 		{
-			return input
+			return .nil
 		}
 
 		return .string(inputString.trimmingWhitespaces)
@@ -666,7 +667,7 @@ extension Filter
 
 		guard let decimalInput = input.decimalValue, let decimalParameter = parameters.first?.decimalValue else
 		{
-			return input
+			return .nil
 		}
 
 		return .decimal(decimalInput * decimalParameter)
@@ -678,7 +679,7 @@ extension Filter
 
 		guard (1...2).contains(parameters.count), let length = parameters[0].integerValue else
 		{
-			return input
+			return .nil
 		}
 
 		let inputString = input.stringValue
@@ -699,7 +700,7 @@ extension Filter
 
 		guard (1...2).contains(parameters.count), let wordCount = parameters[0].integerValue else
 		{
-			return input
+			return .nil
 		}
 
 		let inputString = input.stringValue
@@ -739,7 +740,7 @@ extension Filter
 
 		guard case .array(let inputArray) = input else
 		{
-			return input
+			return .nil
 		}
 
 		return .array(NSOrderedSet(array: inputArray).array.compactMap({ $0 as? Token.Value }))
