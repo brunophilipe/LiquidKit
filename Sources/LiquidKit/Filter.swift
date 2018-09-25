@@ -19,7 +19,8 @@ open class Filter
 	let lambda: ((Token.Value, [Token.Value]) -> Token.Value)
 
 	/// Filter constructor.
-	init(identifier: String, lambda: @escaping (Token.Value, [Token.Value]) -> Token.Value) {
+	init(identifier: String, lambda: @escaping (Token.Value, [Token.Value]) -> Token.Value)
+	{
 		self.identifier = identifier
 		self.lambda = lambda
 	}
@@ -36,24 +37,36 @@ extension Filter
 	]
 }
 
-extension Filter {
-	static let abs = Filter(identifier: "abs") { (input, _) -> Token.Value in
-		guard let decimal = input.decimalValue else {
+extension Filter
+{
+	static let abs = Filter(identifier: "abs")
+	{
+		(input, _) -> Token.Value in
+
+		guard let decimal = input.decimalValue else
+		{
 			return input
 		}
 		
 		return .decimal(Swift.abs(decimal))
 	}
 
-	static let append = Filter(identifier: "append") { (input, parameters) -> Token.Value in
-		guard let stringParameter = parameters.first?.stringValue else {
+	static let append = Filter(identifier: "append")
+	{
+		(input, parameters) -> Token.Value in
+
+		guard let stringParameter = parameters.first?.stringValue else
+		{
 			return input
 		}
 
 		return .string(input.stringValue + stringParameter)
 	}
 
-	static let atLeast = Filter(identifier: "at_least") { (input, parameters) -> Token.Value in
+	static let atLeast = Filter(identifier: "at_least")
+	{
+		(input, parameters) -> Token.Value in
+
 		guard
 			let inputDecimal = input.decimalValue,
 			let parameterDecimal = parameters.first?.decimalValue
@@ -64,7 +77,10 @@ extension Filter {
 		return .decimal(max(inputDecimal, parameterDecimal))
 	}
 
-	static let atMost = Filter(identifier: "at_most") { (input, parameters) -> Token.Value in
+	static let atMost = Filter(identifier: "at_most")
+	{
+		(input, parameters) -> Token.Value in
+
 		guard
 			let inputDecimal = input.decimalValue,
 			let parameterDecimal = parameters.first?.decimalValue
@@ -75,22 +91,28 @@ extension Filter {
 		return .decimal(min(inputDecimal, parameterDecimal))
 	}
 
-	static let capitalize = Filter(identifier: "capitalize") { (input, _) -> Token.Value in
+	static let capitalize = Filter(identifier: "capitalize")
+	{
+		(input, _) -> Token.Value in
 
 		let inputString = input.stringValue
 		
-		guard inputString.count > 0 else {
+		guard inputString.count > 0 else
+		{
 			return input
 		}
 
 		var firstWord: String!
 		var firstWordRange: Range<String.Index>!
 
-		inputString.enumerateSubstrings(in: inputString.startIndex..., options: .byWords, { (word, range, _, stop) in
+		inputString.enumerateSubstrings(in: inputString.startIndex..., options: .byWords)
+		{
+			(word, range, _, stop) in
+
 			firstWord = word
 			firstWordRange = range
 			stop = true
-		})
+		}
 
 		return .string(inputString.replacingCharacters(in: firstWordRange, with: firstWord.localizedCapitalized))
 	}
@@ -110,9 +132,12 @@ extension Filter {
 	// static let compact: Filter
 	// static let concat: Filter
 
-	static let date = Filter(identifier: "date") { (input, parameters) -> Token.Value in
+	static let date = Filter(identifier: "date")
+	{
+		(input, parameters) -> Token.Value in
 
-		guard let formatString = parameters.first?.stringValue else {
+		guard let formatString = parameters.first?.stringValue else
+		{
 			return input
 		}
 		
@@ -120,59 +145,73 @@ extension Filter {
 
 		var date: Date? = nil
 
-		if inputString == "today" || inputString == "now" {
+		if inputString == "today" || inputString == "now"
+		{
 			date = Date()
-		} else {
+		}
+		else
+		{
 			let styles: [DateFormatter.Style] = [.none, .short, .medium, .long, .full]
 			let dateFormatter = DateFormatter()
 
-			for dateStyle in styles {
-				for timeStyle in styles {
+			for dateStyle in styles
+			{
+				for timeStyle in styles
+				{
 					dateFormatter.dateStyle = dateStyle
 					dateFormatter.timeStyle = timeStyle
 
 					dateFormatter.locale = Locale.current
 
-					if let parsedDate = dateFormatter.date(from: inputString) {
+					if let parsedDate = dateFormatter.date(from: inputString)
+					{
 						date = parsedDate
 						break
 					}
 
 					dateFormatter.locale = Locale(identifier: "en_US")
 
-					if let parsedDate = dateFormatter.date(from: inputString) {
+					if let parsedDate = dateFormatter.date(from: inputString)
+					{
 						date = parsedDate
 						break
 					}
 				}
 
-				if date != nil {
+				if date != nil
+				{
 					break
 				}
 			}
 		}
 
-		guard date != nil else {
+		guard date != nil else
+		{
 			return input
 		}
 
 		let strFormatter = STRFTimeFormatter()
 		strFormatter.setFormatString(formatString)
 
-		if let dateString = strFormatter.string(from: date!) {
+		if let dateString = strFormatter.string(from: date!)
+		{
 			return .string(dateString)
 		}
 		
 		return input
 	}
 
-	static let `default` = Filter(identifier: "default") { (input, parameters) -> Token.Value in
+	static let `default` = Filter(identifier: "default")
+	{
+		(input, parameters) -> Token.Value in
 		
-		guard let defaultParameter = parameters.first else {
+		guard let defaultParameter = parameters.first else
+		{
 			return input
 		}
 		
-		if input.isFalsy || input.isEmptyString {
+		if input.isFalsy || input.isEmptyString
+		{
 			return defaultParameter
 		}
 		
