@@ -11,7 +11,6 @@
 		152FDD2721485F41003C2C63 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152FDD2621485F41003C2C63 /* Tag.swift */; };
 		152FDD2A21488A06003C2C63 /* TagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152FDD2821488989003C2C63 /* TagTests.swift */; };
 		1532BE53214E8A47009AE815 /* Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1532BE52214E8A47009AE815 /* Operator.swift */; };
-		154097742149DE6B005F471B /* FlowControlTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154097732149DE6B005F471B /* FlowControlTag.swift */; };
 		154F3380214661E00022B689 /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F337F214661E00022B689 /* FilterTests.swift */; };
 		1580EC622151A2DB0084A182 /* OperatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1580EC612151A2DB0084A182 /* OperatorTests.swift */; };
 		15CB06A9214353360023648A /* LiquidKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CB069F214353360023648A /* LiquidKit.framework */; };
@@ -45,7 +44,6 @@
 		152FDD2621485F41003C2C63 /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tag.swift; path = Sources/LiquidKit/Tag.swift; sourceTree = SOURCE_ROOT; };
 		152FDD2821488989003C2C63 /* TagTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TagTests.swift; path = Tests/LiquidKitTests/TagTests.swift; sourceTree = SOURCE_ROOT; };
 		1532BE52214E8A47009AE815 /* Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operator.swift; sourceTree = "<group>"; };
-		154097732149DE6B005F471B /* FlowControlTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FlowControlTag.swift; path = Sources/LiquidKit/FlowControlTag.swift; sourceTree = SOURCE_ROOT; };
 		154F337F214661E00022B689 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterTests.swift; path = Tests/LiquidKitTests/FilterTests.swift; sourceTree = SOURCE_ROOT; };
 		1580EC612151A2DB0084A182 /* OperatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorTests.swift; sourceTree = "<group>"; };
 		15CB069F214353360023648A /* LiquidKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LiquidKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -120,7 +118,6 @@
 				15CB06BE214353A70023648A /* Context.swift */,
 				15CB06BA214353A70023648A /* Error.swift */,
 				152FDD2621485F41003C2C63 /* Tag.swift */,
-				154097732149DE6B005F471B /* FlowControlTag.swift */,
 				15CB06BC214353A70023648A /* Filter.swift */,
 				15CB06B9214353A70023648A /* Info.plist */,
 				15CB06BB214353A70023648A /* Lexer.swift */,
@@ -352,7 +349,6 @@
 				15CB06C4214353A70023648A /* Lexer.swift in Sources */,
 				152FDD2721485F41003C2C63 /* Tag.swift in Sources */,
 				15CB06C1214353A70023648A /* Token.swift in Sources */,
-				154097742149DE6B005F471B /* FlowControlTag.swift in Sources */,
 				15CB06C8214353A70023648A /* Parser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
