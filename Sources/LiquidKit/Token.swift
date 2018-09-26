@@ -41,6 +41,7 @@ public enum Token : Equatable
 		case integer(Int)
 		case decimal(Decimal)
 		case array([Value])
+		case dictionary([String: Value])
 
 		/// Returns a string value or representation of the receiver.
 		///
@@ -51,11 +52,11 @@ public enum Token : Equatable
 		{
 			switch self
 			{
-			case .bool(_), .nil: return ""
 			case .decimal(let decimal): return "\(decimal)"
 			case .integer(let integer): return "\(integer)"
 			case .string(let string): return string
-			case .array: return ""
+			default:
+				 return ""
 			}
 		}
 
@@ -156,6 +157,7 @@ public enum Token : Equatable
 			case .integer(let integerValue):	return integerValue.hashValue
 			case .decimal(let decimalValue):	return decimalValue.hashValue
 			case .array(let arrayValue):		return arrayValue.hashValue
+			case .dictionary(let dictValue):	return dictValue.hashValue
 			}
 		}
 	}
