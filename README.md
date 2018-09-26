@@ -36,7 +36,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] join
   - [x] last
   - [x] lstrip
-  - [ ] map
+  - [x] map
   - [x] minus
   - [x] modulo
   - [x] newline_to_br
