@@ -169,6 +169,21 @@ class FilterTests: XCTestCase
 		XCTAssertEqual(res, ["So much room for activities!          "])
 	}
 
+	func testFilter_map()
+	{
+		let values: [String: Token.Value] = ["items": .array([
+			.dictionary(["title": .string("Title 1"), "content": .string("alpha")]),
+			.dictionary(["title": .string("Title 2"), "content": .string("beta")]),
+			.dictionary(["title": .string("Title 3"), "content": .string("charlie")])
+		])]
+
+		let lexer = Lexer(templateString: "{{ items | map: \"content\" | join: \", \" }}{{ items | map: \"title\" | first }}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context(dictionary: values))
+		let res = parser.parse()
+		XCTAssertEqual(res, ["alpha, beta, charlie", "Title 1"])
+	}
+
 	func testFilter_minus()
 	{
 		let lexer = Lexer(templateString: "{{ 4 | minus: 2 }}{{ 16 | minus: 4 }}{{ 183.357 | minus: 12 }}")

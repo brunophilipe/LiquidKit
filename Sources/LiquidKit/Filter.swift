@@ -30,9 +30,9 @@ extension Filter
 {
 	static let builtInFilters: [Filter] = [
 		abs, append, atLeast, atMost, capitalize, ceil, compact, date, `default`, dividedBy, downcase, escape,
-		escapeOnce, first, floor, join, last, leftStrip, minus, modulo, newlineToBr, plus, prepend, remove, removeFirst,
-		replace, replaceFirst, reverse, round, rightStrip, size, slice, sort, sortNatural, split, strip, stripHTML,
-		stripNewlines, times, truncate, truncateWords, uniq, upcase, urlDecode, urlEncode
+		escapeOnce, first, floor, join, last, leftStrip, map, minus, modulo, newlineToBr, plus, prepend, remove,
+		removeFirst, replace, replaceFirst, reverse, round, rightStrip, size, slice, sort, sortNatural, split, strip,
+		stripHTML, stripNewlines, times, truncate, truncateWords, uniq, upcase, urlDecode, urlEncode
 	]
 }
 
@@ -358,7 +358,24 @@ extension Filter
 		return .string(String(inputString[index...]))
 	}
 
-//	static let map: Filter
+	static let map = Filter(identifier: "map")
+	{
+		(input, parameters) -> Token.Value in
+
+		guard case .array(let inputArray) = input, let keyName = parameters.first?.stringValue else
+		{
+			return .nil
+		}
+
+		return .array(inputArray.compactMap({
+			guard case .dictionary(let dictionaryValue) = $0 else
+			{
+				return nil
+			}
+
+			return dictionaryValue[keyName] ?? .nil
+		}))
+	}
 
 	static let minus = Filter(identifier: "minus")
 	{
