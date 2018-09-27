@@ -79,12 +79,12 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `or` logical or
   - [x] `and` logical and
   - [x] `contains` checks substring inside a string
-- [ ] Control flow
+- [x] Control flow
   - [x] `if` if a certain condition is true
   - [x] `unless` if a certain condition is not met
   - [x] `elsif` more conditions
   - [x] `else` else conditions
-  - [ ] `case/when` switch statement
+  - [x] `case/when` switch statement
 - [ ] Iteration
   - [ ] `for`
   - [ ] `break`
