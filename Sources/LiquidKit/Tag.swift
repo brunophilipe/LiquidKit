@@ -47,6 +47,10 @@ public class Tag
 		return false
 	}
 
+	/// Tags classes that should be skipped after evaluation this tag. This value is only invoked after
+	/// `shouldEnter(scope:)` returns.
+	internal fileprivate(set) var tagClassesToSkip: [Tag.Type]?
+
 	/// Whether the statement provided to this tag causes its scope to be executed.
 	///
 	/// *Notice:* This value is only evaluated if `definesScope` returns `true`.
@@ -323,6 +327,7 @@ class TagIf: Tag
 		// An `if` tag should execute if its statement is considered "truthy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
 		{
+			tagClassesToSkip = [TagElsif.self, TagElse.self]
 			return true
 		}
 
@@ -355,8 +360,6 @@ class TagEndIf: Tag
 
 class TagElse: Tag
 {
-	private var terminatedScopeTag: Tag? = nil
-
 	override class var keyword: String
 	{
 		return "else"
@@ -369,23 +372,7 @@ class TagElse: Tag
 
 	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
-		if let tagIf = terminatedScopeTag as? TagIf
-		{
-			return !tagIf.shouldEnter(scope: scope)
-		}
-		else if let tagCase = scope.parentScope?.tag as? TagCase
-		{
-			return !tagCase.didMatchWhenTag
-		}
-		else
-		{
-			return false
-		}
-	}
-
-	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
-	{
-		terminatedScopeTag = scope.tag
+		return true
 	}
 
 	override var terminatesScopesWithTags: [Tag.Type]?
@@ -396,8 +383,6 @@ class TagElse: Tag
 
 class TagElsif: TagIf
 {
-	private var terminatedScopeTag: Tag? = nil
-
 	override class var keyword: String
 	{
 		return "elsif"
@@ -406,25 +391,6 @@ class TagElsif: TagIf
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
 		return [TagIf.self, TagElsif.self]
-	}
-
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
-	{
-		// An `elsif` tag should be executed if an immediatelly prior `if` tag is not executed, and its statement
-		// evaluates to `true`
-		if let ifTag = terminatedScopeTag as? TagIf
-		{
-			return !ifTag.shouldEnter(scope: scope) && super.shouldEnter(scope: scope)
-		}
-		else
-		{
-			return false
-		}
-	}
-
-	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
-	{
-		terminatedScopeTag = scope.tag
 	}
 }
 
@@ -462,8 +428,6 @@ class TagEndUnless: Tag
 
 class TagCase: Tag
 {
-	internal var didMatchWhenTag = false
-
 	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		return [.variable("conditional")]
@@ -496,6 +460,7 @@ class TagCase: Tag
 
 	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
 	{
+		// Prevent rogue text between the `case` tag and the first `when` tag from being output.
 		scope.producesOutput = false
 	}
 }
@@ -530,15 +495,12 @@ class TagWhen: Tag
 
 		let isMatch = comparator == conditional
 
-		if isMatch, !tagCase.didMatchWhenTag
+		if isMatch
 		{
-			tagCase.didMatchWhenTag = true
-			return true
+			tagClassesToSkip = [TagWhen.self, TagElse.self]
 		}
-		else
-		{
-			return false
-		}
+
+		return isMatch
 	}
 
 	override func parse(statement: String, using parser: TokenParser) throws

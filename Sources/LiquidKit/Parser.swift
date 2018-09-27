@@ -399,6 +399,7 @@ internal extension TokenParser.Scope
 	func compile(using parser: TokenParser) -> [String]?
 	{
 		var nodes = [String]()
+		var tagClassesToSkip: [Tag.Type]? = nil
 
 		if let tag = self.tag, tag.definesScope && !tag.shouldEnter(scope: self)
 		{
@@ -407,6 +408,16 @@ internal extension TokenParser.Scope
 		else if let outputNodes = tag?.output?.map({ $0.stringValue })
 		{
 			nodes.append(contentsOf: outputNodes)
+		}
+
+		func shouldSkip(scope: TokenParser.Scope) -> Bool
+		{
+			guard let classes = tagClassesToSkip, let tag = scope.tag else
+			{
+				return false
+			}
+
+			return classes.contains(where: { type(of: tag) == $0 })
 		}
 
 		for statement in processedStatements
@@ -419,11 +430,13 @@ internal extension TokenParser.Scope
 			case .filteredOutput(let filterStatement) where producesOutput:
 				nodes.append(parser.compileFilter(filterStatement).stringValue)
 
-			case .scope(let childScope):
+			case .scope(let childScope) where !shouldSkip(scope: childScope):
 				if let childNodes = childScope.compile(using: parser)
 				{
 					nodes.append(contentsOf: childNodes)
 				}
+
+				tagClassesToSkip = childScope.tag?.tagClassesToSkip
 				
 			default:
 				break
