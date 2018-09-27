@@ -83,9 +83,9 @@ open class TokenParser
 
 	/// This method will traverse the provided tokens (which is a linear structure) and create a scoped (nested) data
 	/// structure of the code, so that it can be compiled later.
-	private func preprocessTokens() -> ScopeLevel
+	private func preprocessTokens() -> Scope
 	{
-		let rootScope = ScopeLevel()
+		let rootScope = Scope()
 		var currentScope = rootScope
 
 		while let token = nextToken()
@@ -112,11 +112,11 @@ open class TokenParser
 					// Inform this tag instance that it has closed a tag.
 					tag.didTerminateScope(currentScope, parser: self)
 
-					if tag.terminatesParentScope, let grampaScope = currentScope.parentScopeLevel?.parentScopeLevel
+					if tag.terminatesParentScope, let grampaScope = currentScope.parentScope?.parentScope
 					{
 						currentScope = grampaScope
 					}
-					else if let parentScope = currentScope.parentScopeLevel
+					else if let parentScope = currentScope.parentScope
 					{
 						currentScope = parentScope
 					}
@@ -330,13 +330,13 @@ open class TokenParser
 
 	/// Defines a level of scope during parsing. Each time a scope-defining tag is found (such as `if`, `else`, etc…),
 	/// a new scope is defined. Closing tags (such as `endif`, `elsif`, etc) terminate scopes.
-	internal class ScopeLevel
+	internal class Scope
 	{
 		/// The tag that defined this scope level. Is only `nil` on the root scope level.
 		let tag: Tag?
 
 		/// The parent scope level, that contains the receiver scope. Is only `nil` on the root scope level.
-		let parentScopeLevel: ScopeLevel?
+		let parentScope: Scope?
 		
 		/// Whether the processed statements should be compiled and written to the output. Default is `true`.
 		var producesOutput = true
@@ -344,10 +344,10 @@ open class TokenParser
 		/// The statements inside the receiver scope.
 		private(set) var processedStatements: [ProcessedStatement] = []
 
-		init(tag: Tag? = nil, parent: ScopeLevel? = nil)
+		init(tag: Tag? = nil, parent: Scope? = nil)
 		{
 			self.tag = tag
-			self.parentScopeLevel = parent
+			self.parentScope = parent
 
 			parent?.processedStatements.append(.scope(self))
 		}
@@ -365,16 +365,16 @@ open class TokenParser
 		}
 
 		/// Append a tag to the processed statements of the receiver scope level, thus defining a child scope level.
-		func appendScope(for tag: Tag) -> ScopeLevel
+		func appendScope(for tag: Tag) -> Scope
 		{
-			return ScopeLevel(tag: tag, parent: self)
+			return Scope(tag: tag, parent: self)
 		}
 
 		enum ProcessedStatement
 		{
 			case rawOutput(String)
 			case filteredOutput(String)
-			case scope(ScopeLevel)
+			case scope(Scope)
 		}
 	}
 
@@ -392,7 +392,7 @@ open class TokenParser
 	}
 }
 
-internal extension TokenParser.ScopeLevel
+internal extension TokenParser.Scope
 {
 	/// This method will compile the nodes of the receiver scope, depending on its opener tag and the contents of is
 	/// nodes and child scopes.
