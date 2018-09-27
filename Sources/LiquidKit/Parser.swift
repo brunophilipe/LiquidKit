@@ -408,13 +408,13 @@ internal extension TokenParser.ScopeLevel
 		{
 			switch statement
 			{
-			case .rawOutput(let output):
+			case .rawOutput(let output) where producesOutput:
 				nodes.append(output)
 
-			case .filteredOutput(let filterStatement):
+			case .filteredOutput(let filterStatement) where producesOutput:
 				nodes.append(parser.compileFilter(filterStatement).stringValue)
 
-			case .scope(let childScope) where childScope.producesOutput:
+			case .scope(let childScope):
 				if let childNodes = childScope.compile(using: parser)
 				{
 					nodes.append(contentsOf: childNodes)

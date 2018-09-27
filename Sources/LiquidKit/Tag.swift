@@ -274,13 +274,14 @@ class TagEndCapture: Tag
 	
 	override func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
 	{
-		scope.producesOutput = false
-		
 		if let assigneeName = scope.tag?.compiledExpression["assignee"] as? String,
 			let compiledCapturedStatements = scope.compile(using: parser)
 		{
 			context.set(value: .string(compiledCapturedStatements.joined()), for: assigneeName)
 		}
+
+		// Prevent the nodes of the scope from being written to the output when the final compilation happens.
+		scope.producesOutput = false
 	}
 }
 
