@@ -106,8 +106,13 @@ public class Context
 		}
 		else if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"")
 		{
-			// This is a literal string. Strip its quotations.
+			// This is a literal string. Strip its double-quotations.
 			return .string(trimmedToken.trim(character: "\""))
+		}
+		else if trimmedToken.hasPrefix("'"), trimmedToken.hasSuffix("'")
+		{
+			// This is a literal string. Strip its quotations.
+			return .string(trimmedToken.trim(character: "'"))
 		}
 		else if let integer = Int(trimmedToken)
 		{
