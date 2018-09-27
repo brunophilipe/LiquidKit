@@ -10,12 +10,14 @@ import Foundation
 /// A class representing a filter
 public class Tag
 {
+	/// Keyword used to identify the receiver tag.
 	public class var keyword: String
 	{
 		return ""
 	}
 
-	internal var tagExpression: [ExpressionSegment]
+	/// Expression which defines the structure of the accepted parameters for the receiver tag.
+	internal var tagParametersExpression: [ExpressionSegment]
 	{
 		return []
 	}
@@ -39,6 +41,7 @@ public class Tag
 		return nil
 	}
 
+	/// Whether the parent scope of the scope terminated by this tag should also be terminated.
 	internal var terminatesParentScope: Bool
 	{
 		return false
@@ -75,7 +78,7 @@ public class Tag
 	{
 		let scanner = Scanner(statement.trimmingWhitespaces)
 
-		for segment in tagExpression
+		for segment in tagParametersExpression
 		{
 			switch segment
 			{
@@ -157,7 +160,7 @@ extension Tag
 
 class TagAssign: Tag
 {
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		// example: {% assign IDENTIFIER = "value" %}
 		return [.identifier("assignee"), .literal("="), .variable("value")]
@@ -186,7 +189,7 @@ class TagAssign: Tag
 
 class TagIncrement: Tag
 {
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		// example: {% increment IDENTIFIER %}
 		return [.identifier("assignee")]
@@ -212,7 +215,7 @@ class TagIncrement: Tag
 
 class TagDecrement: Tag
 {
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		// example: {% increment IDENTIFIER %}
 		return [.identifier("assignee")]
@@ -238,7 +241,7 @@ class TagDecrement: Tag
 
 class TagCapture: Tag
 {
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		// example: {% capture IDENTIFIER %}
 		return [.identifier("assignee")]
@@ -299,7 +302,7 @@ class TagEndCapture: Tag
 
 class TagIf: Tag
 {
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		// example: {% if IDENTIFIER %}
 		return [.variable("conditional")]
@@ -461,7 +464,7 @@ class TagCase: Tag
 {
 	internal var didMatchWhenTag = false
 
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		return [.variable("conditional")]
 	}
@@ -499,7 +502,7 @@ class TagCase: Tag
 
 class TagWhen: Tag
 {
-	internal override var tagExpression: [ExpressionSegment]
+	internal override var tagParametersExpression: [ExpressionSegment]
 	{
 		return [.variable("comparator")]
 	}
