@@ -47,18 +47,18 @@ public class Tag
 	/// Whether the statement provided to this tag causes its scope to be executed.
 	///
 	/// *Notice:* This value is only evaluated if `definesScope` returns `true`.
-	internal func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	internal func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		return false
 	}
 
 	/// If this tag terminates a scope during preprocessing, the parser will invoke this method with the new scope.
-	internal func didTerminateScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	internal func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
 	{
 	}
 
 	/// If this tag defines a scope during preprocessing, the parser will invoke this method with the new scope.
-	internal func didDefineScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	internal func didDefine(scope: TokenParser.Scope, parser: TokenParser)
 	{
 	}
 
@@ -254,7 +254,7 @@ class TagCapture: Tag
 		return true
 	}
 	
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		return true
 	}
@@ -282,7 +282,7 @@ class TagEndCapture: Tag
 		return [TagCapture.self]
 	}
 	
-	override func didTerminateScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
 	{
 		if let assigneeName = scope.tag?.compiledExpression["assignee"] as? String,
 			let compiledCapturedStatements = scope.compile(using: parser)
@@ -315,7 +315,7 @@ class TagIf: Tag
 		return "if"
 	}
 
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		// An `if` tag should execute if its statement is considered "truthy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
@@ -364,12 +364,11 @@ class TagElse: Tag
 		return true
 	}
 
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
-		// An `else` tag should be executed if an immediatelly prior `if` tag is not executed.
 		if let tagIf = terminatedScopeTag as? TagIf
 		{
-			return !tagIf.shouldEnterScope(scope)
+			return !tagIf.shouldEnter(scope: scope)
 		}
 		else if let tagCase = scope.parentScope?.tag as? TagCase
 		{
@@ -381,7 +380,7 @@ class TagElse: Tag
 		}
 	}
 
-	override func didTerminateScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
 	{
 		terminatedScopeTag = scope.tag
 	}
@@ -406,13 +405,13 @@ class TagElsif: TagIf
 		return [TagIf.self, TagElsif.self]
 	}
 
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		// An `elsif` tag should be executed if an immediatelly prior `if` tag is not executed, and its statement
 		// evaluates to `true`
 		if let ifTag = terminatedScopeTag as? TagIf
 		{
-			return !ifTag.shouldEnterScope(scope) && super.shouldEnterScope(scope)
+			return !ifTag.shouldEnter(scope: scope) && super.shouldEnter(scope: scope)
 		}
 		else
 		{
@@ -420,7 +419,7 @@ class TagElsif: TagIf
 		}
 	}
 
-	override func didTerminateScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
 	{
 		terminatedScopeTag = scope.tag
 	}
@@ -433,7 +432,7 @@ class TagUnless: TagIf
 		return "unless"
 	}
 
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		// An `unless` tag should execute if its statement is considered "falsy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isFalsy
@@ -477,7 +476,7 @@ class TagCase: Tag
 		return true
 	}
 
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		return true
 	}
@@ -492,7 +491,7 @@ class TagCase: Tag
 		}
 	}
 
-	override func didDefineScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
 	{
 		scope.producesOutput = false
 	}
@@ -515,7 +514,7 @@ class TagWhen: Tag
 		return true
 	}
 
-	override func shouldEnterScope(_ scope: TokenParser.Scope) -> Bool
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		guard
 			let tagCase = scope.parentScope?.tag as? TagCase,
@@ -569,7 +568,7 @@ class TagEndCase: Tag
 		return [TagCase.self, TagElse.self]
 	}
 
-	override func didTerminateScope(_ scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
 	{
 		shouldTerminateParentScope = scope.tag is TagElse && scope.parentScope?.tag is TagCase
 	}

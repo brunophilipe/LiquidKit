@@ -110,7 +110,7 @@ open class TokenParser
 					terminatedTags.contains(where: { type(of: openerTag) == $0 })
 				{
 					// Inform this tag instance that it has closed a tag.
-					tag.didTerminateScope(currentScope, parser: self)
+					tag.didTerminate(scope: currentScope, parser: self)
 
 					if tag.terminatesParentScope, let grampaScope = currentScope.parentScope?.parentScope
 					{
@@ -136,7 +136,7 @@ open class TokenParser
 				if tag.definesScope
 				{
 					currentScope = currentScope.appendScope(for: tag)
-					tag.didDefineScope(currentScope, parser: self)
+					tag.didDefine(scope: currentScope, parser: self)
 				}
 			}
 		}
@@ -400,7 +400,7 @@ internal extension TokenParser.Scope
 	{
 		var nodes = [String]()
 
-		if let tag = self.tag, tag.definesScope && !tag.shouldEnterScope(self)
+		if let tag = self.tag, tag.definesScope && !tag.shouldEnter(scope: self)
 		{
 			return tag.output?.map { $0.stringValue }
 		}
