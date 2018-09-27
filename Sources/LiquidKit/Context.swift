@@ -119,15 +119,20 @@ public class Context
 			// This is an integer literal (the integer constructor fails if a decimal point is found).
 			return .integer(integer)
 		}
+		else if let value = getValue(for: trimmedToken)
+		{
+			// This is a known variable name.
+			return value
+		}
 		else if let number = Decimal(string: trimmedToken)
 		{
-			// This is a decimal literal.
+			// This is a decimal literal. Decimal needs to be evaluated last because the string initializer might match
+			// strings such as "everything", which might be defined as context variables.
 			return .decimal(number)
 		}
 		else
 		{
-			// This is a variable name. Return its value, or an empty string.
-			return getValue(for: trimmedToken)
+			return nil
 		}
 	}
 }
