@@ -126,4 +126,40 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "</p>"])
 	}
+
+	func testTagCaseWhen_1()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign handle = 'cake' %}{% case handle %}rogue chars{% when 'cake' %}This is a cake{% when 'cookie' %}This is a cookie{% else %}This is not a cake nor a cookie{% endcase %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "This is a cake", "</p>"])
+	}
+
+	func testTagCaseWhen_2()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign handle = 'cookie' %}{% case handle %}rogue chars{% when 'cake' %}This is a cake{% when 'cookie' %}This is a cookie{% else %}This is not a cake nor a cookie{% endcase %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "This is a cookie", "</p>"])
+	}
+
+	func testTagCaseWhenElse()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign handle = 'croissant' %}{% case handle %}rogue chars{% when 'cake' %}This is a cake{% when 'cookie' %}This is a cookie{% else %}This is not a cake nor a cookie{% endcase %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "This is not a cake nor a cookie", "</p>"])
+	}
+
+	func testTagCaseEmpty()
+	{
+		let lexer = Lexer(templateString: "<p>{% assign handle = 'cake' %}{% case handle %}{% else %}This is not a cake nor a cookie{% endcase %}</p>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<p>", "This is not a cake nor a cookie", "</p>"])
+	}
 }

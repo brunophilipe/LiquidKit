@@ -28,33 +28,42 @@ public class Tag
 
 	/// If true, will create a scope for this tag upon compiling it. One or more closing tgas will need to be defined
 	/// to close that scope. Those tags will need the name of this class in its `terminatesScopesWithTags` property.
-	public var definesScope: Bool
+	internal var definesScope: Bool
 	{
 		return false
 	}
 
 	/// If defined, lists which scopes this this tag will close, based on their opener tags.
-	public var terminatesScopesWithTags: [Tag.Type]?
+	internal var terminatesScopesWithTags: [Tag.Type]?
 	{
 		return nil
+	}
+
+	internal var terminatesParentScope: Bool
+	{
+		return false
 	}
 
 	/// Whether the statement provided to this tag causes its scope to be executed.
 	///
 	/// *Notice:* This value is only evaluated if `definesScope` returns `true`.
-	public var shouldEnterScope: Bool
+	internal func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
 	{
 		return false
 	}
 
-	/// If compiling this tag produces an output, this value will be stored here.
-	public internal(set) var output: [Token.Value]? = nil
-
-	/// If this tag terminates a scope during preprocessing, the parser will set this property to the opener tag of
-	/// that scope.
+	/// If this tag terminates a scope during preprocessing, the parser will invoke this method with the new scope.
 	internal func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
 	{
 	}
+
+	/// If this tag defines a scope during preprocessing, the parser will invoke this method with the new scope.
+	internal func didDefineScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+	}
+
+	/// If compiling this tag produces an output, this value will be stored here.
+	public internal(set) var output: [Token.Value]? = nil
 
 	public required init(context: Context)
 	{
@@ -139,7 +148,8 @@ extension Tag
 {
 	static let builtInTags: [Tag.Type] = [
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
-		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self
+		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
+		TagWhen.self
 	]
 }
 
@@ -244,7 +254,7 @@ class TagCapture: Tag
 		return true
 	}
 	
-	override var shouldEnterScope: Bool
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
 	{
 		return true
 	}
@@ -305,7 +315,7 @@ class TagIf: Tag
 		return "if"
 	}
 
-	override var shouldEnterScope: Bool
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
 	{
 		// An `if` tag should execute if its statement is considered "truthy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
@@ -354,12 +364,16 @@ class TagElse: Tag
 		return true
 	}
 
-	override var shouldEnterScope: Bool
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
 	{
 		// An `else` tag should be executed if an immediatelly prior `if` tag is not executed.
-		if let ifTag = terminatedScopeTag as? TagIf
+		if let tagIf = terminatedScopeTag as? TagIf
 		{
-			return !ifTag.shouldEnterScope
+			return !tagIf.shouldEnterScope(scope)
+		}
+		else if let tagCase = scope.parentScopeLevel?.tag as? TagCase
+		{
+			return !tagCase.didMatchWhenTag
 		}
 		else
 		{
@@ -374,7 +388,7 @@ class TagElse: Tag
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
-		return [TagIf.self, TagElsif.self]
+		return [TagIf.self, TagElsif.self, TagWhen.self]
 	}
 }
 
@@ -392,13 +406,13 @@ class TagElsif: TagIf
 		return [TagIf.self, TagElsif.self]
 	}
 
-	override var shouldEnterScope: Bool
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
 	{
 		// An `elsif` tag should be executed if an immediatelly prior `if` tag is not executed, and its statement
 		// evaluates to `true`
 		if let ifTag = terminatedScopeTag as? TagIf
 		{
-			return !ifTag.shouldEnterScope && super.shouldEnterScope
+			return !ifTag.shouldEnterScope(scope) && super.shouldEnterScope(scope)
 		}
 		else
 		{
@@ -419,7 +433,7 @@ class TagUnless: TagIf
 		return "unless"
 	}
 
-	override var shouldEnterScope: Bool
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
 	{
 		// An `unless` tag should execute if its statement is considered "falsy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isFalsy
@@ -441,5 +455,127 @@ class TagEndUnless: Tag
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
 		return [TagUnless.self]
+	}
+}
+
+class TagCase: Tag
+{
+	internal var didMatchWhenTag = false
+
+	internal override var tagExpression: [ExpressionSegment]
+	{
+		return [.variable("conditional")]
+	}
+
+	override class var keyword: String
+	{
+		return "case"
+	}
+
+	override var definesScope: Bool
+	{
+		return true
+	}
+
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
+	{
+		return true
+	}
+
+	override func parse(statement: String, using parser: TokenParser) throws
+	{
+		try super.parse(statement: statement, using: parser)
+
+		guard compiledExpression["conditional"] is Token.Value else
+		{
+			throw Errors.missingArtifacts
+		}
+	}
+
+	override func didDefineScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+		scope.producesOutput = false
+	}
+}
+
+class TagWhen: Tag
+{
+	internal override var tagExpression: [ExpressionSegment]
+	{
+		return [.variable("comparator")]
+	}
+
+	override class var keyword: String
+	{
+		return "when"
+	}
+
+	override var definesScope: Bool
+	{
+		return true
+	}
+
+	override func shouldEnterScope(_ scope: TokenParser.ScopeLevel) -> Bool
+	{
+		guard
+			let tagCase = scope.parentScopeLevel?.tag as? TagCase,
+			let comparator = compiledExpression["comparator"] as? Token.Value,
+			let conditional = tagCase.compiledExpression["conditional"] as? Token.Value
+		else
+		{
+			return false
+		}
+
+		let isMatch = comparator == conditional
+
+		if isMatch, !tagCase.didMatchWhenTag
+		{
+			tagCase.didMatchWhenTag = true
+			return true
+		}
+		else
+		{
+			return false
+		}
+	}
+
+	override func parse(statement: String, using parser: TokenParser) throws
+	{
+		try super.parse(statement: statement, using: parser)
+
+		guard compiledExpression["comparator"] is Token.Value else
+		{
+			throw Errors.missingArtifacts
+		}
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagWhen.self]
+	}
+}
+
+class TagEndCase: Tag
+{
+	private var shouldTerminateParentScope = false
+
+	override class var keyword: String
+	{
+		return "endcase"
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagCase.self, TagElse.self]
+	}
+
+	override func didTerminateScope(_ scope: TokenParser.ScopeLevel, parser: TokenParser)
+	{
+		shouldTerminateParentScope = scope.tag is TagElse && scope.parentScopeLevel?.tag is TagCase
+	}
+
+	override var terminatesParentScope: Bool
+	{
+		return shouldTerminateParentScope
 	}
 }

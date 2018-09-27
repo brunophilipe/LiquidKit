@@ -112,7 +112,11 @@ open class TokenParser
 					// Inform this tag instance that it has closed a tag.
 					tag.didTerminateScope(currentScope, parser: self)
 
-					if let parentScope = currentScope.parentScopeLevel
+					if tag.terminatesParentScope, let grampaScope = currentScope.parentScopeLevel?.parentScopeLevel
+					{
+						currentScope = grampaScope
+					}
+					else if let parentScope = currentScope.parentScopeLevel
 					{
 						currentScope = parentScope
 					}
@@ -132,6 +136,7 @@ open class TokenParser
 				if tag.definesScope
 				{
 					currentScope = currentScope.appendScope(for: tag)
+					tag.didDefineScope(currentScope, parser: self)
 				}
 			}
 		}
@@ -395,7 +400,7 @@ internal extension TokenParser.ScopeLevel
 	{
 		var nodes = [String]()
 
-		if let tag = self.tag, tag.definesScope && !tag.shouldEnterScope
+		if let tag = self.tag, tag.definesScope && !tag.shouldEnterScope(self)
 		{
 			return tag.output?.map { $0.stringValue }
 		}
