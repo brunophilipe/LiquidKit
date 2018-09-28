@@ -69,6 +69,23 @@ class FilterTests: XCTestCase
 		XCTAssertEqual(res, ["2", "2", "184", "4"])
 	}
 
+	func testFilter_concat()
+	{
+		let lexer = Lexer(templateString: """
+{% assign fruits = \"apples, oranges, peaches\" | split: \", \" %}
+{% assign vegetables = \"carrots, turnips, potatoes\" | split: \", \" %}
+{% assign everything = fruits | concat: vegetables %}
+{{ everything | join: \", \" }}
+{% assign furniture = "chairs, tables, shelves" | split: ", " %}
+{% assign everything = fruits | concat: vegetables | concat: furniture %}
+{{ everything | join: \", \" }}
+""")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["\n", "\n", "\n", "apples, oranges, peaches, carrots, turnips, potatoes", "\n", "\n", "\n", "apples, oranges, peaches, carrots, turnips, potatoes, chairs, tables, shelves"])
+	}
+
 	func testFilter_compact()
 	{
 		let values: [String: Token.Value] = ["categories": .array([.nil, .string("A"), .nil, .string("B")])]
