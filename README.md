@@ -16,7 +16,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
 - [ ] Raw
 - [x] Truthy and falsy
 - [ ] Whitespace control
-- [ ] Filters
+- [x] Filters
   - [x] abs
   - [x] append
   - [x] at_least
@@ -24,7 +24,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] capitalize
   - [x] ceil
   - [x] compact
-  - [ ] concat
+  - [x] concat
   - [x] date
   - [x] default
   - [x] divided_by
