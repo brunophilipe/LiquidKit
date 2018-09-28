@@ -96,7 +96,7 @@ open class TokenParser
 				currentScope.append(rawOutput: contents)
 
 			case .variable(let contents):
-				currentScope.append(filteredOutput: contents)
+				currentScope.append(rawOutput: compileFilter(contents).stringValue)
 
 			case .tag(let contents):
 				guard let tag = compileTag(contents) else
@@ -355,13 +355,7 @@ open class TokenParser
 		/// Append a raw string to the processed statements of the receiver scope level.
 		func append(rawOutput: String)
 		{
-			processedStatements.append(.rawOutput(rawOutput))
-		}
-
-		/// Append a string that should be parsed as a filter to the processed statements of the receiver scope level.
-		func append(filteredOutput: String)
-		{
-			processedStatements.append(.filteredOutput(filteredOutput))
+			processedStatements.append(.output(rawOutput))
 		}
 
 		/// Append a tag to the processed statements of the receiver scope level, thus defining a child scope level.
@@ -372,8 +366,7 @@ open class TokenParser
 
 		enum ProcessedStatement
 		{
-			case rawOutput(String)
-			case filteredOutput(String)
+			case output(String)
 			case scope(Scope)
 		}
 	}
@@ -424,11 +417,8 @@ internal extension TokenParser.Scope
 		{
 			switch statement
 			{
-			case .rawOutput(let output) where producesOutput:
+			case .output(let output) where producesOutput:
 				nodes.append(output)
-
-			case .filteredOutput(let filterStatement) where producesOutput:
-				nodes.append(parser.compileFilter(filterStatement).stringValue)
 
 			case .scope(let childScope) where !shouldSkip(scope: childScope):
 				if let childNodes = childScope.compile(using: parser)
