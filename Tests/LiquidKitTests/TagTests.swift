@@ -171,4 +171,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "This is not a cake nor a cookie", "</p>"])
 	}
+	
+	func testTagRaw()
+	{
+		let lexer = Lexer(templateString: "{% raw %}In Handlebars, {{ this }} will be HTML-escaped, but {{{ that }}} will not.{% endraw %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["In Handlebars, {{ this }} will be HTML-escaped, but {{{ that }}} will not."])
+	}
 }

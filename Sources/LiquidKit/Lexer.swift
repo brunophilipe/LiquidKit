@@ -41,27 +41,32 @@ public struct Lexer
 	/// Returns an array of tokens from a given template string.
 	public func tokenize() -> [Token]
 	{
-		var tokens: [Token] = []
-		
 		let scanner = Scanner(templateString)
-		
-		let map = [
-			"{{": "}}",
-			"{%": "%}",
-			]
+		let map = ["{{": "}}", "{%": "%}"]
+		var tokens: [Token] = []
 		
 		while !scanner.isEmpty
 		{
-			if let text = scanner.scan(until: ["{{", "{%"])
+			if let (scanned, text) = scanner.scan(until: ["{{", "{%"])
 			{
-				if !text.1.isEmpty
+				if !text.isEmpty
 				{
-					tokens.append(createToken(string: text.1))
+					tokens.append(createToken(string: text))
 				}
 				
-				let end = map[text.0]!
+				let end = map[scanned]!
 				let result = scanner.scan(until: end, returnUntil: true)
-				tokens.append(createToken(string: result))
+				
+				if createToken(string: result) == .tag(value: "raw")
+				{
+					// Entered raw mode. Must find the {% endraw %} tag now.
+					let rawContent = scanner.scan(until: "{% endraw %}", returnUntil: false)
+					tokens.append(.text(value: rawContent))
+				}
+				else
+				{
+					tokens.append(createToken(string: result))
+				}
 			}
 			else
 			{
