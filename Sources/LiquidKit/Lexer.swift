@@ -19,7 +19,7 @@ public struct Lexer
 	
 	func createToken(string: String) -> Token
 	{
-		func strip() -> String
+		var stripped: String
 		{
 			let start = string.index(string.startIndex, offsetBy: 2)
 			let end = string.index(string.endIndex, offsetBy: -2)
@@ -28,11 +28,11 @@ public struct Lexer
 		
 		if string.hasPrefix("{{")
 		{
-			return .variable(value: strip())
+			return .variable(value: stripped)
 		}
 		else if string.hasPrefix("{%")
 		{
-			return .tag(value: strip())
+			return .tag(value: stripped)
 		}
 		
 		return .text(value: string)
