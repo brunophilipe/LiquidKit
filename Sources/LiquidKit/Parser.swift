@@ -97,14 +97,14 @@ open class TokenParser
 					break
 				}
 
-				// If this tag closes the opener tag, then leave the current scope.
+				// If this tag closes the opener tag of the current scope, then we must leave the current scope.
 				if let openerTag = currentScope.tag, let terminatedTags = tag.terminatesScopesWithTags,
 					terminatedTags.contains(where: { type(of: openerTag) == $0 })
 				{
 					// Inform this tag instance that it has closed a tag.
 					tag.didTerminate(scope: currentScope, parser: self)
 
-					// If this scope was defined by an iteration tag, we need to check with it if we need another pass
+					// If this scope was defined by an iteration tag, we need to check with it if we need another pass.
 					if let iterationTag = currentScope.tag as? IterationTag,
 						let tagTokenIndex = currentScope.tagTokenIndex,
 						let supplementalContext = iterationTag.supplementalContext
@@ -112,10 +112,12 @@ open class TokenParser
 						currentScope.context = supplementalContext
 						tokenIterator.setCurrentIndex(tagTokenIndex)
 					}
+					// If this tag also closes the parent scope, we need to jump two scope levels up.
 					else if tag.terminatesParentScope, let grampaScope = currentScope.parentScope?.parentScope
 					{
 						currentScope = grampaScope
 					}
+					// Otherwise we just jump back to the parent scope, if present.
 					else if let parentScope = currentScope.parentScope
 					{
 						currentScope = parentScope
