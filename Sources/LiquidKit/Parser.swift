@@ -49,16 +49,6 @@ open class TokenParser
 		return preprocessTokens().compile(using: self) ?? []
 	}
 
-	public func nextToken() -> Token?
-	{
-		if tokens.count > 0
-		{
-			return tokens.remove(at: 0)
-		}
-
-		return nil
-	}
-
 	public func register(filter: Filter)
 	{
 		filters.append(filter)
@@ -85,10 +75,12 @@ open class TokenParser
 	/// structure of the code, so that it can be compiled later.
 	private func preprocessTokens() -> Scope
 	{
+		var tokenIterator = TokenIterator(tokens)
+
 		let rootScope = Scope()
 		var currentScope = rootScope
 
-		while let token = nextToken()
+		while let (tokenIndex, token) = tokenIterator.next()
 		{
 			switch token
 			{
@@ -96,10 +88,10 @@ open class TokenParser
 				currentScope.append(rawOutput: contents)
 
 			case .variable(let contents):
-				currentScope.append(rawOutput: compileFilter(contents).stringValue)
+				currentScope.append(rawOutput: compileFilter(contents, context: currentScope.context).stringValue)
 
 			case .tag(let contents):
-				guard let tag = compileTag(contents) else
+				guard let tag = compileTag(contents, context: currentScope.context) else
 				{
 					// Unknown tag keyword or invalid statement
 					break
@@ -112,7 +104,15 @@ open class TokenParser
 					// Inform this tag instance that it has closed a tag.
 					tag.didTerminate(scope: currentScope, parser: self)
 
-					if tag.terminatesParentScope, let grampaScope = currentScope.parentScope?.parentScope
+					// If this scope was defined by an iteration tag, we need to check with it if we need another pass
+					if let iterationTag = currentScope.tag as? IterationTag,
+						let tagTokenIndex = currentScope.tagTokenIndex,
+						let supplementalContext = iterationTag.supplementalContext
+					{
+						currentScope.context = supplementalContext
+						tokenIterator.setCurrentIndex(tagTokenIndex)
+					}
+					else if tag.terminatesParentScope, let grampaScope = currentScope.parentScope?.parentScope
 					{
 						currentScope = grampaScope
 					}
@@ -136,6 +136,8 @@ open class TokenParser
 				if tag.definesScope
 				{
 					currentScope = currentScope.appendScope(for: tag)
+					currentScope.tagTokenIndex = tokenIndex
+					currentScope.context = (tag as? IterationTag)?.supplementalContext
 					tag.didDefine(scope: currentScope, parser: self)
 				}
 			}
@@ -149,16 +151,17 @@ open class TokenParser
 		return rootScope
 	}
 
-	internal func compileFilter(_ statement: String) -> Token.Value
+	internal func compileFilter(_ statement: String, context inputContext: Context? = nil) -> Token.Value
 	{
+		let context = inputContext ?? self.context
 		let splitStatement = statement.split(separator: "|")
 
 		if splitStatement.count == 1
 		{
-			return compileOperators(for: statement)
+			return compileOperators(for: statement, context: context)
 		}
 
-		var filteredValue = compileOperators(for: String(splitStatement.first!))
+		var filteredValue = compileOperators(for: String(splitStatement.first!), context: context)
 
 		for filterString in splitStatement[1...]
 		{
@@ -194,8 +197,9 @@ open class TokenParser
 		return filteredValue
 	}
 
-	private func compileTag(_ statement: String) -> Tag?
+	private func compileTag(_ statement: String, context inputContext: Context? = nil) -> Tag?
 	{
+		let context = inputContext ?? self.context
 		let statementScanner = Scanner(statement.trimmingWhitespaces)
 		let keyword = statementScanner.scan(until: .whitespaces)
 
@@ -232,13 +236,14 @@ open class TokenParser
 		return nil
 	}
 
-	internal func compileOperators(for statement: String) -> Token.Value
+	internal func compileOperators(for statement: String, context inputContext: Context? = nil) -> Token.Value
 	{
 		if statement.count == 0
 		{
 			return .nil
 		}
 
+		let context = inputContext ?? self.context
 		let statementNodes = statement.smartSplit(separator: " ").filter({ $0.count > 0 })
 
 		if statementNodes.count <= 1
@@ -341,6 +346,12 @@ open class TokenParser
 		/// Whether the processed statements should be compiled and written to the output. Default is `true`.
 		var producesOutput = true
 
+		/// The index of the token that was parsed as the tag that defined this scope
+		var tagTokenIndex: Int?
+
+		/// An optional supplemental context.
+		var context: Context?
+
 		/// The statements inside the receiver scope.
 		private(set) var processedStatements: [ProcessedStatement] = []
 
@@ -434,5 +445,34 @@ internal extension TokenParser.Scope
 		}
 
 		return nodes
+	}
+}
+
+private struct TokenIterator
+{
+	private let tokens: [Token]
+
+	private(set) var currentIndex: Int = -1
+
+	init(_ tokens: [Token])
+	{
+		self.tokens = tokens
+	}
+
+	mutating func next() -> (Int, Token)?
+	{
+		guard currentIndex + 1 < tokens.count else
+		{
+			return nil
+		}
+
+		currentIndex += 1
+
+		return (currentIndex, tokens[currentIndex])
+	}
+
+	mutating func setCurrentIndex(_ index: Int)
+	{
+		currentIndex = index
 	}
 }

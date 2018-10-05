@@ -543,3 +543,12 @@ class TagEndCase: Tag
 		return shouldTerminateParentScope
 	}
 }
+
+// MARK: - Iteration
+
+protocol IterationTag
+{
+	var supplementalContext: Context? { get }
+
+	var hasSupplementalContext: Bool { get }
+}

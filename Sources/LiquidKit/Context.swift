@@ -137,3 +137,41 @@ public class Context
 	}
 }
 
+extension Context
+{
+	public func makeSupplement(with variables: [String: Token.Value]) -> Context
+	{
+		return SupplementalContext(original: self, variables: variables)
+	}
+}
+
+private class SupplementalContext: Context
+{
+	private var original: Context
+
+	init(original: Context, variables: [String: Token.Value])
+	{
+		self.original = original
+		super.init(dictionary: variables)
+	}
+
+	override func getValue(for key: String) -> Token.Value?
+	{
+		return super.getValue(for: key) ?? original.getValue(for: key)
+	}
+
+	override func set(value: Token.Value, for key: String)
+	{
+		original.set(value: value, for: key)
+	}
+
+	override func incrementCounter(for key: String) -> Int
+	{
+		return original.incrementCounter(for: key)
+	}
+
+	override func decrementCounter(for key: String) -> Int
+	{
+		return original.decrementCounter(for: key)
+	}
+}
