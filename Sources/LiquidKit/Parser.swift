@@ -405,7 +405,7 @@ internal extension TokenParser.Scope
 	func compile(using parser: TokenParser) -> [String]?
 	{
 		var nodes = [String]()
-		var tagClassesToSkip: [Tag.Type]? = nil
+		var tagClassesToSkip: Set<Tag.Kind>? = nil
 
 		if let tag = self.tag, tag.definesScope && !tag.shouldEnter(scope: self)
 		{
@@ -423,7 +423,7 @@ internal extension TokenParser.Scope
 				return false
 			}
 
-			return classes.contains(where: { type(of: tag) == $0 })
+			return classes.contains(type(of: tag).kind)
 		}
 
 		for statement in processedStatements
@@ -439,7 +439,7 @@ internal extension TokenParser.Scope
 					nodes.append(contentsOf: childNodes)
 				}
 
-				tagClassesToSkip = childScope.tag?.tagClassesToSkip
+				tagClassesToSkip = childScope.tag?.tagKindsToSkip
 				
 			default:
 				break

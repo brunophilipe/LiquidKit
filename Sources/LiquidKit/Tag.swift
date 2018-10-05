@@ -49,7 +49,7 @@ public class Tag
 
 	/// Tags classes that should be skipped after evaluation this tag. This value is only invoked after
 	/// `shouldEnter(scope:)` returns.
-	internal fileprivate(set) var tagClassesToSkip: [Tag.Type]?
+	internal fileprivate(set) var tagKindsToSkip: Set<Tag.Kind>?
 
 	/// Whether the statement provided to this tag causes its scope to be executed.
 	///
@@ -158,6 +158,16 @@ extension Tag
 		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
 		TagWhen.self, TagFor.self, TagEndFor.self
 	]
+}
+
+internal extension Tag
+{
+	typealias Kind = Int
+
+	class var kind: Kind
+	{
+		return self.keyword.hashValue
+	}
 }
 
 // MARK: - Assignment
@@ -327,7 +337,7 @@ class TagIf: Tag
 		// An `if` tag should execute if its statement is considered "truthy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
 		{
-			tagClassesToSkip = [TagElsif.self, TagElse.self]
+			tagKindsToSkip = [TagElsif.kind, TagElse.kind]
 			return true
 		}
 
@@ -497,7 +507,7 @@ class TagWhen: Tag
 
 		if isMatch
 		{
-			tagClassesToSkip = [TagWhen.self, TagElse.self]
+			tagKindsToSkip = [TagWhen.kind, TagElse.kind]
 		}
 
 		return isMatch
