@@ -156,7 +156,7 @@ extension Tag
 	static let builtInTags: [Tag.Type] = [
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
 		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
-		TagWhen.self
+		TagWhen.self, TagFor.self, TagEndFor.self
 	]
 }
 
@@ -551,4 +551,81 @@ protocol IterationTag
 	var supplementalContext: Context? { get }
 
 	var hasSupplementalContext: Bool { get }
+}
+
+class TagFor: Tag, IterationTag
+{
+	private var iterator: IndexingIterator<([Token.Value])>!
+
+	private(set) var hasSupplementalContext: Bool = true
+
+	private var itemsCount: Int
+	{
+		guard case .some(.array(let array)) = compiledExpression["iterand"] as? Token.Value else
+		{
+			return 0
+		}
+
+		return array.count
+	}
+
+	var supplementalContext: Context?
+	{
+		guard let item = iterator.next(), let iteree = compiledExpression["iteree"] as? String else
+		{
+			hasSupplementalContext = false
+			return nil
+		}
+
+		return context.makeSupplement(with: [iteree: item])
+	}
+
+	override class var keyword: String
+	{
+		return "for"
+	}
+
+	internal override var tagParametersExpression: [ExpressionSegment]
+	{
+		// example: {% for IDENTIFIER in IDENTIFIER %}
+		return [.identifier("iteree"), .literal("in"), .variable("iterand")]
+	}
+
+	override var definesScope: Bool
+	{
+		return true
+	}
+
+	override func shouldEnter(scope: TokenParser.Scope) -> Bool
+	{
+		return true
+	}
+
+	override func parse(statement: String, using parser: TokenParser) throws
+	{
+		try super.parse(statement: statement, using: parser)
+
+		guard
+			compiledExpression["iteree"] is String,
+			case .some(.array(let array)) = compiledExpression["iterand"] as? Token.Value
+		else
+		{
+			throw Errors.missingArtifacts
+		}
+
+		self.iterator = array.makeIterator()
+	}
+}
+
+class TagEndFor: Tag
+{
+	override class var keyword: String
+	{
+		return "endfor"
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagFor.self]
+	}
 }

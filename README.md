@@ -86,7 +86,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `else` else conditions
   - [x] `case/when` switch statement
 - [ ] Iteration
-  - [ ] `for`
+  - [x] `for`
   - [ ] `break`
   - [ ] `continue`
   - [ ] `limit` limits the loop (for parameters)
