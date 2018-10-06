@@ -141,37 +141,49 @@ extension Context
 {
 	public func makeSupplement(with variables: [String: Token.Value]) -> Context
 	{
-		return SupplementalContext(original: self, variables: variables)
+		return SupplementalContext(supplemented: self, variables: variables)
 	}
 }
 
+/// A context that provides supplemental read-only variables to the parser. This is used, for instance,
+/// to provide the current element variable which is available inside each iteration of a for loop.
 private class SupplementalContext: Context
 {
-	private var original: Context
+	private var supplementedContext: Context
 
-	init(original: Context, variables: [String: Token.Value])
+	/// Defines a supplemental context.
+	///
+	/// - Parameters:
+	///   - supplemented: The context to be supplemented.
+	///   - variables: The variables that are only available in the supplemental context.
+	init(supplemented: Context, variables: [String: Token.Value])
 	{
-		self.original = original
+		self.supplementedContext = supplemented
 		super.init(dictionary: variables)
 	}
 
+	/// Returns the value for the given key in the supplemental context, if defined. Otherwise returns the value for
+	/// the given key in the supplemented context, if defined.
 	override func getValue(for key: String) -> Token.Value?
 	{
-		return super.getValue(for: key) ?? original.getValue(for: key)
+		return super.getValue(for: key) ?? supplementedContext.getValue(for: key)
 	}
 
+	/// Sets the value for a key in the supplemented context.
 	override func set(value: Token.Value, for key: String)
 	{
-		original.set(value: value, for: key)
+		supplementedContext.set(value: value, for: key)
 	}
 
+	/// Increments a counter in the supplemented context, and returns its new value.
 	override func incrementCounter(for key: String) -> Int
 	{
-		return original.incrementCounter(for: key)
+		return supplementedContext.incrementCounter(for: key)
 	}
 
+	/// Decrements a counter in the supplemented context, and returns its new value.
 	override func decrementCounter(for key: String) -> Int
 	{
-		return original.decrementCounter(for: key)
+		return supplementedContext.decrementCounter(for: key)
 	}
 }
