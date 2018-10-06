@@ -41,7 +41,6 @@ public class Context
 	
 	public func set(value: Any?, for key: String)
 	{
-		
 		if let value = parseValue(value)
 		{
 			variables[key] = value
@@ -95,6 +94,7 @@ public class Context
 	func valueOrLiteral(for token: String) -> Token.Value?
 	{
 		let trimmedToken = token.trimmingWhitespaces
+		let nsToken = token as NSString
 
 		if trimmedToken == "true"
 		{
@@ -103,6 +103,14 @@ public class Context
 		else if trimmedToken == "false"
 		{
 			return .bool(false)
+		}
+		else if let result = NSRegularExpression.rangeRegex.firstMatch(in: token, options: [],
+																	   range: NSMakeRange(0, nsToken.length)),
+			result.numberOfRanges == 3,
+			let lowerBound = valueOrLiteral(for: nsToken.substring(with: result.range(at: 1)))?.integerValue,
+			let upperBound = valueOrLiteral(for: nsToken.substring(with: result.range(at: 2)))?.integerValue
+		{
+			return .range(lowerBound...upperBound)
 		}
 		else if trimmedToken.hasPrefix("\""), trimmedToken.hasSuffix("\"")
 		{
@@ -186,4 +194,9 @@ private class SupplementalContext: Context
 	{
 		return supplementedContext.decrementCounter(for: key)
 	}
+}
+
+private extension NSRegularExpression
+{
+	static var rangeRegex = try! NSRegularExpression(pattern: "\\(([^\\.\\n]+)\\.\\.([^\\.\\n]+)\\)", options: [])
 }

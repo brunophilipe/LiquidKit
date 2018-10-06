@@ -42,6 +42,7 @@ public enum Token : Equatable
 		case decimal(Decimal)
 		case array([Value])
 		case dictionary([String: Value])
+		case range(ClosedRange<Int>)
 
 		/// Returns a string value or representation of the receiver.
 		///
@@ -55,6 +56,8 @@ public enum Token : Equatable
 			case .decimal(let decimal): return "\(decimal)"
 			case .integer(let integer): return "\(integer)"
 			case .string(let string): return string
+			case .array(let array): return array.compactMap({ $0.stringValue }).joined()
+			case .range(let range): return "\(range.lowerBound)..\(range.upperBound)"
 			default:
 				 return ""
 			}
@@ -158,6 +161,7 @@ public enum Token : Equatable
 			case .decimal(let decimalValue):	return decimalValue.hashValue
 			case .array(let arrayValue):		return arrayValue.hashValue
 			case .dictionary(let dictValue):	return dictValue.hashValue
+			case .range(let range):				return range.hashValue
 			}
 		}
 	}
