@@ -87,7 +87,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `case/when` switch statement
 - [ ] Iteration
   - [x] `for`
-  - [ ] `break`
+  - [x] `break`
   - [ ] `continue`
   - [ ] `limit` limits the loop (for parameters)
   - [ ] `offset` begins the loop at the specified index (for parameters)
