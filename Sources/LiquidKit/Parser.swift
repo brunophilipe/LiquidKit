@@ -348,8 +348,21 @@ open class TokenParser
 		/// The parent scope level, that contains the receiver scope. Is only `nil` on the root scope level.
 		let parentScope: Scope?
 		
-		/// Whether the processed statements should be compiled and written to the output. Default is `true`.
+		/// Whether the processed statements should be compiled and written to the output. Default is `true`. Setting
+		/// this property
 		var producesOutput = true
+		{
+			didSet
+			{
+				for statement in processedStatements
+				{
+					if case .scope(let scope) = statement
+					{
+						scope.producesOutput = producesOutput
+					}
+				}
+			}
+		}
 
 		/// The index of the token that was parsed as the tag that defined this scope
 		var tagTokenIndex: Int?
@@ -366,6 +379,11 @@ open class TokenParser
 			self.parentScope = parent
 
 			parent?.processedStatements.append(.scope(self))
+
+			if parent?.producesOutput == false
+			{
+				producesOutput = false
+			}
 		}
 
 		/// Append a raw string to the processed statements of the receiver scope level.
@@ -384,6 +402,20 @@ open class TokenParser
 		func dumpProcessedStatements()
 		{
 			processedStatements.removeAll()
+		}
+
+		/// Looks up the scope chain for the scope that was defined by a tag of kind present in `tagKinds`. If none is
+		/// found, returns nil.
+		func scopeDefined(by tagKinds: Set<Tag.Kind>) -> Scope?
+		{
+			if let tag = self.tag, tagKinds.contains(type(of: tag).kind)
+			{
+				return self
+			}
+			else
+			{
+				return parentScope?.scopeDefined(by: tagKinds)
+			}
 		}
 
 		enum ProcessedStatement

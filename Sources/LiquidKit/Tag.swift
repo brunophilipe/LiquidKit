@@ -374,6 +374,16 @@ class TagElse: Tag
 	{
 		return [TagIf.self, TagElsif.self, TagWhen.self]
 	}
+
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	{
+		super.didDefine(scope: scope, parser: parser)
+
+		if scope.parentScope?.tag is TagCase
+		{
+			scope.parentScope?.producesOutput = true
+		}
+	}
 }
 
 class TagElsif: TagIf
