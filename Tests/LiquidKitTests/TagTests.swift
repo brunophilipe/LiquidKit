@@ -189,4 +189,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "coffee", "biscuits"])
 	}
+
+	func testTagForNested()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% assign utensils = 'fork,spoon,mug' | split: ',' %}{% for food in foodstuff %}{{ food }}{% for utensil in utensils %}{{ utensil }}{% endfor %}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["cake", "fork", "spoon", "mug", "coffee", "fork", "spoon", "mug", "biscuits", "fork", "spoon", "mug"])
+	}
 }
