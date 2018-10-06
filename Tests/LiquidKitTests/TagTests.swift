@@ -207,4 +207,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "coffee"])
 	}
+
+	func testTagForContinue()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{% if food == 'coffee' %}{% continue %}{% endif %}{{ food }}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["cake", "biscuits"])
+	}
 }

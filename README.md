@@ -88,7 +88,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
 - [ ] Iteration
   - [x] `for`
   - [x] `break`
-  - [ ] `continue`
+  - [x] `continue`
   - [ ] `limit` limits the loop (for parameters)
   - [ ] `offset` begins the loop at the specified index (for parameters)
   - [ ] `range` defines a range of numbers to loop through
