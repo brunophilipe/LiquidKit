@@ -407,11 +407,7 @@ internal extension TokenParser.Scope
 		var nodes = [String]()
 		var tagClassesToSkip: Set<Tag.Kind>? = nil
 
-		if let tag = self.tag, tag.definesScope && !tag.shouldEnter(scope: self)
-		{
-			return tag.output?.map { $0.stringValue }
-		}
-		else if let outputNodes = tag?.output?.map({ $0.stringValue })
+		if let outputNodes = tag?.output?.map({ $0.stringValue })
 		{
 			nodes.append(contentsOf: outputNodes)
 		}

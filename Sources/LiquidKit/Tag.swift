@@ -51,14 +51,6 @@ public class Tag
 	/// `shouldEnter(scope:)` returns.
 	internal fileprivate(set) var tagKindsToSkip: Set<Tag.Kind>?
 
-	/// Whether the statement provided to this tag causes its scope to be executed.
-	///
-	/// *Notice:* This value is only evaluated if `definesScope` returns `true`.
-	internal func shouldEnter(scope: TokenParser.Scope) -> Bool
-	{
-		return false
-	}
-
 	/// If this tag terminates a scope during preprocessing, the parser will invoke this method with the new scope.
 	internal func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
 	{
@@ -271,11 +263,6 @@ class TagCapture: Tag
 		return true
 	}
 	
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
-	{
-		return true
-	}
-	
 	override func parse(statement: String, using parser: TokenParser) throws
 	{
 		try super.parse(statement: statement, using: parser)
@@ -332,18 +319,6 @@ class TagIf: Tag
 		return "if"
 	}
 
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
-	{
-		// An `if` tag should execute if its statement is considered "truthy".
-		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
-		{
-			tagKindsToSkip = [TagElsif.kind, TagElse.kind]
-			return true
-		}
-
-		return false
-	}
-
 	override func parse(statement: String, using parser: TokenParser) throws
 	{
 		try super.parse(statement: statement, using: parser)
@@ -351,6 +326,21 @@ class TagIf: Tag
 		guard compiledExpression["conditional"] is Token.Value else
 		{
 			throw Errors.missingArtifacts
+		}
+	}
+
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	{
+		super.didDefine(scope: scope, parser: parser)
+
+		// An `if` tag should execute if its statement is considered "truthy".
+		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
+		{
+			tagKindsToSkip = [TagElsif.kind, TagElse.kind]
+		}
+		else
+		{
+			scope.producesOutput = false
 		}
 	}
 }
@@ -376,11 +366,6 @@ class TagElse: Tag
 	}
 
 	override var definesScope: Bool
-	{
-		return true
-	}
-
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		return true
 	}
@@ -411,15 +396,15 @@ class TagUnless: TagIf
 		return "unless"
 	}
 
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
 	{
-		// An `unless` tag should execute if its statement is considered "falsy".
-		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isFalsy
-		{
-			return true
-		}
+		super.didDefine(scope: scope, parser: parser)
 
-		return false
+		// An `unless` tag should execute if its statement is considered "falsy".
+		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
+		{
+			scope.producesOutput = false
+		}
 	}
 }
 
@@ -449,11 +434,6 @@ class TagCase: Tag
 	}
 
 	override var definesScope: Bool
-	{
-		return true
-	}
-
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		return true
 	}
@@ -492,15 +472,28 @@ class TagWhen: Tag
 		return true
 	}
 
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
+	override func parse(statement: String, using parser: TokenParser) throws
 	{
+		try super.parse(statement: statement, using: parser)
+
+		guard compiledExpression["comparator"] is Token.Value else
+		{
+			throw Errors.missingArtifacts
+		}
+	}
+
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	{
+		super.didDefine(scope: scope, parser: parser)
+
 		guard
 			let tagCase = scope.parentScope?.tag as? TagCase,
 			let comparator = compiledExpression["comparator"] as? Token.Value,
 			let conditional = tagCase.compiledExpression["conditional"] as? Token.Value
 		else
 		{
-			return false
+			scope.producesOutput = false
+			return
 		}
 
 		let isMatch = comparator == conditional
@@ -510,17 +503,7 @@ class TagWhen: Tag
 			tagKindsToSkip = [TagWhen.kind, TagElse.kind]
 		}
 
-		return isMatch
-	}
-
-	override func parse(statement: String, using parser: TokenParser) throws
-	{
-		try super.parse(statement: statement, using: parser)
-
-		guard compiledExpression["comparator"] is Token.Value else
-		{
-			throw Errors.missingArtifacts
-		}
+		scope.producesOutput = isMatch
 	}
 
 	override var terminatesScopesWithTags: [Tag.Type]?
@@ -602,11 +585,6 @@ class TagFor: Tag, IterationTag
 	}
 
 	override var definesScope: Bool
-	{
-		return true
-	}
-
-	override func shouldEnter(scope: TokenParser.Scope) -> Bool
 	{
 		return true
 	}
