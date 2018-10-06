@@ -148,7 +148,7 @@ extension Tag
 	static let builtInTags: [Tag.Type] = [
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
 		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
-		TagWhen.self, TagFor.self, TagEndFor.self
+		TagWhen.self, TagFor.self, TagEndFor.self, TagBreak.self
 	]
 }
 
@@ -625,5 +625,23 @@ class TagEndFor: Tag
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
 		return [TagFor.self]
+	}
+}
+
+class TagBreak: Tag
+{
+	override class var keyword: String
+	{
+		return "break"
+	}
+
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	{
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
+
+		if currentScope.producesOutput, let forScope = currentScope.scopeDefined(by: [TagFor.kind])
+		{
+			forScope.producesOutput = false
+		}
 	}
 }

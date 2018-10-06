@@ -198,4 +198,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "fork", "spoon", "mug", "coffee", "fork", "spoon", "mug", "biscuits", "fork", "spoon", "mug"])
 	}
+
+	func testTagForBreak()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ food }}{% if food == 'coffee' %}{% break %}{% endif %}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["cake", "coffee"])
+	}
 }
