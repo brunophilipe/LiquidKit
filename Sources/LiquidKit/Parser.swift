@@ -105,7 +105,8 @@ open class TokenParser
 					tag.didTerminate(scope: currentScope, parser: self)
 
 					// If this scope was defined by an iteration tag, we need to check with it if we need another pass.
-					if let iterationTag = currentScope.tag as? IterationTag,
+					if currentScope.producesOutput, // The break statement sets this to false, so we can skip already.
+						let iterationTag = currentScope.tag as? IterationTag,
 						let tagTokenIndex = currentScope.tagTokenIndex,
 						let supplementalContext = iterationTag.supplementalContext
 					{
