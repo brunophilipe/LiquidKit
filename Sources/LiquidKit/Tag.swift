@@ -108,7 +108,7 @@ public class Tag
 					throw Errors.malformedStatement("Expected identifier or literal, found nothing.")
 				}
 
-				compiledExpression[name] = parser.compileFilter(scanner.content)
+				compiledExpression[name] = parser.compileFilter(scanner.content, context: currentScope.context)
 			}
 		}
 	}
