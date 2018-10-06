@@ -91,7 +91,7 @@ open class TokenParser
 				currentScope.append(rawOutput: compileFilter(contents, context: currentScope.context).stringValue)
 
 			case .tag(let contents):
-				guard let tag = compileTag(contents, context: currentScope.context) else
+				guard let tag = compileTag(contents, currentScope: currentScope) else
 				{
 					// Unknown tag keyword or invalid statement
 					break
@@ -202,9 +202,9 @@ open class TokenParser
 		return filteredValue
 	}
 
-	private func compileTag(_ statement: String, context inputContext: Context? = nil) -> Tag?
+	private func compileTag(_ statement: String, currentScope: Scope) -> Tag?
 	{
-		let context = inputContext ?? self.context
+		let context = currentScope.context ?? self.context
 		let statementScanner = Scanner(statement.trimmingWhitespaces)
 		let keyword = statementScanner.scan(until: .whitespaces)
 
@@ -228,7 +228,7 @@ open class TokenParser
 
 			do
 			{
-				try tagInstance.parse(statement: statement, using: self)
+				try tagInstance.parse(statement: statement, using: self, currentScope: currentScope)
 
 				return tagInstance
 			}

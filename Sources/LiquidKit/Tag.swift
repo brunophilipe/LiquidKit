@@ -70,7 +70,7 @@ public class Tag
 	}
 
 	/// Given a string statement, attempts to compile the receiver tag.
-	open func parse(statement: String, using parser: TokenParser) throws
+	internal func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
 		let scanner = Scanner(statement.trimmingWhitespaces)
 
@@ -177,9 +177,9 @@ class TagAssign: Tag
 		return "assign"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard
 			let assignee = compiledExpression["assignee"] as? String,
@@ -206,9 +206,9 @@ class TagIncrement: Tag
 		return "increment"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard let assignee = compiledExpression["assignee"] as? String else
 		{
@@ -232,9 +232,9 @@ class TagDecrement: Tag
 		return "decrement"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard let assignee = compiledExpression["assignee"] as? String else
 		{
@@ -263,9 +263,9 @@ class TagCapture: Tag
 		return true
 	}
 	
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 		
 		guard compiledExpression["assignee"] is String else
 		{
@@ -319,9 +319,9 @@ class TagIf: Tag
 		return "if"
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard compiledExpression["conditional"] is Token.Value else
 		{
@@ -448,9 +448,9 @@ class TagCase: Tag
 		return true
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard compiledExpression["conditional"] is Token.Value else
 		{
@@ -482,9 +482,9 @@ class TagWhen: Tag
 		return true
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard compiledExpression["comparator"] is Token.Value else
 		{
@@ -599,9 +599,9 @@ class TagFor: Tag, IterationTag
 		return true
 	}
 
-	override func parse(statement: String, using parser: TokenParser) throws
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		try super.parse(statement: statement, using: parser)
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
 		guard
 			compiledExpression["iteree"] is String,
