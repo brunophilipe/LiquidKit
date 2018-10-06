@@ -84,10 +84,10 @@ open class TokenParser
 		{
 			switch token
 			{
-			case .text(let contents) where currentScope.producesOutput:
+			case .text(let contents) where currentScope.outputState == .enabled:
 				currentScope.append(rawOutput: contents)
 
-			case .variable(let contents) where currentScope.producesOutput:
+			case .variable(let contents) where currentScope.outputState == .enabled:
 				currentScope.append(rawOutput: compileFilter(contents, context: currentScope.context).stringValue)
 
 			case .tag(let contents):
@@ -105,12 +105,13 @@ open class TokenParser
 					tag.didTerminate(scope: currentScope, parser: self)
 
 					// If this scope was defined by an iteration tag, we need to check with it if we need another pass.
-					if currentScope.producesOutput, // The break statement sets this to false, so we can skip already.
+					if currentScope.outputState != .disabled,
 						let iterationTag = currentScope.tag as? IterationTag,
 						let tagTokenIndex = currentScope.tagTokenIndex,
 						let supplementalContext = iterationTag.supplementalContext
 					{
 						currentScope.context = supplementalContext
+						currentScope.outputState = .enabled
 						tokenIterator.setCurrentIndex(tagTokenIndex)
 					}
 					// If this tag also closes the parent scope, we need to jump two scope levels up.
@@ -349,9 +350,9 @@ open class TokenParser
 		/// The parent scope level, that contains the receiver scope. Is only `nil` on the root scope level.
 		let parentScope: Scope?
 		
-		/// Whether the processed statements should be compiled and written to the output. Default is `true`. Setting
-		/// this property
-		var producesOutput = true
+		/// Controls whether the scope allows output statements to be appended to it. Setting this value will also set
+		/// the `outputState` of all children scopes recursively.
+		var outputState: OutputState = .enabled
 		{
 			didSet
 			{
@@ -359,11 +360,14 @@ open class TokenParser
 				{
 					if case .scope(let scope) = statement
 					{
-						scope.producesOutput = producesOutput
+						scope.outputState = outputState
 					}
 				}
 			}
 		}
+
+		/// Whether ouptut is halted. This
+		var haltedOutput = false
 
 		/// The index of the token that was parsed as the tag that defined this scope
 		var tagTokenIndex: Int?
@@ -381,9 +385,9 @@ open class TokenParser
 
 			parent?.processedStatements.append(.scope(self))
 
-			if parent?.producesOutput == false
+			if parent?.outputState == .disabled
 			{
-				producesOutput = false
+				outputState = .disabled
 			}
 		}
 
@@ -423,6 +427,19 @@ open class TokenParser
 		{
 			case output(String)
 			case scope(Scope)
+		}
+
+		enum OutputState
+		{
+			/// Output statements can be added to this scope.
+			case enabled
+
+			/// Output statements can not be added to this scope.
+			case disabled
+
+			/// Output statements can not be added to this scope. However, if this scope was started by an iterator
+			/// tag, the state will be set to `.enabled` upon the start of a new iteration.
+			case halted
 		}
 	}
 

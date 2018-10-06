@@ -340,7 +340,7 @@ class TagIf: Tag
 		}
 		else
 		{
-			scope.producesOutput = false
+			scope.outputState = .disabled
 		}
 	}
 }
@@ -381,7 +381,7 @@ class TagElse: Tag
 
 		if scope.parentScope?.tag is TagCase
 		{
-			scope.parentScope?.producesOutput = true
+			scope.parentScope?.outputState = .enabled
 		}
 	}
 }
@@ -413,7 +413,7 @@ class TagUnless: TagIf
 		// An `unless` tag should execute if its statement is considered "falsy".
 		if let conditional = (compiledExpression["conditional"] as? Token.Value), conditional.isTruthy
 		{
-			scope.producesOutput = false
+			scope.outputState = .disabled
 		}
 	}
 }
@@ -461,7 +461,7 @@ class TagCase: Tag
 	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
 	{
 		// Prevent rogue text between the `case` tag and the first `when` tag from being output.
-		scope.producesOutput = false
+		scope.outputState = .disabled
 	}
 }
 
@@ -502,7 +502,7 @@ class TagWhen: Tag
 			let conditional = tagCase.compiledExpression["conditional"] as? Token.Value
 		else
 		{
-			scope.producesOutput = false
+			scope.outputState = .disabled
 			return
 		}
 
@@ -513,7 +513,7 @@ class TagWhen: Tag
 			tagKindsToSkip = [TagWhen.kind, TagElse.kind]
 		}
 
-		scope.producesOutput = isMatch
+		scope.outputState = isMatch ? .enabled : .disabled
 	}
 
 	override var terminatesScopesWithTags: [Tag.Type]?
@@ -639,9 +639,10 @@ class TagBreak: Tag
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
-		if currentScope.producesOutput, let forScope = currentScope.scopeDefined(by: [TagFor.kind])
+		if currentScope.outputState == .enabled, let forScope = currentScope.scopeDefined(by: [TagFor.kind])
 		{
-			forScope.producesOutput = false
+			// If the current scope produces output, finds the nearest iterator and stops its output.
+			forScope.outputState = .disabled
 		}
 	}
 }
