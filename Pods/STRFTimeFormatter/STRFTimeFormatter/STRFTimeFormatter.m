@@ -26,7 +26,7 @@
 
 
 @interface STRFTimeFormatter () {
-    const char *_formatString;
+    NSString *_formatString;
     BOOL _useUniversalTimeLocale;
 }
 
@@ -43,7 +43,7 @@
     self = [super init];
     
     if (self) {
-        _formatString = "%Y-%m-%dT%H:%M:%S%z";
+        _formatString = @"%Y-%m-%dT%H:%M:%S%z";
         _useUniversalTimeLocale = NO;
     }
     
@@ -58,7 +58,7 @@
     time_t timeInterval;
     struct tm time;
     
-    strptime_l([string cStringUsingEncoding:NSASCIIStringEncoding], _formatString, &time, NULL);
+    strptime_l([string cStringUsingEncoding:NSASCIIStringEncoding], [self asciiFormatString], &time, NULL);
     
     if ([self useUniversalTimeLocale]) {
         timeInterval = timegm(&time);
@@ -79,7 +79,7 @@
     timeInterval = [date timeIntervalSince1970];
     time = *([self useUniversalTimeLocale] ? gmtime(&timeInterval) : localtime(&timeInterval));
     
-    strftime_l(buffer, sizeof(buffer), _formatString, &time, NULL);
+    strftime_l(buffer, sizeof(buffer), [self asciiFormatString], &time, NULL);
     
     return [NSString stringWithCString:buffer encoding:NSASCIIStringEncoding];
 }
@@ -88,13 +88,29 @@
 #pragma mark - Format String
 
 - (NSString *)formatString {
-    
-    return [NSString stringWithCString:_formatString encoding:NSASCIIStringEncoding];
+
+	return _formatString;
 }
 
 - (void)setFormatString:(NSString *)formatString {
-    
-    _formatString = [formatString cStringUsingEncoding:NSASCIIStringEncoding];
+
+	_formatString = formatString;
+}
+
+- (const char *)asciiFormatString {
+
+	static NSUInteger formatStringHash = 0;
+	static const char *formatString = NULL;
+
+	NSUInteger currentFormatStringHash = [[self formatString] hash];
+
+	if (formatString == NULL || formatStringHash != currentFormatStringHash) {
+
+		formatStringHash = currentFormatStringHash;
+		formatString = [[self formatString] cStringUsingEncoding:NSASCIIStringEncoding];
+	}
+
+	return formatString;
 }
 
 
@@ -117,11 +133,9 @@
     
     STRFTimeFormatter *copy = [[STRFTimeFormatter allocWithZone:zone] init];
     
-    char *formatString = malloc(sizeof(_formatString));
-	strcpy(formatString, _formatString);
-	
-	copy->_formatString = formatString;
-    
+	[copy setFormatString:_formatString];
+	[copy setUseUniversalTimeLocale:_useUniversalTimeLocale];
+
     return copy;
 }
 
