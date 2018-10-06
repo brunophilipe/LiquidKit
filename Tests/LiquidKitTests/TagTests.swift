@@ -216,4 +216,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "biscuits"])
 	}
+
+	func testTagForRange()
+	{
+		let lexer = Lexer(templateString: "{% assign digits = (3..5) %}{% for digit in digits %}{{ digit }}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["3", "4", "5"])
+	}
 }

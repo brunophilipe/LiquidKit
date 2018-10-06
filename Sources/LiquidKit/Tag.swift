@@ -564,12 +564,22 @@ class TagFor: Tag, IterationTag
 
 	private var itemsCount: Int
 	{
-		guard case .some(.array(let array)) = compiledExpression["iterand"] as? Token.Value else
+		guard let iterandValue = compiledExpression["iterand"] as? Token.Value else
 		{
 			return 0
 		}
 
-		return array.count
+		switch iterandValue
+		{
+		case .array(let array):
+			return array.count
+
+		case .range(let range):
+			return range.count
+
+		default:
+			return 0
+		}
 	}
 
 	var supplementalContext: Context?
@@ -605,13 +615,23 @@ class TagFor: Tag, IterationTag
 
 		guard
 			compiledExpression["iteree"] is String,
-			case .some(.array(let array)) = compiledExpression["iterand"] as? Token.Value
+			let iterandValue = compiledExpression["iterand"] as? Token.Value
 		else
 		{
 			throw Errors.missingArtifacts
 		}
 
-		self.iterator = array.makeIterator()
+		switch iterandValue
+		{
+		case .array(let array):
+			self.iterator = array.makeIterator()
+
+		case .range(let range):
+			self.iterator = range.lazy.map({ Token.Value.integer($0) }).makeIterator()
+
+		default:
+			throw Errors.malformedStatement("Expected array or range parameter for for statement, found \(type(of: iterandValue))")
+		}
 	}
 }
 
