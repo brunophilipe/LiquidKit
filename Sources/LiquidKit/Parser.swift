@@ -84,10 +84,10 @@ open class TokenParser
 		{
 			switch token
 			{
-			case .text(let contents):
+			case .text(let contents) where currentScope.producesOutput:
 				currentScope.append(rawOutput: contents)
 
-			case .variable(let contents):
+			case .variable(let contents) where currentScope.producesOutput:
 				currentScope.append(rawOutput: compileFilter(contents, context: currentScope.context).stringValue)
 
 			case .tag(let contents):
@@ -142,6 +142,9 @@ open class TokenParser
 					currentScope.context = (tag as? IterationTag)?.supplementalContext
 					tag.didDefine(scope: currentScope, parser: self)
 				}
+
+			default:
+				break
 			}
 		}
 
@@ -377,6 +380,12 @@ open class TokenParser
 			return Scope(tag: tag, parent: self)
 		}
 
+		/// Removes all statements from `processedStatements`.
+		func dumpProcessedStatements()
+		{
+			processedStatements.removeAll()
+		}
+
 		enum ProcessedStatement
 		{
 			case output(String)
@@ -426,7 +435,7 @@ internal extension TokenParser.Scope
 		{
 			switch statement
 			{
-			case .output(let output) where producesOutput:
+			case .output(let output):
 				nodes.append(output)
 
 			case .scope(let childScope) where !shouldSkip(scope: childScope):

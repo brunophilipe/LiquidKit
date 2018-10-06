@@ -295,7 +295,7 @@ class TagEndCapture: Tag
 		}
 
 		// Prevent the nodes of the scope from being written to the output when the final compilation happens.
-		scope.producesOutput = false
+		scope.dumpProcessedStatements()
 	}
 }
 
