@@ -236,7 +236,9 @@ open class TokenParser
 			}
 			catch
 			{
+				#if DEBUG
 				NSLog("Error parsing tag: \(error.localizedDescription)")
+				#endif
 			}
 		}
 
