@@ -604,36 +604,24 @@ protocol IterationTag
 class TagFor: Tag, IterationTag
 {
 	private var iterator: IndexingIterator<([Token.Value])>!
+	private var iteratedElements = 0
+	private var limit: Int? = nil
 
 	private(set) var hasSupplementalContext: Bool = true
 
-	private var itemsCount: Int
-	{
-		guard let iterandValue = compiledExpression["iterand"] as? Token.Value else
-		{
-			return 0
-		}
-
-		switch iterandValue
-		{
-		case .array(let array):
-			return array.count
-
-		case .range(let range):
-			return range.count
-
-		default:
-			return 0
-		}
-	}
-
 	var supplementalContext: Context?
 	{
-		guard let item = iterator.next(), let iteree = compiledExpression["iteree"] as? String else
+		guard
+			iteratedElements < limit ?? .max,
+			let item = iterator.next(),
+			let iteree = compiledExpression["iteree"] as? String
+		else
 		{
 			hasSupplementalContext = false
 			return nil
 		}
+
+		iteratedElements += 1
 
 		return context.makeSupplement(with: [iteree: item])
 	}
@@ -647,6 +635,11 @@ class TagFor: Tag, IterationTag
 	{
 		// example: {% for IDENTIFIER in IDENTIFIER %}
 		return [.identifier("iteree"), .literal("in"), .variable("iterand")]
+	}
+
+	override var parameters: [String]
+	{
+		return ["limit"]
 	}
 
 	override var definesScope: Bool
@@ -676,6 +669,11 @@ class TagFor: Tag, IterationTag
 
 		default:
 			throw Errors.malformedStatement("Expected array or range parameter for for statement, found \(type(of: iterandValue))")
+		}
+
+		if let limit = (compiledExpression["limit"] as? Token.Value)?.integerValue
+		{
+			self.limit = limit
 		}
 	}
 }

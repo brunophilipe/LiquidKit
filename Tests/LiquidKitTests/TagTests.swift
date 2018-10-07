@@ -225,4 +225,14 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["3", "4", "5"])
 	}
+
+	func testTagForLimit()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff limit:2 %}{{ food }}{% endfor %}{% for food in foodstuff limit : 2 %}{{ food }}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["cake", "coffee", "cake", "coffee"])
+	}
 }
+

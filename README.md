@@ -87,12 +87,19 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `case/when` switch statement
 - [ ] Iteration
   - [x] `for`
-  - [x] `break`
-  - [x] `continue`
-  - [ ] `limit` limits the loop (for parameters)
-  - [ ] `offset` begins the loop at the specified index (for parameters)
-  - [ ] `range` defines a range of numbers to loop through
-  - [ ] `reversed` reverses the order of the loop
+     - [x] `break`
+     - [x] `continue`
+     - [x] `limit` limits the loop (for parameters)
+     - [ ] `offset` begins the loop at the specified index (for parameters)
+     - [ ] `range` defines a range of numbers to loop through
+     - [ ] `reversed` reverses the order of the loop
+  - [ ] `cycle`
+     - [ ] `group`
+  - [ ] `tablerow`
+     - [ ] `cols`
+     - [ ] `limit` limits the loop (for parameters)
+     - [ ] `offset` begins the loop at the specified index (for parameters)
+     - [ ] `range` defines a range of numbers to loop through
 - [x] Default Filter
 
 ## Liquid Docs
