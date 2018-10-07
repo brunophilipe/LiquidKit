@@ -136,3 +136,11 @@ extension String {
 		return splits
 	}
 }
+
+extension NSString
+{
+	var fullRange: NSRange
+	{
+		return NSMakeRange(0, length)
+	}
+}

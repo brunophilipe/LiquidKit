@@ -54,7 +54,7 @@ public class Tag
 
 	/// Tags classes that should be skipped after evaluation this tag. This value is only invoked after
 	/// `shouldEnter(scope:)` returns.
-	internal fileprivate(set) var tagKindsToSkip: Set<Tag.Kind>?
+	internal var tagKindsToSkip: Set<Tag.Kind>?
 
 	/// If this tag terminates a scope during preprocessing, the parser will invoke this method with the new scope.
 	internal func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
@@ -77,9 +77,40 @@ public class Tag
 	/// Given a string statement, attempts to compile the receiver tag.
 	internal func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
 	{
-		let scanner = Scanner(statement.trimmingWhitespaces)
+		var processedStatement = statement
 
-		for segment in tagParametersExpression
+		for parameter in parameters
+		{
+			let pattern = "\(parameter)(\\s*:\\s*(\\w+))?"
+
+			guard let range = processedStatement.range(of: pattern, options: [.backwards, .regularExpression]) else
+			{
+				continue
+			}
+
+			let parameterStatement = String(processedStatement[range])
+			let nsParameterStatement = parameterStatement as NSString
+
+			let regex = try! NSRegularExpression(pattern: pattern, options: [])
+
+			if let match = regex.firstMatch(in: parameterStatement, options: [], range: nsParameterStatement.fullRange)
+			{
+				if match.numberOfRanges == 3
+				{
+					let value = nsParameterStatement.substring(with: match.range(at: 2))
+					compiledExpression[parameter] = parser.compileFilter(value, context: currentScope.context)
+				}
+				else
+				{
+					compiledExpression[parameter] = Token.Value.bool(true)
+				}
+
+				processedStatement.removeSubrange(range)
+			}
+		}
+
+		let scanner = Scanner(processedStatement.trimmingWhitespaces)
+
 		for segment in tagExpression
 		{
 			switch segment
@@ -114,8 +145,16 @@ public class Tag
 					throw Errors.malformedStatement("Expected identifier or literal, found nothing.")
 				}
 
-				compiledExpression[name] = parser.compileFilter(scanner.content, context: currentScope.context)
+				compiledExpression[name] = parser.compileFilter(scanner.scanUntilEnd(), context: currentScope.context)
 			}
+		}
+
+		// Skip any left whitespace
+		_ = scanner.scan(until: CharacterSet.whitespaces.inverted)
+
+		guard scanner.isEmpty else
+		{
+			throw Errors.malformedStatement("Expected end of tag expression, but found \(scanner.content)")
 		}
 	}
 

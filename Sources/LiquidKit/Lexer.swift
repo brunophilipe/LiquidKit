@@ -172,4 +172,14 @@ class Scanner
 		content = String(content[finalIndex...])
 		return scannedString
 	}
+
+	func scanUntilEnd() -> String
+	{
+		defer
+		{
+			content = ""
+		}
+
+		return content
+	}
 }

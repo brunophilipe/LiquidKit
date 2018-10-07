@@ -195,8 +195,3 @@ private class SupplementalContext: Context
 		return supplementedContext.decrementCounter(for: key)
 	}
 }
-
-private extension NSRegularExpression
-{
-	static var rangeRegex = try! NSRegularExpression(pattern: "\\(([^\\.\\n]+)\\.\\.([^\\.\\n]+)\\)", options: [])
-}
