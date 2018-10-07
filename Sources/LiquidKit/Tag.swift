@@ -639,7 +639,7 @@ class TagFor: Tag, IterationTag
 
 	override var parameters: [String]
 	{
-		return ["limit"]
+		return ["limit", "offset"]
 	}
 
 	override var definesScope: Bool
@@ -659,17 +659,26 @@ class TagFor: Tag, IterationTag
 			throw Errors.missingArtifacts
 		}
 
+		var values: [Token.Value]
+
 		switch iterandValue
 		{
 		case .array(let array):
-			self.iterator = array.makeIterator()
+			values = array
 
 		case .range(let range):
-			self.iterator = range.lazy.map({ Token.Value.integer($0) }).makeIterator()
+			values = range.lazy.map({ Token.Value.integer($0) })
 
 		default:
 			throw Errors.malformedStatement("Expected array or range parameter for for statement, found \(type(of: iterandValue))")
 		}
+
+		if let offset = (compiledExpression["offset"] as? Token.Value)?.integerValue
+		{
+			values.removeSubrange(..<offset)
+		}
+
+		self.iterator = values.makeIterator()
 
 		if let limit = (compiledExpression["limit"] as? Token.Value)?.integerValue
 		{
