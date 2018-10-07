@@ -16,8 +16,13 @@ public class Tag
 		return ""
 	}
 
-	/// Expression which defines the structure of the accepted parameters for the receiver tag.
-	internal var tagParametersExpression: [ExpressionSegment]
+	/// Expression which defines the structure of the tag's expression.
+	internal var tagExpression: [ExpressionSegment]
+	{
+		return []
+	}
+
+	internal var parameters: [String]
 	{
 		return []
 	}
@@ -75,6 +80,7 @@ public class Tag
 		let scanner = Scanner(statement.trimmingWhitespaces)
 
 		for segment in tagParametersExpression
+		for segment in tagExpression
 		{
 			switch segment
 			{
@@ -166,7 +172,7 @@ internal extension Tag
 
 class TagAssign: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% assign IDENTIFIER = "value" %}
 		return [.identifier("assignee"), .literal("="), .variable("value")]
@@ -195,7 +201,7 @@ class TagAssign: Tag
 
 class TagIncrement: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% increment IDENTIFIER %}
 		return [.identifier("assignee")]
@@ -221,7 +227,7 @@ class TagIncrement: Tag
 
 class TagDecrement: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% increment IDENTIFIER %}
 		return [.identifier("assignee")]
@@ -247,7 +253,7 @@ class TagDecrement: Tag
 
 class TagCapture: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% capture IDENTIFIER %}
 		return [.identifier("assignee")]
@@ -303,7 +309,7 @@ class TagEndCapture: Tag
 
 class TagIf: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% if IDENTIFIER %}
 		return [.variable("conditional")]
@@ -433,7 +439,7 @@ class TagEndUnless: Tag
 
 class TagCase: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		return [.variable("conditional")]
 	}
@@ -467,7 +473,7 @@ class TagCase: Tag
 
 class TagWhen: Tag
 {
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		return [.variable("comparator")]
 	}
@@ -598,7 +604,7 @@ class TagFor: Tag, IterationTag
 		return "for"
 	}
 
-	internal override var tagParametersExpression: [ExpressionSegment]
+	internal override var tagExpression: [ExpressionSegment]
 	{
 		// example: {% for IDENTIFIER in IDENTIFIER %}
 		return [.identifier("iteree"), .literal("in"), .variable("iterand")]
