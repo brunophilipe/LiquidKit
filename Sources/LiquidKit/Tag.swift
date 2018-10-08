@@ -95,7 +95,7 @@ public class Tag
 
 			if let match = regex.firstMatch(in: parameterStatement, options: [], range: nsParameterStatement.fullRange)
 			{
-				if match.numberOfRanges == 3
+				if match.range(at: 2).location != NSNotFound
 				{
 					let value = nsParameterStatement.substring(with: match.range(at: 2))
 					compiledExpression[parameter] = parser.compileFilter(value, context: currentScope.context)
@@ -604,24 +604,16 @@ protocol IterationTag
 class TagFor: Tag, IterationTag
 {
 	private var iterator: IndexingIterator<([Token.Value])>!
-	private var iteratedElements = 0
-	private var limit: Int? = nil
 
 	private(set) var hasSupplementalContext: Bool = true
 
 	var supplementalContext: Context?
 	{
-		guard
-			iteratedElements < limit ?? .max,
-			let item = iterator.next(),
-			let iteree = compiledExpression["iteree"] as? String
-		else
+		guard let item = iterator.next(), let iteree = compiledExpression["iteree"] as? String else
 		{
 			hasSupplementalContext = false
 			return nil
 		}
-
-		iteratedElements += 1
 
 		return context.makeSupplement(with: [iteree: item])
 	}
@@ -639,7 +631,7 @@ class TagFor: Tag, IterationTag
 
 	override var parameters: [String]
 	{
-		return ["limit", "offset"]
+		return ["limit", "offset", "reversed"]
 	}
 
 	override var definesScope: Bool
@@ -678,12 +670,17 @@ class TagFor: Tag, IterationTag
 			values.removeSubrange(..<offset)
 		}
 
-		self.iterator = values.makeIterator()
-
 		if let limit = (compiledExpression["limit"] as? Token.Value)?.integerValue
 		{
-			self.limit = limit
+			values.removeSubrange(limit...)
 		}
+
+		if compiledExpression["reversed"] as? Token.Value == .bool(true)
+		{
+			values.reverse()
+		}
+
+		self.iterator = values.makeIterator()
 	}
 }
 

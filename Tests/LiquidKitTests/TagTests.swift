@@ -252,5 +252,23 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["coffee"])
 	}
+
+	func testTagForReversed()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff reversed %}{{ food }}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["biscuits", "coffee", "cake"])
+	}
+
+	func testTagForReversedLimitOffset()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits,tea' | split: ',' %}{% for food in foodstuff reversed limit:1 offset:2 %}{{ food }}{% endfor %}{% for food in foodstuff reversed offset:2 limit:1 %}{{ food }}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["biscuits", "biscuits"])
+	}
 }
 
