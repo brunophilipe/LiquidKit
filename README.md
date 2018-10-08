@@ -90,16 +90,16 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
      - [x] `break`
      - [x] `continue`
      - [x] `limit` limits the loop (for parameters)
-     - [ ] `offset` begins the loop at the specified index (for parameters)
-     - [ ] `range` defines a range of numbers to loop through
-     - [ ] `reversed` reverses the order of the loop
+     - [x] `offset` begins the loop at the specified index (for parameters)
+     - [x] `range` defines a range of numbers to loop through
+     - [x] `reversed` reverses the order of the loop
   - [ ] `cycle`
      - [ ] `group`
   - [ ] `tablerow`
      - [ ] `cols`
      - [ ] `limit` limits the loop (for parameters)
      - [ ] `offset` begins the loop at the specified index (for parameters)
-     - [ ] `range` defines a range of numbers to loop through
+     - [x] `range` defines a range of numbers to loop through
 - [x] Default Filter
 
 ## Liquid Docs
