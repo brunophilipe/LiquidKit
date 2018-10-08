@@ -166,3 +166,80 @@ public enum Token : Equatable
 		}
 	}
 }
+
+public protocol TokenValueConvertible
+{
+	var tokenValue: Token.Value { get }
+}
+
+extension Dictionary: TokenValueConvertible where Key == String, Value == TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .dictionary(mapValues({$0.tokenValue}))
+	}
+}
+
+extension Array: TokenValueConvertible where Element: TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .array(map({$0.tokenValue}))
+	}
+}
+
+extension Int: TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .integer(self)
+	}
+}
+
+extension String: TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .string(self)
+	}
+}
+
+extension Float: TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .decimal(Decimal(floatLiteral: Double(self)))
+	}
+}
+
+extension Double: TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .decimal(Decimal(floatLiteral: self))
+	}
+}
+
+extension Bool: TokenValueConvertible
+{
+	public var tokenValue: Token.Value
+	{
+		return .bool(self)
+	}
+}
+
+extension Range: TokenValueConvertible where Bound: SignedInteger
+{
+	public var tokenValue: Token.Value
+	{
+		return .range(Int(lowerBound)...Int(upperBound - 1))
+	}
+}
+
+extension ClosedRange: TokenValueConvertible where Bound: SignedInteger
+{
+	public var tokenValue: Token.Value
+	{
+		return .range(Int(lowerBound)...Int(upperBound))
+	}
+}
