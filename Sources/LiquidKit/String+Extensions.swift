@@ -135,6 +135,43 @@ extension String {
 
 		return splits
 	}
+
+	var splitKeyPath: (key: String, index: Int?, remainder: String?)?
+	{
+		let nsKeyPath = self as NSString
+		let pattern = "(\\w+)(\\[(\\d+)\\])?\\.?"
+
+		let regex = try! NSRegularExpression(pattern: pattern, options: [])
+
+		guard
+			let match = regex.firstMatch(in: self, options: [], range: nsKeyPath.fullRange),
+			match.range(at: 1).location != NSNotFound
+		else
+		{
+			return nil
+		}
+
+		let key = nsKeyPath.substring(with: match.range(at: 1))
+		let remainder: String?
+
+		if match.range.upperBound < nsKeyPath.length
+		{
+			remainder = nsKeyPath.substring(from: match.range.upperBound)
+		}
+		else
+		{
+			remainder = nil
+		}
+
+		if match.range(at: 3).location != NSNotFound, let index = Int(nsKeyPath.substring(with: match.range(at: 3)))
+		{
+			return (key, index, remainder)
+		}
+		else
+		{
+			return (key, nil, remainder)
+		}
+	}
 }
 
 extension NSString

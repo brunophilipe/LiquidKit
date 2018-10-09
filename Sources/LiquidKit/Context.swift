@@ -127,6 +127,10 @@ public class Context
 			// This is an integer literal (the integer constructor fails if a decimal point is found).
 			return .integer(integer)
 		}
+		else if trimmedToken.firstIndex(of: ".") != nil, let value = variables.valueFor(keyPath: trimmedToken)
+		{
+			return value
+		}
 		else if let value = getValue(for: trimmedToken)
 		{
 			// This is a known variable name.
@@ -150,6 +154,76 @@ extension Context
 	public func makeSupplement(with variables: [String: Token.Value]) -> Context
 	{
 		return SupplementalContext(supplemented: self, variables: variables)
+	}
+}
+
+private extension Dictionary where Key == String, Value == Token.Value
+{
+	/// Returns the value associated with the traversal of the receiver's substructure using the given keypath.
+	func valueFor(keyPath: String) -> Token.Value?
+	{
+		guard let (key, index, remainder) = keyPath.splitKeyPath, let value = self[key] else
+		{
+			return nil
+		}
+
+		switch (value, index, remainder)
+		{
+		case (.array(let array), .some(let index), nil) where (0..<array.count).contains(index):
+			return array[index]
+
+		case (.array(let array), .some(let index), .some(let remainder)) where (0..<array.count).contains(index):
+			guard case .dictionary(let dictionary) = array[index] else
+			{
+				return nil
+			}
+
+			return dictionary.valueFor(keyPath: remainder)
+
+		case (.array(let array), nil, .some(let remainder)) where remainder.hasPrefix("first"):
+			let rangeFirst = remainder.range(of: "first\\.?", options: .regularExpression)!
+
+			if rangeFirst.upperBound == remainder.endIndex
+			{
+				return array.first
+			}
+			else if case .some(.dictionary(let dictionary)) = array.first
+			{
+				return dictionary.valueFor(keyPath: String(remainder[rangeFirst.upperBound...]))
+			}
+			else
+			{
+				return nil
+			}
+
+		case (.array(let array), nil, .some(let remainder)) where remainder.hasPrefix("last"):
+			let rangeLast = remainder.range(of: "last\\.?", options: .regularExpression)!
+
+			if rangeLast.upperBound == remainder.endIndex
+			{
+				return array.last
+			}
+			else if case .some(.dictionary(let dictionary)) = array.last
+			{
+				return dictionary.valueFor(keyPath: String(remainder[rangeLast.upperBound...]))
+			}
+			else
+			{
+				return nil
+			}
+
+		case (.dictionary, nil, nil):
+			return value
+
+		case (.dictionary(let dictionary), nil, .some(let remainder)):
+			return dictionary.valueFor(keyPath: remainder)
+
+		case (_, nil, nil):
+			return value
+
+		default:
+			return nil
+		}
 	}
 }
 
