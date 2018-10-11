@@ -94,8 +94,8 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
      - [x] `offset` begins the loop at the specified index (for parameters)
      - [x] `range` defines a range of numbers to loop through
      - [x] `reversed` reverses the order of the loop
-  - [ ] `cycle`
-     - [ ] `group`
+  - [x] `cycle`
+     - [x] `group`
   - [ ] `tablerow`
      - [ ] `cols`
      - [ ] `limit` limits the loop (for parameters)

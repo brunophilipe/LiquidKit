@@ -270,5 +270,33 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["biscuits", "biscuits"])
 	}
+
+	func testTagCycle()
+	{
+		let lexer = Lexer(templateString: """
+{% cycle 'one', 'two', 'three' %}
+{% cycle 'one', 'two', 'three' %}
+{% cycle 'one', 'two', 'three' %}
+{% cycle 'one', 'two', 'three' %}
+""")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["one", "\n", "two", "\n", "three", "\n", "one"])
+	}
+
+	func testTagCycleGrouped()
+	{
+		let lexer = Lexer(templateString: """
+{% cycle 'one', 'two', 'three' group:'a' %}
+{% cycle 'one', 'two', 'three' group:'b' %}
+{% cycle 'one', 'two', 'three' group:'a' %}
+{% cycle 'one', 'two', 'three' group:'b' %}
+""")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["one", "\n", "one", "\n", "two", "\n", "two"])
+	}
 }
 

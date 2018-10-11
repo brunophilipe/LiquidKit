@@ -103,7 +103,7 @@ public class Tag
 				{
 					// This parameter has a value, so we parse that value and assign it to the keyword.
 					let value = nsParameterStatement.substring(with: match.range(at: 2))
-					compiledExpression[parameter] = parser.compileFilter(value, context: currentScope.context)
+					compiledExpression[parameter] = parser.compileFilter(value, context: context)
 				}
 				else
 				{
@@ -153,7 +153,19 @@ public class Tag
 					throw Errors.malformedStatement("Expected identifier or literal, found nothing.")
 				}
 
-				compiledExpression[name] = parser.compileFilter(scanner.scanUntilEnd(), context: currentScope.context)
+				compiledExpression[name] = parser.compileFilter(scanner.scanUntilEnd(), context: context)
+
+			case .group(let name):
+				guard !scanner.isEmpty else
+				{
+					throw Errors.malformedStatement("Expected group list of strings, found nothing.")
+				}
+
+				let splitContent = scanner.scanUntilEnd().smartSplit(separator: ",")
+				compiledExpression[name] = Token.Value.array(splitContent.compactMap(
+					{
+						parser.parseLiteral($0, context: context)
+					}))
 			}
 		}
 
@@ -178,6 +190,9 @@ public class Tag
 		/// variable defined in the receiver's context, and any filters applied to it afterwards. If none of these are
 		/// matched, is assigned `Token.Value.nil`.
 		case variable(String)
+
+		/// A list of strings separated by commas.
+		case group(String)
 	}
 
 	public enum Errors: Error
@@ -201,7 +216,7 @@ extension Tag
 	static let builtInTags: [Tag.Type] = [
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
 		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
-		TagWhen.self, TagFor.self, TagEndFor.self, TagBreak.self, TagContinue.self
+		TagWhen.self, TagFor.self, TagEndFor.self, TagBreak.self, TagContinue.self, TagCycle.self
 	]
 }
 
@@ -738,6 +753,50 @@ class TagContinue: Tag
 		if currentScope.outputState == .enabled, let forScope = currentScope.scopeDefined(by: [TagFor.kind])
 		{
 			forScope.outputState = .halted
+		}
+	}
+}
+
+class TagCycle: Tag
+{
+	private var groupIdentifier: String?
+	{
+		guard case .some(.string(let groupIdentifier)) = compiledExpression["group"] as? Token.Value else
+		{
+			return nil
+		}
+
+		return groupIdentifier
+	}
+
+	override class var keyword: String
+	{
+		return "cycle"
+	}
+
+	internal override var tagExpression: [ExpressionSegment]
+	{
+		// example: {% cycle group:groupIdentifier %}
+		return [.group("list")]
+	}
+
+	override var parameters: [String]
+	{
+		return ["group"]
+	}
+
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	{
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
+
+		guard case .some(.array(let groupElements)) = compiledExpression["list"] as? Token.Value else
+		{
+			throw Errors.missingArtifacts
+		}
+
+		if let cycleOutput = context.next(in: groupElements, identifier: groupIdentifier)
+		{
+			output = [cycleOutput]
 		}
 	}
 }

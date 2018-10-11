@@ -342,6 +342,11 @@ open class TokenParser
 		return lastParsedValue ?? .nil
 	}
 
+	internal func parseLiteral(_ literal: String, context: Context?) -> Token.Value?
+	{
+		return (context ?? self.context).parseString(literal, onlyIfLiteral: true)
+	}
+
 	/// Defines a level of scope during parsing. Each time a scope-defining tag is found (such as `if`, `else`, etc…),
 	/// a new scope is defined. Closing tags (such as `endif`, `elsif`, etc) terminate scopes.
 	internal class Scope
