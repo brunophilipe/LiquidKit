@@ -79,38 +79,46 @@ public class Tag
 	{
 		var processedStatement = statement
 
+		// Extract any parameters from the tail of the statement first. Parameters are all optional.
 		for parameter in parameters
 		{
 			let pattern = "\(parameter)(\\s*:\\s*(\\w+))?"
 
+			// Since NSRegularExpression doesn't support backwards search, we search using this method first.
 			guard let range = processedStatement.range(of: pattern, options: [.backwards, .regularExpression]) else
 			{
+				// Parameter not found.
 				continue
 			}
 
 			let parameterStatement = String(processedStatement[range])
 			let nsParameterStatement = parameterStatement as NSString
 
+			// Now that we found the parameter range we use NSRegularExpression to extract the capture groups.
 			let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
 			if let match = regex.firstMatch(in: parameterStatement, options: [], range: nsParameterStatement.fullRange)
 			{
 				if match.range(at: 2).location != NSNotFound
 				{
+					// This parameter has a value, so we parse that value and assign it to the keyword.
 					let value = nsParameterStatement.substring(with: match.range(at: 2))
 					compiledExpression[parameter] = parser.compileFilter(value, context: currentScope.context)
 				}
 				else
 				{
+					// This parameter is just a keyword with no value, so we just assign true to it.
 					compiledExpression[parameter] = Token.Value.bool(true)
 				}
 
+				// Remove the parameter from the remaining statement.
 				processedStatement.removeSubrange(range)
 			}
 		}
 
 		let scanner = Scanner(processedStatement.trimmingWhitespaces)
 
+		// Search for the expected segments from left to right. It is up to tags to evaluate if a segment is valid.
 		for segment in tagExpression
 		{
 			switch segment
