@@ -22,7 +22,7 @@ public class Context
 		
 		for (key, value) in dictionary
 		{
-			if let value = parseValue(value)
+			if let value = parseAnyValue(value)
 			{
 				variables[key] = value
 			}
@@ -41,7 +41,7 @@ public class Context
 	
 	public func set(value: Any?, for key: String)
 	{
-		if let value = parseValue(value)
+		if let value = parseAnyValue(value)
 		{
 			variables[key] = value
 		}
@@ -63,7 +63,7 @@ public class Context
 		return counter
 	}
 	
-	private func parseValue(_ value: Any?) -> Token.Value?
+	private func parseAnyValue(_ value: Any?) -> Token.Value?
 	{
 		if let intLiteral = value as? IntegerLiteralType
 		{
@@ -91,7 +91,7 @@ public class Context
 		}
 	}
 
-	func valueOrLiteral(for token: String) -> Token.Value?
+	func parseString(_ token: String, onlyIfLiteral: Bool = false) -> Token.Value?
 	{
 		let trimmedToken = token.trimmingWhitespaces
 		let nsToken = token as NSString
@@ -107,8 +107,8 @@ public class Context
 		else if let result = NSRegularExpression.rangeRegex.firstMatch(in: token, options: [],
 																	   range: NSMakeRange(0, nsToken.length)),
 			result.numberOfRanges == 3,
-			let lowerBound = valueOrLiteral(for: nsToken.substring(with: result.range(at: 1)))?.integerValue,
-			let upperBound = valueOrLiteral(for: nsToken.substring(with: result.range(at: 2)))?.integerValue
+			let lowerBound = parseString(nsToken.substring(with: result.range(at: 1)))?.integerValue,
+			let upperBound = parseString(nsToken.substring(with: result.range(at: 2)))?.integerValue
 		{
 			return .range(lowerBound...upperBound)
 		}
@@ -127,11 +127,11 @@ public class Context
 			// This is an integer literal (the integer constructor fails if a decimal point is found).
 			return .integer(integer)
 		}
-		else if trimmedToken.firstIndex(of: ".") != nil, let value = variables.valueFor(keyPath: trimmedToken)
+		else if !onlyIfLiteral, trimmedToken.contains("."), let value = variables.valueFor(keyPath: trimmedToken)
 		{
 			return value
 		}
-		else if let value = getValue(for: trimmedToken)
+		else if !onlyIfLiteral, let value = getValue(for: trimmedToken)
 		{
 			// This is a known variable name.
 			return value

@@ -189,7 +189,7 @@ open class TokenParser
 			}
 			else
 			{
-				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ context.valueOrLiteral(for: String($0)) ?? .nil })
+				filterParameters = String(filterComponents.last!).smartSplit(separator: ",").map({ context.parseString(String($0)) ?? .nil })
 			}
 
 			guard let filter = filters.first(where: { $0.identifier == filterIdentifier }) else
@@ -257,7 +257,7 @@ open class TokenParser
 
 		if statementNodes.count <= 1
 		{
-			return context.valueOrLiteral(for: statement) ?? .nil
+			return context.parseString(statement) ?? .nil
 		}
 
 		var iterator = statementNodes.reversed().makeIterator()
@@ -287,7 +287,7 @@ open class TokenParser
 				}
 			}
 
-			guard let secondValue = context.valueOrLiteral(for: secondNode) else
+			guard let secondValue = context.parseString(secondNode) else
 			{
 				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Unknown variable “\(secondNode)”."))
 				return .nil
@@ -311,7 +311,7 @@ open class TokenParser
 				return .nil
 			}
 
-			guard let firstValue = context.valueOrLiteral(for: firstNode) else
+			guard let firstValue = context.parseString(firstNode) else
 			{
 				parseErrors.append(ParseErrors.malformedExpression("Malformed expression: Unknown variable “\(node)”."))
 				return .nil
