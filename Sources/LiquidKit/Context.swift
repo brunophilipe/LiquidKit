@@ -10,6 +10,7 @@ public class Context
 {
     private var variables: [String: Token.Value]
 	private var counters: [String: Int] = [:]
+	private var groups: [Int: (originalHash: Int, iterator: IndexingIterator<[Token.Value]>)] = [:]
 
     public init(dictionary: [String: Token.Value]? = nil)
 	{
@@ -61,6 +62,23 @@ public class Context
 		let counter = (counters[key] ?? 0) - 1
 		counters[key] = counter
 		return counter
+	}
+
+	/// Returns the next element in a group of token values. If an identifier is provided, that identifier is used to
+	/// uniquely cycle through the group separately from other groups. If no identifier is provided, then it is assumed
+	/// that multiple calls with the same group of token values are one group.
+	public func next(in group: [Token.Value], identifier: String?) -> Token.Value?
+	{
+		let hash = identifier?.hashValue ?? group.hashValue
+
+		if groups[hash]?.originalHash == hash, let next = groups[hash]?.iterator.next()
+		{
+			return next
+		}
+
+		groups[hash] = (hash, group.makeIterator())
+
+		return groups[hash]?.iterator.next()
 	}
 	
 	private func parseAnyValue(_ value: Any?) -> Token.Value?
@@ -267,5 +285,11 @@ private class SupplementalContext: Context
 	override func decrementCounter(for key: String) -> Int
 	{
 		return supplementedContext.decrementCounter(for: key)
+	}
+
+	/// Returns the next element in a group of token values in the supplemented context.
+	override func next(in group: [Token.Value], identifier: String?) -> Token.Value?
+	{
+		return supplementedContext.next(in: group, identifier: identifier)
 	}
 }
