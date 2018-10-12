@@ -217,7 +217,7 @@ extension Tag
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
 		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
 		TagWhen.self, TagFor.self, TagEndFor.self, TagBreak.self, TagContinue.self, TagCycle.self, TagTablerow.self,
-		TagEndTablerow.self
+		TagEndTablerow.self, TagComment.self, TagEndComment.self
 	]
 }
 
@@ -948,5 +948,39 @@ class TagEndTablerow: Tag
 		}
 
 		scope.processedStatements.append(contentsOf: tableRowIterator.next())
+	}
+}
+
+class TagComment: Tag
+{
+	override class var keyword: String
+	{
+		return "comment"
+	}
+
+	override var definesScope: Bool
+	{
+		return true
+	}
+
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	{
+		super.didDefine(scope: scope, parser: parser)
+
+		// Comment tags never produce output
+		scope.outputState = .disabled
+	}
+}
+
+class TagEndComment: Tag
+{
+	override class var keyword: String
+	{
+		return "endcomment"
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagComment.self]
 	}
 }

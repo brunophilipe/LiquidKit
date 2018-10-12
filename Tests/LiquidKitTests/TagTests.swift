@@ -316,4 +316,13 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<table>", "<tr class=\"row1\">", "<td class=\"col1\">", "cake", "</td>", "<td class=\"col2\">", "coffee", "</td>", "</tr>", "<tr class=\"row2\">", "<td class=\"col1\">", "biscuits", "</td>", "</tr>", "</table>"])
 	}
+
+	func testTagComment()
+	{
+		let lexer = Lexer(templateString: "Anything you put between {% comment %} and {% endcomment %} tags is turned into a comment.")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["Anything you put between ", " tags is turned into a comment."])
+	}
 }

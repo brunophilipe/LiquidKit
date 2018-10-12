@@ -12,7 +12,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
 
 ## Features
 
-- [ ] Comment
+- [x] Comment
 - [x] Raw
 - [x] Truthy and falsy
 - [ ] Whitespace control
