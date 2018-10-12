@@ -298,5 +298,22 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["one", "\n", "one", "\n", "two", "\n", "two"])
 	}
-}
 
+	func testTagTablerow()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}<table>{% tablerow food in foodstuff %}{{ food }}{% endtablerow %}</table>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<table>", "<tr class=\"row1\">", "<td class=\"col1\">", "cake", "</td>", "<td class=\"col2\">", "coffee", "</td>", "<td class=\"col3\">", "biscuits", "</td>", "</tr>", "</table>"])
+	}
+
+	func testTagTablerowCols()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}<table>{% tablerow food in foodstuff cols:2 %}{{ food }}{% endtablerow %}</table>")
+		let tokens = lexer.tokenize()
+		let parser = TokenParser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["<table>", "<tr class=\"row1\">", "<td class=\"col1\">", "cake", "</td>", "<td class=\"col2\">", "coffee", "</td>", "</tr>", "<tr class=\"row2\">", "<td class=\"col1\">", "biscuits", "</td>", "</tr>", "</table>"])
+	}
+}

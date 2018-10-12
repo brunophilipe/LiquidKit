@@ -86,7 +86,7 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
   - [x] `elsif` more conditions
   - [x] `else` else conditions
   - [x] `case/when` switch statement
-- [ ] Iteration
+- [x] Iteration
   - [x] `for`
      - [x] `break`
      - [x] `continue`
@@ -96,10 +96,10 @@ This project is based on the [liquid-swift](https://github.com/yourtion/liquid-s
      - [x] `reversed` reverses the order of the loop
   - [x] `cycle`
      - [x] `group`
-  - [ ] `tablerow`
-     - [ ] `cols`
-     - [ ] `limit` limits the loop (for parameters)
-     - [ ] `offset` begins the loop at the specified index (for parameters)
+  - [x] `tablerow`
+     - [x] `cols`
+     - [x] `limit` limits the loop (for parameters)
+     - [x] `offset` begins the loop at the specified index (for parameters)
      - [x] `range` defines a range of numbers to loop through
 - [x] Default Filter
 

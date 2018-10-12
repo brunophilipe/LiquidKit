@@ -383,7 +383,7 @@ open class TokenParser
 		var context: Context?
 
 		/// The statements inside the receiver scope.
-		private(set) var processedStatements: [ProcessedStatement] = []
+		internal(set) var processedStatements: [ProcessedStatement] = []
 
 		init(tag: Tag? = nil, parent: Scope? = nil)
 		{

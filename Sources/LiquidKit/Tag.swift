@@ -216,7 +216,8 @@ extension Tag
 	static let builtInTags: [Tag.Type] = [
 		TagAssign.self, TagIncrement.self, TagDecrement.self, TagIf.self, TagEndIf.self, TagElse.self, TagElsif.self,
 		TagCapture.self, TagEndCapture.self, TagUnless.self, TagEndUnless.self, TagCase.self, TagEndCase.self,
-		TagWhen.self, TagFor.self, TagEndFor.self, TagBreak.self, TagContinue.self, TagCycle.self
+		TagWhen.self, TagFor.self, TagEndFor.self, TagBreak.self, TagContinue.self, TagCycle.self, TagTablerow.self,
+		TagEndTablerow.self
 	]
 }
 
@@ -641,6 +642,26 @@ class TagFor: Tag, IterationTag
 		return context.makeSupplement(with: [iteree: item])
 	}
 
+	internal var itemsCount: Int
+	{
+		guard let iterandValue = compiledExpression["iterand"] as? Token.Value else
+		{
+			return 0
+		}
+
+		switch iterandValue
+		{
+		case .array(let array):
+			return array.count
+
+		case .range(let range):
+			return range.count
+
+		default:
+			return 0
+		}
+	}
+
 	override class var keyword: String
 	{
 		return "for"
@@ -798,5 +819,134 @@ class TagCycle: Tag
 		{
 			output = [cycleOutput]
 		}
+	}
+}
+
+class TagTablerow: TagFor
+{
+	internal private(set) var tableRowIterator: TableRowIterator! = nil
+
+	override class var keyword: String
+	{
+		return "tablerow"
+	}
+
+	override var parameters: [String]
+	{
+		return ["limit", "offset", "cols"]
+	}
+
+
+	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	{
+		try super.parse(statement: statement, using: parser, currentScope: currentScope)
+
+		if let columnsCount = (compiledExpression["cols"] as? Token.Value)?.integerValue
+		{
+			tableRowIterator = TableRowIterator(columns: columnsCount, itemCount: itemsCount)
+		}
+		else
+		{
+			tableRowIterator = TableRowIterator(itemCount: itemsCount)
+		}
+	}
+
+	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	{
+		super.didDefine(scope: scope, parser: parser)
+
+		scope.processedStatements.append(contentsOf: tableRowIterator.next())
+	}
+
+	class TableRowIterator
+	{
+		let columns: Int
+		let itemCount: Int
+
+		var currentRow: Int = 0
+		var currentColumn: Int = 0
+		var currentItem: Int = 0
+
+		init(columns: Int = .max, itemCount: Int)
+		{
+			self.columns = columns
+			self.itemCount = itemCount
+		}
+
+		func next() -> [TokenParser.Scope.ProcessedStatement]
+		{
+			var statements = [TokenParser.Scope.ProcessedStatement]()
+
+			if currentRow == 0 || currentColumn >= columns
+			{
+				currentRow += 1
+				currentColumn = 1
+			}
+			else
+			{
+				currentColumn += 1
+			}
+
+			if currentColumn == 1
+			{
+				if currentRow > 1
+				{
+					// End column (speacial case for lest item of previous row on new row)
+					statements.append(.output("</td>"))
+
+					// End row
+					statements.append(.output("</tr>"))
+				}
+
+				// Start row
+				statements.append(.output("<tr class=\"row\(currentRow)\">"))
+			}
+
+			if currentColumn > 1
+			{
+				// End column
+				statements.append(.output("</td>"))
+			}
+
+			if currentItem < itemCount
+			{
+				// Start column
+				statements.append(.output("<td class=\"col\(currentColumn)\">"))
+			}
+			else
+			{
+				// End row (special case for last item)
+				statements.append(.output("</tr>"))
+			}
+
+			currentItem += 1
+
+			return statements
+		}
+	}
+}
+
+class TagEndTablerow: Tag
+{
+	override class var keyword: String
+	{
+		return "endtablerow"
+	}
+
+	override var terminatesScopesWithTags: [Tag.Type]?
+	{
+		return [TagTablerow.self]
+	}
+
+	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
+	{
+		super.didTerminate(scope: scope, parser: parser)
+
+		guard let tableRowIterator = (scope.tag as? TagTablerow)?.tableRowIterator else
+		{
+			return
+		}
+
+		scope.processedStatements.append(contentsOf: tableRowIterator.next())
 	}
 }
