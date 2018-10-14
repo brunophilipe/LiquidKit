@@ -9,7 +9,7 @@
 import Foundation
 
 /// A class for parsing an array of tokens and converts them into a collection of Node's
-open class TokenParser
+open class Parser
 {
 	private var tokens: [Token]
 	private let context: Context
@@ -464,11 +464,11 @@ open class TokenParser
 	}
 }
 
-internal extension TokenParser.Scope
+internal extension Parser.Scope
 {
 	/// This method will compile the nodes of the receiver scope, depending on its opener tag and the contents of is
 	/// nodes and child scopes.
-	func compile(using parser: TokenParser) -> [String]?
+	func compile(using parser: Parser) -> [String]?
 	{
 		var nodes = [String]()
 		var tagClassesToSkip: Set<Tag.Kind>? = nil
@@ -478,7 +478,7 @@ internal extension TokenParser.Scope
 			nodes.append(contentsOf: outputNodes)
 		}
 
-		func shouldSkip(scope: TokenParser.Scope) -> Bool
+		func shouldSkip(scope: Parser.Scope) -> Bool
 		{
 			guard let classes = tagClassesToSkip, let tag = scope.tag else
 			{

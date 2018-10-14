@@ -14,7 +14,7 @@ class ParserTests: XCTestCase {
     func testParseText() {
         let lexer = Lexer(templateString: "aab  cc dd")
         let tokens = lexer.tokenize()
-        let parser = TokenParser(tokens: tokens, context: Context())
+        let parser = Parser(tokens: tokens, context: Context())
         let res = parser.parse()
         XCTAssertEqual(res, ["aab  cc dd"])
     }
@@ -23,7 +23,7 @@ class ParserTests: XCTestCase {
         let dic = ["a": "A", "b": "BB", "c": "CCcCC"]
         let lexer = Lexer(templateString: "aab {{ a }} {{b}}c{{c}} d")
         let tokens = lexer.tokenize()
-        let parser = TokenParser(tokens: tokens, context: Context(dictionary: dic))
+        let parser = Parser(tokens: tokens, context: Context(dictionary: dic))
         let res = parser.parse()
         XCTAssertEqual(res, ["aab ", "A", " ","BB","c", "CCcCC"," d"])
     }
@@ -32,7 +32,7 @@ class ParserTests: XCTestCase {
         let dic = ["a": "A", "b": "BB", "c": "CCcCC"]
         let lexer = Lexer(templateString: "aab {{ a }} {{b}}c{{c}} d")
         let tokens = lexer.tokenize()
-        let parser = TokenParser(tokens: tokens, context: Context(dictionary: dic))
+        let parser = Parser(tokens: tokens, context: Context(dictionary: dic))
         measure {
             _ = parser.parse()
         }
@@ -61,7 +61,7 @@ class ParserTests: XCTestCase {
 
 		let lexer = Lexer(templateString: "{% for user in users %}{{ user.name }}{{ user.post_ids | first }}{% endfor %}{{ users[1].email }}{{ users.first.email }}{{ users.last.post_ids.first }}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context(dictionary: values))
+		let parser = Parser(tokens: tokens, context: Context(dictionary: values))
 		var res: [String]? = nil
 		measure
 		{

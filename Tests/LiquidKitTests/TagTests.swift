@@ -14,7 +14,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign filename = \"/index.html\" %}{{ filename }}{% assign reversed = \"abc\" | split: \"\" | reverse | join: \"\" %}{{ reversed }}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["/index.html", "cba"])
 	}
@@ -23,7 +23,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% increment counter %}{% increment counter %}{% increment counter %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["0", "1", "2"])
 	}
@@ -32,7 +32,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% decrement counter %}{% decrement counter %}{% decrement counter %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["-1", "-2", "-3"])
 	}
@@ -41,7 +41,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% decrement counter %}{% decrement counter %}{% decrement counter %}{% increment counter %}{% increment counter %}{% increment counter %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["-1", "-2", "-3", "-3", "-2", "-1"])
 	}
@@ -50,7 +50,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% if check %}{% if check %}10{% endif %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "</p>"])
 	}
@@ -59,7 +59,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% if check %}{% if check %}10{% endif %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "10", "20", "</p>"])
 	}
@@ -68,7 +68,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = 3 %}{% if check == 1 %}1{% elsif check == 2 %}2{% elsif check == 3 %}3{% elsif check == 3 %}4{% else %}5{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "3", "</p>"])
 	}
@@ -77,7 +77,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% if check %}10{% else %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "20", "</p>"])
 	}
@@ -86,7 +86,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% if check %}10{% else %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "10", "</p>"])
 	}
@@ -95,7 +95,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% assign check_inverse = true %}{% if check %}10{% elsif check_inverse %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "20", "</p>"])
 	}
@@ -104,7 +104,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% assign check_inverse = false %}{% if check %}10{% elsif check_inverse %}20{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "10", "</p>"])
 	}
@@ -113,7 +113,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = false %}{% assign check_inverse = true %}{% if check %}10{% elsif check %}20{% elsif check_inverse %}30{% endif %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "30", "</p>"])
 	}
@@ -122,7 +122,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% capture my_variable %}I am being captured.{% endcapture %}\n{{ my_variable }}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["\n", "I am being captured."])
 	}
@@ -131,7 +131,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign check = true %}{% unless check %}{% unless check %}10{% endunless %}20{% endunless %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "</p>"])
 	}
@@ -140,7 +140,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign handle = 'cake' %}{% case handle %}rogue chars{% when 'cake' %}This is a cake{% when 'cookie' %}This is a cookie{% else %}This is not a cake nor a cookie{% endcase %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "This is a cake", "</p>"])
 	}
@@ -149,7 +149,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign handle = 'cookie' %}{% case handle %}rogue chars{% when 'cake' %}This is a cake{% when 'cookie' %}This is a cookie{% else %}This is not a cake nor a cookie{% endcase %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "This is a cookie", "</p>"])
 	}
@@ -158,7 +158,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign handle = 'croissant' %}{% case handle %}rogue chars{% when 'cake' %}This is a cake{% when 'cookie' %}This is a cookie{% else %}This is not a cake nor a cookie{% endcase %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "This is not a cake nor a cookie", "</p>"])
 	}
@@ -167,7 +167,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "<p>{% assign handle = 'cake' %}{% case handle %}{% else %}This is not a cake nor a cookie{% endcase %}</p>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<p>", "This is not a cake nor a cookie", "</p>"])
 	}
@@ -176,7 +176,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% raw %}In Handlebars, {{ this }} will be HTML-escaped, but {{{ that }}} will not.{% endraw %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["In Handlebars, {{ this }} will be HTML-escaped, but {{{ that }}} will not."])
 	}
@@ -185,7 +185,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "coffee", "biscuits"])
 	}
@@ -194,7 +194,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% assign utensils = 'fork,spoon,mug' | split: ',' %}{% for food in foodstuff %}{{ food }}{% for utensil in utensils %}{{ utensil }}{% endfor %}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "fork", "spoon", "mug", "coffee", "fork", "spoon", "mug", "biscuits", "fork", "spoon", "mug"])
 	}
@@ -203,7 +203,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ food }}{% if food == 'coffee' %}{% break %}{% endif %}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "coffee"])
 	}
@@ -212,7 +212,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{% if food == 'coffee' %}{% continue %}{% endif %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "biscuits"])
 	}
@@ -221,7 +221,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign digits = (3..5) %}{% for digit in digits %}{{ digit }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["3", "4", "5"])
 	}
@@ -230,7 +230,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff limit:2 %}{{ food }}{% endfor %}{% for food in foodstuff limit : 2 %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "coffee", "cake", "coffee"])
 	}
@@ -239,7 +239,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff offset:2 %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["biscuits"])
 	}
@@ -248,7 +248,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff offset:1 limit:1 %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["coffee"])
 	}
@@ -257,7 +257,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff reversed %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["biscuits", "coffee", "cake"])
 	}
@@ -266,7 +266,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits,tea' | split: ',' %}{% for food in foodstuff reversed limit:1 offset:2 %}{{ food }}{% endfor %}{% for food in foodstuff reversed offset:2 limit:1 %}{{ food }}{% endfor %}")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["biscuits", "biscuits"])
 	}
@@ -280,7 +280,7 @@ class TagTests: XCTestCase
 {% cycle 'one', 'two', 'three' %}
 """)
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["one", "\n", "two", "\n", "three", "\n", "one"])
 	}
@@ -294,7 +294,7 @@ class TagTests: XCTestCase
 {% cycle 'one', 'two', 'three' group:'b' %}
 """)
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["one", "\n", "one", "\n", "two", "\n", "two"])
 	}
@@ -303,7 +303,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}<table>{% tablerow food in foodstuff %}{{ food }}{% endtablerow %}</table>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<table>", "<tr class=\"row1\">", "<td class=\"col1\">", "cake", "</td>", "<td class=\"col2\">", "coffee", "</td>", "<td class=\"col3\">", "biscuits", "</td>", "</tr>", "</table>"])
 	}
@@ -312,7 +312,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}<table>{% tablerow food in foodstuff cols:2 %}{{ food }}{% endtablerow %}</table>")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["<table>", "<tr class=\"row1\">", "<td class=\"col1\">", "cake", "</td>", "<td class=\"col2\">", "coffee", "</td>", "</tr>", "<tr class=\"row2\">", "<td class=\"col1\">", "biscuits", "</td>", "</tr>", "</table>"])
 	}
@@ -321,7 +321,7 @@ class TagTests: XCTestCase
 	{
 		let lexer = Lexer(templateString: "Anything you put between {% comment %} and {% endcomment %} tags is turned into a comment.")
 		let tokens = lexer.tokenize()
-		let parser = TokenParser(tokens: tokens, context: Context())
+		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
 		XCTAssertEqual(res, ["Anything you put between ", " tags is turned into a comment."])
 	}

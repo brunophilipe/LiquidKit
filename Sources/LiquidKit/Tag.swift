@@ -57,12 +57,12 @@ public class Tag
 	internal var tagKindsToSkip: Set<Tag.Kind>?
 
 	/// If this tag terminates a scope during preprocessing, the parser will invoke this method with the new scope.
-	internal func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
+	internal func didTerminate(scope: Parser.Scope, parser: Parser)
 	{
 	}
 
 	/// If this tag defines a scope during preprocessing, the parser will invoke this method with the new scope.
-	internal func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	internal func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 	}
 
@@ -75,7 +75,7 @@ public class Tag
 	}
 
 	/// Given a string statement, attempts to compile the receiver tag.
-	internal func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	internal func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		var processedStatement = statement
 
@@ -246,7 +246,7 @@ class TagAssign: Tag
 		return "assign"
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -275,7 +275,7 @@ class TagIncrement: Tag
 		return "increment"
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -301,7 +301,7 @@ class TagDecrement: Tag
 		return "decrement"
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -332,7 +332,7 @@ class TagCapture: Tag
 		return true
 	}
 	
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 		
@@ -355,7 +355,7 @@ class TagEndCapture: Tag
 		return [TagCapture.self]
 	}
 	
-	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: Parser.Scope, parser: Parser)
 	{
 		if let assigneeName = scope.tag?.compiledExpression["assignee"] as? String,
 			let compiledCapturedStatements = scope.compile(using: parser)
@@ -388,7 +388,7 @@ class TagIf: Tag
 		return "if"
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -398,7 +398,7 @@ class TagIf: Tag
 		}
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		super.didDefine(scope: scope, parser: parser)
 
@@ -444,7 +444,7 @@ class TagElse: Tag
 		return [TagIf.self, TagElsif.self, TagWhen.self]
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		super.didDefine(scope: scope, parser: parser)
 
@@ -475,7 +475,7 @@ class TagUnless: TagIf
 		return "unless"
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		super.didDefine(scope: scope, parser: parser)
 
@@ -517,7 +517,7 @@ class TagCase: Tag
 		return true
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -527,7 +527,7 @@ class TagCase: Tag
 		}
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		// Prevent rogue text between the `case` tag and the first `when` tag from being output.
 		scope.outputState = .disabled
@@ -551,7 +551,7 @@ class TagWhen: Tag
 		return true
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -561,7 +561,7 @@ class TagWhen: Tag
 		}
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		super.didDefine(scope: scope, parser: parser)
 
@@ -605,7 +605,7 @@ class TagEndCase: Tag
 		return [TagCase.self, TagElse.self]
 	}
 
-	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: Parser.Scope, parser: Parser)
 	{
 		shouldTerminateParentScope = scope.tag is TagElse && scope.parentScope?.tag is TagCase
 	}
@@ -683,7 +683,7 @@ class TagFor: Tag, IterationTag
 		return true
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -748,7 +748,7 @@ class TagBreak: Tag
 		return "break"
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -767,7 +767,7 @@ class TagContinue: Tag
 		return "continue"
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -806,7 +806,7 @@ class TagCycle: Tag
 		return ["group"]
 	}
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -837,7 +837,7 @@ class TagTablerow: TagFor
 	}
 
 
-	override func parse(statement: String, using parser: TokenParser, currentScope: TokenParser.Scope) throws
+	override func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		try super.parse(statement: statement, using: parser, currentScope: currentScope)
 
@@ -851,7 +851,7 @@ class TagTablerow: TagFor
 		}
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		super.didDefine(scope: scope, parser: parser)
 
@@ -873,9 +873,9 @@ class TagTablerow: TagFor
 			self.itemCount = itemCount
 		}
 
-		func next() -> [TokenParser.Scope.ProcessedStatement]
+		func next() -> [Parser.Scope.ProcessedStatement]
 		{
-			var statements = [TokenParser.Scope.ProcessedStatement]()
+			var statements = [Parser.Scope.ProcessedStatement]()
 
 			if currentRow == 0 || currentColumn >= columns
 			{
@@ -938,7 +938,7 @@ class TagEndTablerow: Tag
 		return [TagTablerow.self]
 	}
 
-	override func didTerminate(scope: TokenParser.Scope, parser: TokenParser)
+	override func didTerminate(scope: Parser.Scope, parser: Parser)
 	{
 		super.didTerminate(scope: scope, parser: parser)
 
@@ -963,7 +963,7 @@ class TagComment: Tag
 		return true
 	}
 
-	override func didDefine(scope: TokenParser.Scope, parser: TokenParser)
+	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 		super.didDefine(scope: scope, parser: parser)
 
