@@ -271,6 +271,24 @@ class TagTests: XCTestCase
 		XCTAssertEqual(res, ["biscuits", "biscuits"])
 	}
 
+	func testTagForObject()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{% if forloop.first == true %}First time through!{% else %}Not the first time.{% endif %}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = Parser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["First time through!", "Not the first time.", "Not the first time."])
+	}
+
+	func testTagForObjectIndex()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ forloop.index }}{{ forloop.rindex0 }}{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = Parser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["1", "2", "2", "1", "3", "0"])
+	}
+
 	func testTagCycle()
 	{
 		let lexer = Lexer(templateString: """

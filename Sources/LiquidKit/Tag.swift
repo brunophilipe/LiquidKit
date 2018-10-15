@@ -628,6 +628,7 @@ protocol IterationTag
 class TagFor: Tag, IterationTag
 {
 	private var iterator: IndexingIterator<([Token.Value])>!
+	private var iterated = 0
 
 	private(set) var hasSupplementalContext: Bool = true
 
@@ -639,7 +640,15 @@ class TagFor: Tag, IterationTag
 			return nil
 		}
 
-		return context.makeSupplement(with: [iteree: item])
+		defer
+		{
+			iterated += 1
+		}
+
+		return context.makeSupplement(with: [
+			iteree: item,
+			"forloop": ForLoop(index: iterated, length: itemsCount).tokenValue
+		])
 	}
 
 	internal var itemsCount: Int
@@ -725,6 +734,34 @@ class TagFor: Tag, IterationTag
 		}
 
 		self.iterator = values.makeIterator()
+	}
+
+	private struct ForLoop: TokenValueConvertible
+	{
+		let first: Bool
+		let index: Int
+		let index0: Int
+		let last: Bool
+		let length: Int
+		let rIndex: Int
+		let rIndex0: Int
+
+		init(index: Int, length: Int)
+		{
+			self.index = index + 1
+			self.index0 = index
+			self.first = index == 0
+			self.last = index == (length - 1)
+			self.length = length
+			self.rIndex = length - index
+			self.rIndex0 = length - index - 1
+		}
+
+		var tokenValue: Token.Value
+		{
+			return ["first": first, "index": index, "index0": index0, "last": last,
+					"length": length, "rindex": rIndex, "rindex0": rIndex0].tokenValue
+		}
 	}
 }
 
