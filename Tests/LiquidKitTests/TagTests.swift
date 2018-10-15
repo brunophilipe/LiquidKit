@@ -189,10 +189,28 @@ class TagTests: XCTestCase
 		let res = parser.parse()
 		XCTAssertEqual(res, ["cake", "coffee", "biscuits"])
 	}
+	
+	func testTagForElse()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = ',' | split: ',' %}{% for food in foodstuff %}{{ food }}{% else %}No food items!{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = Parser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["No food items!"])
+	}
+	
+	func testTagForElseWithItems()
+	{
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ food }}{% else %}No food items!{% endfor %}")
+		let tokens = lexer.tokenize()
+		let parser = Parser(tokens: tokens, context: Context())
+		let res = parser.parse()
+		XCTAssertEqual(res, ["cake", "coffee", "biscuits"])
+	}
 
 	func testTagForNested()
 	{
-		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% assign utensils = 'fork,spoon,mug' | split: ',' %}{% for food in foodstuff %}{{ food }}{% for utensil in utensils %}{{ utensil }}{% endfor %}{% endfor %}")
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% assign utensils = 'fork,spoon,mug' | split: ',' %}{% for food in foodstuff %}{{ food }}{% for utensil in utensils %}{{ utensil }}{% endfor %}{% else %}No food items!{% endfor %}")
 		let tokens = lexer.tokenize()
 		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
@@ -201,7 +219,7 @@ class TagTests: XCTestCase
 
 	func testTagForBreak()
 	{
-		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ food }}{% if food == 'coffee' %}{% break %}{% endif %}{% endfor %}")
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{{ food }}{% if food == 'coffee' %}{% break %}{% endif %}{% else %}No food items!{% endfor %}")
 		let tokens = lexer.tokenize()
 		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()
@@ -210,7 +228,7 @@ class TagTests: XCTestCase
 
 	func testTagForContinue()
 	{
-		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{% if food == 'coffee' %}{% continue %}{% endif %}{{ food }}{% endfor %}")
+		let lexer = Lexer(templateString: "{% assign foodstuff = 'cake,coffee,biscuits' | split: ',' %}{% for food in foodstuff %}{% if food == 'coffee' %}{% continue %}{% endif %}{{ food }}{% else %}No food items!{% endfor %}")
 		let tokens = lexer.tokenize()
 		let parser = Parser(tokens: tokens, context: Context())
 		let res = parser.parse()

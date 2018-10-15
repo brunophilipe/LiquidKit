@@ -429,6 +429,8 @@ class TagEndIf: Tag
 
 class TagElse: Tag
 {
+	private var didTerminateScope = false
+	
 	override class var keyword: String
 	{
 		return "else"
@@ -443,6 +445,13 @@ class TagElse: Tag
 	{
 		return [TagIf.self, TagElsif.self, TagWhen.self]
 	}
+	
+	override func didTerminate(scope: Parser.Scope, parser: Parser)
+	{
+		super.didTerminate(scope: scope, parser: parser)
+		
+		didTerminateScope = true
+	}
 
 	override func didDefine(scope: Parser.Scope, parser: Parser)
 	{
@@ -451,6 +460,12 @@ class TagElse: Tag
 		if scope.parentScope?.tag is TagCase
 		{
 			scope.parentScope?.outputState = .enabled
+		}
+		// We need to check if this else tag isn't part of another if/elsif/when clause, since it can be structurally
+		// identical to a for-else clause.
+		else if !didTerminateScope, let tagFor = scope.parentScope?.tag as? TagFor
+		{
+			scope.outputState = tagFor.itemsCount > 0 ? .disabled : .enabled
 		}
 	}
 }
@@ -627,14 +642,14 @@ protocol IterationTag
 
 class TagFor: Tag, IterationTag
 {
-	private var iterator: IndexingIterator<([Token.Value])>!
+	private var iterator: IndexingIterator<([Token.Value])>?
 	private var iterated = 0
 
 	private(set) var hasSupplementalContext: Bool = true
 
 	var supplementalContext: Context?
 	{
-		guard let item = iterator.next(), let iteree = compiledExpression["iteree"] as? String else
+		guard let item = iterator?.next(), let iteree = compiledExpression["iteree"] as? String else
 		{
 			hasSupplementalContext = false
 			return nil
@@ -653,7 +668,7 @@ class TagFor: Tag, IterationTag
 
 	internal var itemsCount: Int
 	{
-		guard let iterandValue = compiledExpression["iterand"] as? Token.Value else
+		guard iterator != nil, let iterandValue = compiledExpression["iterand"] as? Token.Value else
 		{
 			return 0
 		}
@@ -717,6 +732,12 @@ class TagFor: Tag, IterationTag
 		default:
 			throw Errors.malformedStatement("Expected array or range parameter for for statement, found \(type(of: iterandValue))")
 		}
+		
+		guard !values.reduce(false, { (allFalsy, value) in allFalsy || value.isFalsy || value.isEmptyString }) else
+		{
+			self.iterator = nil
+			return
+		}
 
 		if let offset = (compiledExpression["offset"] as? Token.Value)?.integerValue
 		{
@@ -734,6 +755,16 @@ class TagFor: Tag, IterationTag
 		}
 
 		self.iterator = values.makeIterator()
+	}
+	
+	override func didDefine(scope: Parser.Scope, parser: Parser)
+	{
+		super.didDefine(scope: scope, parser: parser)
+		
+		if iterator == nil
+		{
+			scope.outputState = .disabled
+		}
 	}
 
 	private struct ForLoop: TokenValueConvertible
@@ -767,6 +798,8 @@ class TagFor: Tag, IterationTag
 
 class TagEndFor: Tag
 {
+	private var shouldTerminateParentScope: Bool = false
+	
 	override class var keyword: String
 	{
 		return "endfor"
@@ -774,7 +807,22 @@ class TagEndFor: Tag
 
 	override var terminatesScopesWithTags: [Tag.Type]?
 	{
-		return [TagFor.self]
+		return [TagFor.self, TagElse.self]
+	}
+	
+	override func didTerminate(scope: Parser.Scope, parser: Parser)
+	{
+		super.didTerminate(scope: scope, parser: parser)
+		
+		if scope.tag is TagElse
+		{
+			shouldTerminateParentScope = true
+		}
+	}
+	
+	override var terminatesParentScope: Bool
+	{
+		return shouldTerminateParentScope
 	}
 }
 
