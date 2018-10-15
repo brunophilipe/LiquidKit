@@ -103,6 +103,12 @@ open class Parser
 				{
 					// Inform this tag instance that it has closed a tag.
 					tag.didTerminate(scope: currentScope, parser: self)
+					
+					// If this tag also closes the parent scope, we need to jump two scope levels up.
+					if tag.terminatesParentScope, let terminatedScope = currentScope.parentScope
+					{
+						currentScope = terminatedScope
+					}
 
 					// If this scope was defined by an iteration tag, we need to check with it if we need another pass.
 					if currentScope.outputState != .disabled,
@@ -113,11 +119,6 @@ open class Parser
 						currentScope.context = supplementalContext
 						currentScope.outputState = .enabled
 						tokenIterator.setCurrentIndex(tagTokenIndex)
-					}
-					// If this tag also closes the parent scope, we need to jump two scope levels up.
-					else if tag.terminatesParentScope, let grampaScope = currentScope.parentScope?.parentScope
-					{
-						currentScope = grampaScope
 					}
 					// Otherwise we just jump back to the parent scope, if present.
 					else if let parentScope = currentScope.parentScope
