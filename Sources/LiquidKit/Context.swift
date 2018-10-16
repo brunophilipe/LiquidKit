@@ -6,7 +6,7 @@
 //
 //
 /// A container for template variables.
-public class Context
+open class Context
 {
     private var variables: [String: Token.Value]
 	private var counters: [String: Int] = [:]
@@ -19,37 +19,29 @@ public class Context
 	
 	public init(dictionary: [String: Any?])
 	{
-		variables = [:]
-		
-		for (key, value) in dictionary
-		{
-			if let value = parseAnyValue(value)
-			{
-				variables[key] = value
-			}
-		}
+		self.variables = dictionary.mapValues({ Context.parseAny($0) }).filter({ $0.value != nil }).mapValues({ $0! })
 	}
 	
-	public func getValue(for key: String) -> Token.Value?
+	open func getValue(for key: String) -> Token.Value?
 	{
 		return variables[key]
 	}
 	
-	public func set(value: Token.Value, for key: String)
+	open func set(value: Token.Value, for key: String)
 	{
 		variables[key] = value
 	}
 	
-	public func set(value: Any?, for key: String)
+	open func set(value: Any?, for key: String)
 	{
-		if let value = parseAnyValue(value)
+		if let value = Context.parseAny(value)
 		{
 			variables[key] = value
 		}
 	}
 
 	/// Creates a new number variable, and increases its value by one every time it is called. The initial value is 0.
-	public func incrementCounter(for key: String) -> Int
+	open func incrementCounter(for key: String) -> Int
 	{
 		let counter = counters[key] ?? 0
 		counters[key] = counter + 1
@@ -57,7 +49,7 @@ public class Context
 	}
 
 	/// Creates a new number variable, and decreases its value by one every time it is called. The initial value is -1.
-	public func decrementCounter(for key: String) -> Int
+	open func decrementCounter(for key: String) -> Int
 	{
 		let counter = (counters[key] ?? 0) - 1
 		counters[key] = counter
@@ -67,7 +59,7 @@ public class Context
 	/// Returns the next element in a group of token values. If an identifier is provided, that identifier is used to
 	/// uniquely cycle through the group separately from other groups. If no identifier is provided, then it is assumed
 	/// that multiple calls with the same group of token values are one group.
-	public func next(in group: [Token.Value], identifier: String?) -> Token.Value?
+	open func next(in group: [Token.Value], identifier: String?) -> Token.Value?
 	{
 		let hash = identifier?.hashValue ?? group.hashValue
 
@@ -81,7 +73,7 @@ public class Context
 		return groups[hash]?.iterator.next()
 	}
 	
-	private func parseAnyValue(_ value: Any?) -> Token.Value?
+	private static func parseAny(_ value: Any?) -> Token.Value?
 	{
 		if let intLiteral = value as? IntegerLiteralType
 		{
@@ -109,7 +101,7 @@ public class Context
 		}
 	}
 
-	func parseString(_ token: String, onlyIfLiteral: Bool = false) -> Token.Value?
+	internal func parseString(_ token: String, onlyIfLiteral: Bool = false) -> Token.Value?
 	{
 		let trimmedToken = token.trimmingWhitespaces
 		let nsToken = token as NSString

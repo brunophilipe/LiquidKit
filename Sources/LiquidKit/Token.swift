@@ -49,7 +49,7 @@ public enum Token : Equatable
 		/// * If the receiver is an integer or decimal enum, returns its value embedded in a string using `"\()"`.
 		/// * If the receiver is a string enum, returns its value.
 		/// * For any other enum value, returns an empty string.
-		var stringValue: String
+		public var stringValue: String
 		{
 			switch self
 			{
@@ -69,7 +69,7 @@ public enum Token : Equatable
 		/// * If the receiver is a decimal enum, returns its value.
 		/// * If the receiver is a string enum, attempts to parse its value as a Decimal, which might return `nil`.
 		/// * For any other enum value, returns `nil`.
-		var decimalValue: Decimal?
+		public var decimalValue: Decimal?
 		{
 			switch self
 			{
@@ -87,7 +87,7 @@ public enum Token : Equatable
 		/// * If the receiver is a decimal enum, returns its value cast to Double.
 		/// * If the receiver is a string enum, attempts to parse its value as a Double, which might return `nil`.
 		/// * For any other enum value, returns `nil`.
-		var doubleValue: Double?
+		public var doubleValue: Double?
 		{
 			switch self
 			{
@@ -105,7 +105,7 @@ public enum Token : Equatable
 		/// * If the receiver is a decimal enum, returns its value cast to Int.
 		/// * If the receiver is a string enum, attempts to parse its value as an Int, which might return `nil`.
 		/// * For any other enum value, returns `nil`.
-		var integerValue: Int?
+		public var integerValue: Int?
 		{
 			switch self
 			{
@@ -118,7 +118,7 @@ public enum Token : Equatable
 		}
 
 		/// Returns `true` if the receiver is either `.nil` or `.bool(false)`. Otherwise returns `false`.
-		var isFalsy: Bool
+		public var isFalsy: Bool
 		{
 			switch self
 			{
@@ -131,14 +131,14 @@ public enum Token : Equatable
 		}
 
 		/// Returns `false` if the receiver is either `.nil` or `.bool(false)`. Otherwise returns `true`.
-		var isTruthy: Bool
+		public var isTruthy: Bool
 		{
 			return !isFalsy
 		}
 
 		/// Returns `true` if the receiver is a string enum and its value is an empty string. For all other cases
 		/// returns `false`.
-		var isEmptyString: Bool
+		public var isEmptyString: Bool
 		{
 			switch self
 			{

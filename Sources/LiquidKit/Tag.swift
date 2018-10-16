@@ -8,66 +8,66 @@
 import Foundation
 
 /// A class representing a filter
-public class Tag
+open class Tag
 {
 	/// Keyword used to identify the receiver tag.
-	public class var keyword: String
+	open class var keyword: String
 	{
 		return ""
 	}
 
 	/// Expression which defines the structure of the tag's expression.
-	internal var tagExpression: [ExpressionSegment]
+	open var tagExpression: [ExpressionSegment]
 	{
 		return []
 	}
 
-	internal var parameters: [String]
+	open var parameters: [String]
 	{
 		return []
 	}
 
 	/// Storage for the compiled statement expression, which is populated after a successful compilation.
-	internal var compiledExpression: [String: Any] = [:]
+	public internal(set) var compiledExpression: [String: Any] = [:]
 
 	/// The context where variables, counters, and other properties are stored.
-	internal let context: Context
+	public let context: Context
 
 	/// If true, will create a scope for this tag upon compiling it. One or more closing tgas will need to be defined
 	/// to close that scope. Those tags will need the name of this class in its `terminatesScopesWithTags` property.
-	internal var definesScope: Bool
+	open var definesScope: Bool
 	{
 		return false
 	}
 
 	/// If defined, lists which scopes this this tag will close, based on their opener tags.
-	internal var terminatesScopesWithTags: [Tag.Type]?
+	open var terminatesScopesWithTags: [Tag.Type]?
 	{
 		return nil
 	}
 
 	/// Whether the parent scope of the scope terminated by this tag should also be terminated.
-	internal var terminatesParentScope: Bool
+	open var terminatesParentScope: Bool
 	{
 		return false
 	}
 
 	/// Tags classes that should be skipped after evaluation this tag. This value is only invoked after
 	/// `shouldEnter(scope:)` returns.
-	internal var tagKindsToSkip: Set<Tag.Kind>?
+	open var tagKindsToSkip: Set<Tag.Kind>?
 
 	/// If this tag terminates a scope during preprocessing, the parser will invoke this method with the new scope.
-	internal func didTerminate(scope: Parser.Scope, parser: Parser)
+	open func didTerminate(scope: Parser.Scope, parser: Parser)
 	{
 	}
 
 	/// If this tag defines a scope during preprocessing, the parser will invoke this method with the new scope.
-	internal func didDefine(scope: Parser.Scope, parser: Parser)
+	open func didDefine(scope: Parser.Scope, parser: Parser)
 	{
 	}
 
 	/// If compiling this tag produces an output, this value will be stored here.
-	public internal(set) var output: [Token.Value]? = nil
+	public var output: [Token.Value]? = nil
 
 	public required init(context: Context)
 	{
@@ -75,7 +75,7 @@ public class Tag
 	}
 
 	/// Given a string statement, attempts to compile the receiver tag.
-	internal func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
+	open func parse(statement: String, using parser: Parser, currentScope: Parser.Scope) throws
 	{
 		var processedStatement = statement
 
@@ -221,11 +221,11 @@ extension Tag
 	]
 }
 
-internal extension Tag
+public extension Tag
 {
-	typealias Kind = Int
+	public typealias Kind = Int
 
-	class var kind: Kind
+	public class var kind: Kind
 	{
 		return self.keyword.hashValue
 	}

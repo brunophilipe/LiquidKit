@@ -19,7 +19,7 @@ open class Filter
 	let lambda: ((Token.Value, [Token.Value]) -> Token.Value)
 
 	/// Filter constructor.
-	init(identifier: String, lambda: @escaping (Token.Value, [Token.Value]) -> Token.Value)
+	public init(identifier: String, lambda: @escaping (Token.Value, [Token.Value]) -> Token.Value)
 	{
 		self.identifier = identifier
 		self.lambda = lambda

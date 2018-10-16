@@ -350,7 +350,7 @@ open class Parser
 
 	/// Defines a level of scope during parsing. Each time a scope-defining tag is found (such as `if`, `else`, etc…),
 	/// a new scope is defined. Closing tags (such as `endif`, `elsif`, etc) terminate scopes.
-	internal class Scope
+	open class Scope
 	{
 		/// The tag that defined this scope level. Is only `nil` on the root scope level.
 		let tag: Tag?
