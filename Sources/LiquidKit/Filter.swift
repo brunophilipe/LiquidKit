@@ -36,6 +36,45 @@ extension Filter
 	]
 }
 
+public extension Filter
+{
+	static func parseDate(string inputString: String) -> Date?
+	{
+		guard inputString != "today", inputString != "now" else
+		{
+			return Date()
+		}
+
+		let styles: [DateFormatter.Style] = [.none, .short, .medium, .long, .full]
+		let dateFormatter = DateFormatter()
+
+		for dateStyle in styles
+		{
+			for timeStyle in styles
+			{
+				dateFormatter.dateStyle = dateStyle
+				dateFormatter.timeStyle = timeStyle
+
+				dateFormatter.locale = Locale.current
+
+				if let parsedDate = dateFormatter.date(from: inputString)
+				{
+					return parsedDate
+				}
+
+				dateFormatter.locale = Locale(identifier: "en_US")
+
+				if let parsedDate = dateFormatter.date(from: inputString)
+				{
+					return parsedDate
+				}
+			}
+		}
+
+		return nil
+	}
+}
+
 extension Filter
 {
 	static let abs = Filter(identifier: "abs")
@@ -160,50 +199,8 @@ extension Filter
 		{
 			return .nil
 		}
-		
-		let inputString = input.stringValue
 
-		var date: Date? = nil
-
-		if inputString == "today" || inputString == "now"
-		{
-			date = Date()
-		}
-		else
-		{
-			let styles: [DateFormatter.Style] = [.none, .short, .medium, .long, .full]
-			let dateFormatter = DateFormatter()
-
-			for dateStyle in styles
-			{
-				for timeStyle in styles
-				{
-					dateFormatter.dateStyle = dateStyle
-					dateFormatter.timeStyle = timeStyle
-
-					dateFormatter.locale = Locale.current
-
-					if let parsedDate = dateFormatter.date(from: inputString)
-					{
-						date = parsedDate
-						break
-					}
-
-					dateFormatter.locale = Locale(identifier: "en_US")
-
-					if let parsedDate = dateFormatter.date(from: inputString)
-					{
-						date = parsedDate
-						break
-					}
-				}
-
-				if date != nil
-				{
-					break
-				}
-			}
-		}
+		var date: Date? = Filter.parseDate(string: input.stringValue)
 
 		guard date != nil else
 		{
