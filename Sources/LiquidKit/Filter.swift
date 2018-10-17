@@ -9,7 +9,9 @@ import Foundation
 import STRFTimeFormatter
 import HTMLEntities
 
-/// A class representing a filter
+/// A class representing a filter. Filters transform `Token.Value` objects into other `Token.Value` objects, and might
+/// accept one or more `Token.Value` parameters. Filters are identified by the `identifier` value, and only one filter
+/// can be defined per `identifier`.
 open class Filter
 {
 	/// Keyword used to identify the filter.

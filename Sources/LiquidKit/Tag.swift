@@ -7,7 +7,8 @@
 
 import Foundation
 
-/// A class representing a filter
+/// A class representing a Tag. Tag is effectively an abstract class, and should be subclassed to implement individual
+/// tag behavior.
 open class Tag
 {
 	/// Keyword used to identify the receiver tag.
@@ -22,6 +23,7 @@ open class Tag
 		return []
 	}
 
+	/// List of parameters the tag accepts. All parameters are optional and might have arguments.
 	open var parameters: [String]
 	{
 		return []
@@ -225,6 +227,7 @@ public extension Tag
 {
 	public typealias Kind = Int
 
+	/// The unique kind of the tag. All tags with the same `keyword` have the same `kind`.
 	public class var kind: Kind
 	{
 		return self.keyword.hashValue
