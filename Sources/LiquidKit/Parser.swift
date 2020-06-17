@@ -384,7 +384,7 @@ open class Parser
 		var context: Context?
 
 		/// The statements inside the receiver scope.
-		internal(set) var processedStatements: [ProcessedStatement] = []
+		var processedStatements: [ProcessedStatement] = []
 
 		init(tag: Tag? = nil, parent: Scope? = nil)
 		{

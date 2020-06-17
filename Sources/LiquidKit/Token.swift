@@ -150,18 +150,18 @@ public enum Token : Equatable
 			}
 		}
 
-		public var hashValue: Int
+		public func hash(into hasher: inout Hasher)
 		{
 			switch self
 			{
-			case .nil:							return Int.min
-			case .bool(let boolValue):			return boolValue.hashValue
-			case .string(let stringValue):		return stringValue.hashValue
-			case .integer(let integerValue):	return integerValue.hashValue
-			case .decimal(let decimalValue):	return decimalValue.hashValue
-			case .array(let arrayValue):		return arrayValue.hashValue
-			case .dictionary(let dictValue):	return dictValue.hashValue
-			case .range(let range):				return range.hashValue
+			case .nil:							hasher.combine(0)
+			case .bool(let boolValue):			hasher.combine(boolValue)
+			case .string(let stringValue):		hasher.combine(stringValue)
+			case .integer(let integerValue):	hasher.combine(integerValue)
+			case .decimal(let decimalValue):	hasher.combine(decimalValue)
+			case .array(let arrayValue):		hasher.combine(arrayValue)
+			case .dictionary(let dictValue):	hasher.combine(dictValue)
+			case .range(let range):				hasher.combine(range)
 			}
 		}
 	}

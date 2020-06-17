@@ -225,10 +225,10 @@ extension Tag
 
 public extension Tag
 {
-	public typealias Kind = Int
+	typealias Kind = Int
 
 	/// The unique kind of the tag. All tags with the same `keyword` have the same `kind`.
-	public class var kind: Kind
+	class var kind: Kind
 	{
 		return self.keyword.hashValue
 	}
